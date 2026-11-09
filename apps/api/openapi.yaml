@@ -1,0 +1,125 @@
+openapi: 3.0.3
+info:
+  title: Kung Food Pandas API
+  version: 0.1.0
+  description: REST API documentation for Kung Food Pandas.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: http://localhost:4000
+    description: Local Development Server
+  - url: https://kung-food-pandas-api.onrender.com
+    description: Production Server (Render)
+components:
+  schemas:
+    LivenessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+          example: ok
+        timestamp:
+          type: string
+          format: date-time
+          example: 2026-11-09T12:00:00.000Z
+        uptime:
+          type: number
+          minimum: 0
+          example: 42.15
+      required:
+        - status
+        - timestamp
+        - uptime
+    ReadinessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - ready
+            - degraded
+          example: ready
+        timestamp:
+          type: string
+          format: date-time
+          example: 2026-11-09T12:00:00.000Z
+        checks:
+          type: object
+          properties:
+            database:
+              type: string
+              enum:
+                - up
+                - down
+              example: up
+          required:
+            - database
+      required:
+        - status
+        - timestamp
+        - checks
+    ApiErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - error
+          example: error
+        message:
+          type: string
+          example: Validation failed
+        issues:
+          type: array
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+                example: body.email
+              message:
+                type: string
+                example: Invalid email address
+            required:
+              - path
+              - message
+      required:
+        - status
+        - message
+  parameters: {}
+paths:
+  /healthz:
+    get:
+      tags:
+        - System
+      summary: Liveness probe
+      description: Verifies that the process is alive.
+      responses:
+        "200":
+          description: Process is alive
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LivenessResponse"
+  /readyz:
+    get:
+      tags:
+        - System
+      summary: Readiness probe
+      description: Verifies that the service is ready to accept traffic.
+      responses:
+        "200":
+          description: Service is ready to accept traffic
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReadinessResponse"
+        "503":
+          description: Service is not ready to accept traffic
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReadinessResponse"

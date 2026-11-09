@@ -69,6 +69,7 @@ web_modules/
 .env
 .env.*
 !.env.example
+!.env.template
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -81,6 +82,8 @@ out
 # Nuxt.js build / generate output
 .nuxt
 dist
+docs-dist
+openapi.bundled.yaml
 .output
 
 # Gatsby files
@@ -147,3 +150,10 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Generated Prisma Client
+apps/api/src/generated/
+
+tasks/
+# Pull requests list
+pull-requests.txt

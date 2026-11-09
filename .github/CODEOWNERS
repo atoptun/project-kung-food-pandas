@@ -1,0 +1,17 @@
+# Default global owner
+*                            @atoptun
+
+# Backend ownership (add backend reviewers here, e.g. @atoptun @backend-dev)
+/apps/api/                   @atoptun
+
+# Frontend ownership (add frontend reviewers here, e.g. @atoptun @frontend-dev)
+/apps/web/                   @atoptun
+
+# Shared contracts & schemas require review from both leads
+/packages/shared/            @atoptun
+
+# Repository tooling & CI/CD
+/packages/typescript-config/ @atoptun
+/.github/                    @atoptun
+/package.json                @atoptun
+/turbo.json                  @atoptun

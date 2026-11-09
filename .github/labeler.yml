@@ -1,0 +1,20 @@
+'scope: api':
+  - changed-files:
+      - any-glob-to-any-file: 'apps/api/**'
+
+'scope: web':
+  - changed-files:
+      - any-glob-to-any-file: 'apps/web/**'
+
+'scope: shared':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/shared/**'
+
+'scope: repo':
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/**'
+          - 'packages/typescript-config/**'
+          - 'package.json'
+          - 'turbo.json'
+          - 'pnpm-workspace.yaml'
