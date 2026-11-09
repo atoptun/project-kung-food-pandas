@@ -36,9 +36,12 @@ const EnvSchema = z
     // CLOUDINARY_CLOUD_NAME: z.string().default('demo'),
     // CLOUDINARY_API_KEY: z.string().default('demo_key'),
     // CLOUDINARY_API_SECRET: z.string().default('demo_secret'),
-    CLOUDINARY_URL: z.url().startsWith('cloudinary://', {
-      message: 'CLOUDINARY_URL must start with cloudinary://',
-    }),
+    CLOUDINARY_URL: z
+      .url()
+      .startsWith('cloudinary://', {
+        message: 'CLOUDINARY_URL must start with cloudinary://',
+      })
+      .default('cloudinary://demo_key:demo_secret@demo'),
   })
   .transform((data) => ({
     ...data,
