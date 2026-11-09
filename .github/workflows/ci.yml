@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  pr-policy:
+    name: Enforce Branch & Scope Isolation
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate branch naming convention
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          REGEX="^(feat|fix|chore|docs|refactor|test|ci|perf)\/(api|web|shared|docs|repo)\/[a-z0-9-]+$"
+          if [[ ! "$HEAD_REF" =~ $REGEX ]]; then
+            echo "::error::Invalid branch name '$HEAD_REF'. Expected <type>/<scope>/<short-kebab-description>."
+            exit 1
+          fi
+
+      - name: Prevent mixing apps/api and apps/web in a single PR
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          PR_LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
+        run: |
+          if [[ "$HEAD_REF" == *"/repo/"* ]] || echo "$PR_LABELS" | grep -q "allow-cross-scope"; then
+            echo "Repo-scoped branch or allow-cross-scope label detected. Skipping scope isolation check."
+            exit 0
+          fi
+
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          TOUCHES_API=$(echo "$CHANGED_FILES" | grep -c "^apps/api/" || true)
+          TOUCHES_WEB=$(echo "$CHANGED_FILES" | grep -c "^apps/web/" || true)
+
+          if [[ "$TOUCHES_API" -gt 0 && "$TOUCHES_WEB" -gt 0 ]]; then
+            echo "::error::This PR modifies both apps/api/ and apps/web/. Please split backend and frontend changes into separate Pull Requests."
+            exit 1
+          fi
+
+  verify:
+    name: Lint, Typecheck, Test & Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm db:generate
+
+      - name: Lint & Format Check
+        run: |
+          pnpm lint
+          pnpm format:check
+
+      - name: Validate OpenAPI Specification
+        run: pnpm docs:lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Run Tests
+        run: pnpm test
+
+      - name: Build All Packages
+        run: pnpm build

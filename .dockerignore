@@ -1,0 +1,28 @@
+# Git & IDE
+.git
+.gitignore
+.github
+.husky
+.vscode
+
+# Dependencies & build artifacts
+**/node_modules
+**/dist
+**/docs-dist
+**/coverage
+**/src/generated
+.turbo
+.pnpm-store
+
+# Environment files
+.env
+.env.*
+
+# Frontend app (not needed for backend Docker image)
+apps/web
+
+# Documentation & local tasks
+tasks
+README.md
+CONTRIBUTING.md
+pull-requests.txt

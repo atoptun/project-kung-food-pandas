@@ -1,0 +1,32 @@
+# ==============================================================================
+# Render Blueprint (Infrastructure as Code)
+# ==============================================================================
+
+services:
+  - type: web
+    name: kung-food-pandas-api
+    plan: free
+    # Multi-stage Docker
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    # Node build
+    # runtime: node
+    # buildCommand: corepack enable && pnpm install --frozen-lockfile --prod=false && pnpm build:api && pnpm --filter @repo/api db:migrate:deploy && pnpm prune --prod
+    # startCommand: pnpm start:api
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: LOG_LEVEL
+        value: info
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: CLOUDINARY_URL
+        sync: false

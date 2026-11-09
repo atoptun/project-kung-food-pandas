@@ -1,0 +1,10 @@
+extends:
+  - recommended
+
+apis:
+  main:
+    root: ./openapi.yaml
+
+rules:
+  operation-4xx-response: off
+  security-defined: off

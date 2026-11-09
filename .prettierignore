@@ -1,0 +1,9 @@
+node_modules
+dist
+docs-dist
+coverage
+.turbo
+pnpm-lock.yaml
+apps/api/openapi.yaml
+apps/api/openapi.bundled.yaml
+apps/api/src/generated
