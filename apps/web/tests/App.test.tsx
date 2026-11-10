@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { App } from '@/App.js';
+import { App } from '@/App';
 
 describe('App', () => {
   it('renders the application heading', () => {
