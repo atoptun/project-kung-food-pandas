@@ -5,5 +5,6 @@ import { z } from 'zod';
 extendZodWithOpenApi(z);
 
 export { z };
-export * from './schemas/error.schema.js';
-export * from './schemas/health.schema.js';
+export * from './schemas/auth.schema';
+export * from './schemas/error.schema';
+export * from './schemas/health.schema';

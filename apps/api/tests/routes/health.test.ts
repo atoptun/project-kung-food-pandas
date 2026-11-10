@@ -1,8 +1,8 @@
 import request from 'supertest';
 import { describe, expect, it, vi } from 'vitest';
 
-import { app } from '@/app.js';
-import prisma from '@/config/prisma.js';
+import { app } from '@/app';
+import prisma from '@/lib/prisma';
 
 describe('Health & Readiness Endpoints', () => {
   it('GET /healthz returns 200 OK liveness payload', async () => {

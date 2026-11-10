@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 import YAML from 'yaml';
 
-import { generateOpenApiDocument } from './openapi.js';
+import { generateOpenApiDocument } from './openapi';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const outputPath = path.resolve(__dirname, '../../openapi.yaml');

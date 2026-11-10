@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import type { z, ZodError } from 'zod';
 
-import { BadRequestError, type ErrorIssue, UnprocessableEntityError } from '@/errors/http.error.js';
+import { BadRequestError, type ErrorIssue, UnprocessableEntityError } from '@/errors/http.error';
 
 function formatZodIssues(error: ZodError): ErrorIssue[] {
   return error.issues.map((issue) => ({

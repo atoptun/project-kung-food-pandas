@@ -1,7 +1,7 @@
 import type { LivenessResponse, ReadinessResponse } from '@repo/shared';
 import { type Request, type Response } from 'express';
 
-import prisma from '@/config/prisma.js';
+import prisma from '@/lib/prisma';
 
 export const handleLiveness = (_req: Request, res: Response<LivenessResponse>) => {
   res.status(200).json({

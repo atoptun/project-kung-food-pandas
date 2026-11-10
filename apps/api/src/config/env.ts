@@ -17,6 +17,8 @@ const EnvSchema = z
     LOG_LEVEL: z
       .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
       .default('info'),
+    BETTER_AUTH_SECRET: z.string().default('super-secret-key-at-least-32-characters-long'),
+    BETTER_AUTH_URL: z.url().default('http://localhost:4000'),
     CORS_ORIGINS: z
       .string()
       .default('http://localhost:5173')

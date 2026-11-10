@@ -4,12 +4,13 @@ import helmet from 'helmet';
 import { pinoHttp } from 'pino-http';
 import swaggerUi from 'swagger-ui-express';
 
-import env from '@/config/env.js';
-import logger from '@/config/logger.js';
-import { generateOpenApiDocument } from '@/docs/openapi.js';
-import { errorHandler } from '@/middlewares/error-handler.middleware.js';
+import env from '@/config/env';
+import logger from '@/config/logger';
+import { generateOpenApiDocument } from '@/docs/openapi';
+import { errorHandler } from '@/middlewares/error-handler.middleware';
 import { notFound } from '@/middlewares/not-found.middleware';
-import { healthRouter } from '@/routes/health.routes.js';
+import { authRouter } from '@/routes/auth.routes';
+import { healthRouter } from '@/routes/health.routes';
 
 export function createApp(): Express {
   const app = express();
@@ -30,6 +31,7 @@ export function createApp(): Express {
       maxAge: 86400,
     }),
   );
+
   app.use(express.json());
   app.use(pinoHttp({ logger }));
 
@@ -37,6 +39,7 @@ export function createApp(): Express {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
   app.use(healthRouter);
+  app.use('/auth', authRouter);
 
   app.use(notFound);
   app.use(errorHandler);

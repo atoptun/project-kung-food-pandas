@@ -1,7 +1,7 @@
 import type { TransportTargetOptions } from 'pino';
 import pino from 'pino';
 
-import env from '@/config/env.js';
+import env from '@/config/env';
 
 const devTargets: TransportTargetOptions[] = [
   // Console
@@ -19,7 +19,7 @@ const devTargets: TransportTargetOptions[] = [
     target: 'pino/file',
     level: 'debug',
     options: {
-      destination: '../../../../logs/api.log',
+      destination: '../../../logs/api.log',
       mkdir: true,
     },
   },
