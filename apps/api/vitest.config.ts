@@ -11,6 +11,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '../../.env.local'), quiet: true });
 dotenv.config({ quiet: true });
 
+const testDatabaseUrl =
+  process.env.TEST_DATABASE_URL ||
+  'postgresql://kfp:kfp_local_pass@localhost:5432/kfp_db_test?schema=public';
+
 export default defineConfig({
   resolve: {
     alias: {
@@ -29,8 +33,8 @@ export default defineConfig({
     include: ['tests/**/*.test.ts'],
     env: {
       NODE_ENV: 'test',
-      DATABASE_URL: process.env.TEST_DATABASE_URL,
-      DIRECT_URL: process.env.TEST_DATABASE_URL,
+      DATABASE_URL: testDatabaseUrl,
+      DIRECT_URL: testDatabaseUrl,
       CLOUDINARY_URL: 'cloudinary://test_key:test_secret@test_cloud',
     },
   },
