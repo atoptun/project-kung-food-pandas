@@ -24,7 +24,7 @@ export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
     setupFiles: [
-      // "./tests/migrate-test.ts", // for migrate the test base before running the tests
+      './tests/migrate-test.ts', // for migrate the test base before running the tests
       './tests/setup.ts',
     ],
     fileParallelism: false,

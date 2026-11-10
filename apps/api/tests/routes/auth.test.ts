@@ -1,9 +1,10 @@
-import { APIError } from 'better-auth/api';
 import request from 'supertest';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { app } from '@/app';
-import { auth } from '@/lib/auth';
+import prisma from '@/lib/prisma';
+
+import { createAuthUser } from '../helpers/auth';
 
 describe('Auth Endpoints', () => {
   afterEach(() => {
@@ -12,18 +13,6 @@ describe('Auth Endpoints', () => {
 
   describe('POST /auth/register', () => {
     it('returns 201 and user with token on valid registration', async () => {
-      vi.spyOn(auth.api, 'signUpEmail').mockResolvedValueOnce({
-        token: 'mock-session-token',
-        user: {
-          id: 'user-1',
-          name: 'Panda',
-          email: 'panda@panda.com',
-          emailVerified: false,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      });
-
       const response = await request(app).post('/auth/register').send({
         name: 'Panda',
         email: 'panda@panda.com',
@@ -32,12 +21,19 @@ describe('Auth Endpoints', () => {
 
       expect(response.status).toBe(201);
       expect(response.body).toEqual({
-        token: 'mock-session-token',
+        token: expect.any(String),
         user: {
           name: 'Panda',
           email: 'panda@panda.com',
         },
       });
+
+      const user = await prisma.user.findUnique({
+        where: {
+          email: 'panda@panda.com',
+        },
+      });
+      expect(user).not.toBeNull();
     });
 
     it('returns 422 when request body fails validation', async () => {
@@ -56,11 +52,11 @@ describe('Auth Endpoints', () => {
     });
 
     it('returns error status when user already exists', async () => {
-      vi.spyOn(auth.api, 'signUpEmail').mockRejectedValueOnce(
-        new APIError('UNPROCESSABLE_ENTITY', {
-          message: 'User already exists',
-        }),
-      );
+      const _userData = await createAuthUser({
+        name: 'Panda',
+        email: 'panda@panda.com',
+        password: 'StrongPass123!',
+      });
 
       const response = await request(app).post('/auth/register').send({
         name: 'Panda',
@@ -71,24 +67,17 @@ describe('Auth Endpoints', () => {
       expect(response.status).toBe(422);
       expect(response.body).toEqual({
         status: 'error',
-        message: 'User already exists',
+        message: 'User already exists. Use another email.',
       });
     });
   });
 
   describe('POST /auth/login', () => {
     it('returns 200 and session token on valid credentials', async () => {
-      vi.spyOn(auth.api, 'signInEmail').mockResolvedValueOnce({
-        redirect: false,
-        token: 'mock-login-token',
-        user: {
-          id: 'user-1',
-          name: 'Panda',
-          email: 'panda@panda.com',
-          emailVerified: false,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
+      const _userData = await createAuthUser({
+        name: 'Panda',
+        email: 'panda@panda.com',
+        password: 'StrongPass123!',
       });
 
       const response = await request(app).post('/auth/login').send({
@@ -98,7 +87,7 @@ describe('Auth Endpoints', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
-        token: 'mock-login-token',
+        token: expect.any(String),
         user: {
           name: 'Panda',
           email: 'panda@panda.com',
@@ -121,11 +110,11 @@ describe('Auth Endpoints', () => {
     });
 
     it('returns 401 when credentials are invalid', async () => {
-      vi.spyOn(auth.api, 'signInEmail').mockRejectedValueOnce(
-        new APIError('UNAUTHORIZED', {
-          message: 'Invalid email or password',
-        }),
-      );
+      const _userData = await createAuthUser({
+        name: 'Panda',
+        email: 'panda@panda.com',
+        password: 'StrongPass123!',
+      });
 
       const response = await request(app).post('/auth/login').send({
         email: 'panda@panda.com',
@@ -142,41 +131,20 @@ describe('Auth Endpoints', () => {
 
   describe('POST /auth/logout', () => {
     it('returns 204 when authenticated user logs out', async () => {
-      const now = new Date();
-      vi.spyOn(auth.api, 'getSession').mockResolvedValueOnce({
-        session: {
-          id: 'session-1',
-          token: 'valid-token',
-          userId: 'user-1',
-          expiresAt: new Date(now.getTime() + 86400000),
-          createdAt: now,
-          updatedAt: now,
-        },
-        user: {
-          id: 'user-1',
-          name: 'Panda',
-          email: 'panda@panda.com',
-          emailVerified: false,
-          createdAt: now,
-          updatedAt: now,
-        },
-      });
-      vi.spyOn(auth.api, 'signOut').mockResolvedValueOnce({
-        success: true,
-        url: undefined,
-        redirect: undefined,
+      const _userData = await createAuthUser({
+        name: 'Panda',
+        email: 'panda@panda.com',
+        password: 'StrongPass123!',
       });
 
       const response = await request(app)
         .post('/auth/logout')
-        .set('Authorization', 'Bearer valid-token');
+        .set('Authorization', _userData.authHeader);
 
       expect(response.status).toBe(204);
     });
 
     it('returns 401 when user is not authenticated', async () => {
-      vi.spyOn(auth.api, 'getSession').mockResolvedValueOnce(null);
-
       const response = await request(app).post('/auth/logout');
 
       expect(response.status).toBe(401);
