@@ -135,7 +135,7 @@ pnpm add -D -w <root-tool-package>
 
 ### Path Aliases & Imports
 
-- **Internal imports within `apps/api` and `apps/web`:** Use the `@/*` alias mapped to `./src/*` (e.g., `import env from '@/config/env.js'` or `import { App } from '@/App.js'`) instead of deep relative paths (`../../`).
+- **Internal imports within `apps/api` and `apps/web`:** Use the `@/*` alias mapped to `./src/*` (e.g., `import env from '@/config/env'` or `import { App } from '@/App'`) instead of deep relative paths (`../../`).
 - **Shared contracts (`packages/shared`):** Import schemas and types via the workspace package name `@repo/shared`.
 - **Prisma Client (`apps/api`):** Generated into `apps/api/src/generated/prisma` (gitignored) and imported via `@/generated/prisma/client.js`.
 - **Test location:** All packages (`apps/api`, `apps/web`, `packages/shared`) keep their test files in a dedicated `tests/` directory outside `src/`.

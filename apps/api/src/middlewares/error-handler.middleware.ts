@@ -1,9 +1,10 @@
 import type { ApiErrorResponse } from '@repo/shared';
+import { APIError } from 'better-auth/api';
 import type { NextFunction, Request, Response } from 'express';
 import { ZodError } from 'zod';
 
-import logger from '@/config/logger.js';
-import { HttpError } from '@/errors/http.error.js';
+import logger from '@/config/logger';
+import { HttpError } from '@/errors/http.error';
 
 export function errorHandler(
   err: Error & { type?: string; code?: string },
@@ -21,6 +22,14 @@ export function errorHandler(
           message: 'Invalid JSON format in request body',
         },
       ],
+    });
+  }
+
+  // Better Auth errors
+  if (err instanceof APIError) {
+    return res.status(err.statusCode).json({
+      status: 'error',
+      message: err.message,
     });
   }
 

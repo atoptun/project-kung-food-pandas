@@ -1,7 +1,7 @@
-import { app } from '@/app.js';
-import env from '@/config/env.js';
-import logger from '@/config/logger.js';
-import prisma from '@/config/prisma.js';
+import { app } from '@/app';
+import env from '@/config/env';
+import logger from '@/config/logger';
+import prisma from '@/lib/prisma';
 
 const server = app.listen(env.PORT, () => {
   logger.info(`API server listening on http://localhost:${env.PORT}`);

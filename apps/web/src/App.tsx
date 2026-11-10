@@ -1,7 +1,7 @@
 import { type LivenessResponse, LivenessResponseSchema } from '@repo/shared';
 import { useEffect, useState } from 'react';
 
-import { clientEnv } from './env.js';
+import { clientEnv } from './env';
 
 export function App() {
   const [health, setHealth] = useState<LivenessResponse | null>(null);

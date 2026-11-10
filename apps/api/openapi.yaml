@@ -12,7 +12,72 @@ servers:
   - url: https://kung-food-pandas-api.onrender.com
     description: Production Server (Render)
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Bearer
   schemas:
+    RegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: panda@panda.com
+        name:
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: Panda
+        password:
+          type: string
+          minLength: 8
+          maxLength: 72
+          example: StrongPass123!
+      required:
+        - email
+        - name
+        - password
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: panda@panda.com
+        password:
+          type: string
+          minLength: 8
+          maxLength: 72
+          example: StrongPass123!
+      required:
+        - email
+        - password
+    AuthUser:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: panda@panda.com
+        name:
+          type: string
+          example: Panda
+      required:
+        - email
+        - name
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        user:
+          $ref: "#/components/schemas/AuthUser"
+      required:
+        - token
+        - user
     LivenessResponse:
       type: object
       properties:
@@ -91,6 +156,99 @@ components:
         - message
   parameters: {}
 paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a new user
+      description: Creates a new user account and returns a session token with basic
+        user profile.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "409":
+          description: User with this email already exists
+          content:
+            application/json:
+              example:
+                status: error
+                message: User with this email already exists
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "422":
+          description: Validation failed
+          content:
+            application/json:
+              example:
+                status: error
+                message: Validation failed
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login user
+      description: Authenticates a user by email and password and returns a session token.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid email or password
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid email or password
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "422":
+          description: Validation failed
+          content:
+            application/json:
+              example:
+                status: error
+                message: Validation failed
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Logout user
+      description: Invalidates the current user session token.
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Logged out successfully
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
   /healthz:
     get:
       tags:

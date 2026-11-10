@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { LivenessResponseSchema } from '../../src/index.js';
+import { LivenessResponseSchema } from '../../src/index';
 
 describe('LivenessResponseSchema', () => {
   it('validates a valid liveness payload', () => {
