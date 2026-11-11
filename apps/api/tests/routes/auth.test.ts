@@ -23,8 +23,10 @@ describe('Auth Endpoints', () => {
       expect(response.body).toEqual({
         token: expect.any(String),
         user: {
+          id: expect.any(String),
           name: 'Panda',
           email: 'panda@panda.com',
+          avatar: null,
         },
       });
 
@@ -74,7 +76,7 @@ describe('Auth Endpoints', () => {
 
   describe('POST /auth/login', () => {
     it('returns 200 and session token on valid credentials', async () => {
-      const _userData = await createAuthUser({
+      const userData = await createAuthUser({
         name: 'Panda',
         email: 'panda@panda.com',
         password: 'StrongPass123!',
@@ -89,8 +91,10 @@ describe('Auth Endpoints', () => {
       expect(response.body).toEqual({
         token: expect.any(String),
         user: {
-          name: 'Panda',
-          email: 'panda@panda.com',
+          id: userData.user.id,
+          name: userData.user.name,
+          email: userData.user.email,
+          avatar: userData.user.image,
         },
       });
     });
