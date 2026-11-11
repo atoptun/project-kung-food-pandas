@@ -1,6 +1,7 @@
 import './auth.openapi';
 import './dictionaries.openapi';
 import './health.openapi';
+import './recipes.openapi';
 import './users.openapi';
 
 import { OpenApiGeneratorV3 } from '@asteasolutions/zod-to-openapi';

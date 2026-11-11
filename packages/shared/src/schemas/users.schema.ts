@@ -1,19 +1,13 @@
 import { z } from '../zod';
-import { AuthUserSchema } from './auth.schema';
-import { ShortRecipeItemSchema, TinyRecipeItemSchema } from './recipes.schema';
+import { AuthUserSchema, PublicUserSchema } from './auth.schema';
+import { PaginationMetaSchema } from './pagination.schema';
+import { RecipeShortCardSchema, RecipeTinyCardSchema } from './recipes.schema';
 
 export const UserIdParamSchema = z
   .object({
-    id: z.string().max(32).openapi({ example: '64f1a2b3c4d5e6f7a8b9c0d1' }),
+    id: z.string().max(36).openapi({ example: '64f1a2b3c4d5e6f7a8b9c0d1' }),
   })
   .openapi('UserIdParam');
-
-export const PaginationQuerySchema = z
-  .object({
-    page: z.coerce.number().int().min(1).default(1).openapi({ example: 1 }),
-    limit: z.coerce.number().int().min(1).max(50).default(5).openapi({ example: 5 }),
-  })
-  .openapi('PaginationQuery');
 
 export const CurrentUserProfileResponseSchema = z
   .object({
@@ -35,33 +29,21 @@ export const UserPublicProfileResponseSchema = z
 
 export const UserFollowerItemSchema = z
   .object({
-    user: AuthUserSchema,
+    user: PublicUserSchema,
     recipesCount: z.number().int().nonnegative().openapi({ example: 2 }),
     topRecipes: z
-      .array(TinyRecipeItemSchema)
+      .array(RecipeTinyCardSchema)
       .openapi({ description: 'Up to 4 latest/top recipes' }),
   })
   .openapi('UserFollowerItem');
 
-export const UserFollowersListResponseSchema = z
-  .object({
-    total: z.number().int().nonnegative().openapi({ example: 1 }),
-    page: z.number().int().positive().openapi({ example: 1 }),
-    totalPages: z.number().int().nonnegative().openapi({ example: 1 }),
-    perPage: z.number().int().positive().openapi({ example: 5 }),
-    followers: z.array(UserFollowerItemSchema),
-  })
-  .openapi('UserFollowersListResponse');
+export const UserFollowersListResponseSchema = PaginationMetaSchema.extend({
+  items: z.array(UserFollowerItemSchema),
+}).openapi('UserFollowersListResponse');
 
-export const UserRecipesListResponseSchema = z
-  .object({
-    total: z.number().int().nonnegative().openapi({ example: 1 }),
-    page: z.number().int().positive().openapi({ example: 1 }),
-    totalPages: z.number().int().nonnegative().openapi({ example: 1 }),
-    perPage: z.number().int().positive().openapi({ example: 10 }),
-    recipes: z.array(ShortRecipeItemSchema),
-  })
-  .openapi('UserRecipesListResponse');
+export const UserRecipesListResponseSchema = PaginationMetaSchema.extend({
+  items: z.array(RecipeShortCardSchema),
+}).openapi('UserRecipesListResponse');
 
 export const FollowActionResponseSchema = z
   .object({
@@ -69,10 +51,20 @@ export const FollowActionResponseSchema = z
   })
   .openapi('FollowActionResponse');
 
+export const AvatarUploadSchema = z
+  .object({
+    avatar: z.any().openapi({
+      type: 'string',
+      format: 'binary',
+      description: 'Avatar image file (jpg, png, webp; max 5MB)',
+    }),
+  })
+  .openapi('AvatarUpload');
+
 export type UserIdParam = z.infer<typeof UserIdParamSchema>;
-export type PaginationQuery = z.infer<typeof PaginationQuerySchema>;
 export type CurrentUserProfileResponse = z.infer<typeof CurrentUserProfileResponseSchema>;
 export type UserPublicProfileResponse = z.infer<typeof UserPublicProfileResponseSchema>;
 export type UserFollowersListResponse = z.infer<typeof UserFollowersListResponseSchema>;
 export type UserRecipesListResponse = z.infer<typeof UserRecipesListResponseSchema>;
 export type FollowActionResponse = z.infer<typeof FollowActionResponseSchema>;
+export type AvatarUpload = z.infer<typeof AvatarUploadSchema>;

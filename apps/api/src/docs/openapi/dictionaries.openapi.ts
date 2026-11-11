@@ -2,7 +2,9 @@ import {
   AreaResponseSchema,
   CategoryResponseSchema,
   IngredientResponseSchema,
+  PaginationQuerySchema,
   TestimonialResponseSchema,
+  TestimonialsListResponseSchema,
 } from '@repo/shared';
 
 import { jsonResponse } from './helper';
@@ -50,16 +52,20 @@ registry.registerPath({
 });
 
 registry.register('TestimonialResponse', TestimonialResponseSchema);
+registry.register('TestimonialsListResponse', TestimonialsListResponseSchema);
 
 registry.registerPath({
   method: 'get',
   path: '/testimonials',
   tags: TAG,
-  summary: 'Get list of all testimonials',
+  summary: 'Get list of testimonials with pagination',
+  request: {
+    query: PaginationQuerySchema,
+  },
   responses: {
     200: jsonResponse(
       'List of testimonials retrieved successfully',
-      TestimonialResponseSchema.array(),
+      TestimonialsListResponseSchema,
     ),
   },
 });

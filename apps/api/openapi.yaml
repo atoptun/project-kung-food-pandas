@@ -78,6 +78,23 @@ components:
         - id
         - email
         - name
+    PublicUser:
+      type: object
+      properties:
+        id:
+          type: string
+          maxLength: 32
+          example: 64f1a2b3c4d5e6f7a8b9c0d1
+        name:
+          type: string
+          example: Panda
+        avatar:
+          type: string
+          nullable: true
+          example: https://res.cloudinary.com/.../avatar.jpg
+      required:
+        - id
+        - name
     AuthResponse:
       type: object
       properties:
@@ -150,11 +167,63 @@ components:
           type: string
           example: This is a testimonial message.
         owner:
-          $ref: "#/components/schemas/AuthUser"
+          $ref: "#/components/schemas/PublicUser"
       required:
         - id
         - testimonial
         - owner
+    TestimonialsListResponse:
+      allOf:
+        - $ref: "#/components/schemas/PaginationMeta"
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/Testimonial"
+          required:
+            - items
+    Testimonial:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 64f1a2b3c4d5e6f7a8b9c0d2
+        testimonial:
+          type: string
+          example: This is a testimonial message.
+        owner:
+          $ref: "#/components/schemas/PublicUser"
+      required:
+        - id
+        - testimonial
+        - owner
+    PaginationMeta:
+      type: object
+      properties:
+        total:
+          type: integer
+          minimum: 0
+          example: 100
+        page:
+          type: integer
+          minimum: 0
+          exclusiveMinimum: true
+          example: 1
+        totalPages:
+          type: integer
+          minimum: 0
+          example: 10
+        limit:
+          type: integer
+          minimum: 0
+          exclusiveMinimum: true
+          example: 10
+      required:
+        - total
+        - page
+        - totalPages
+        - limit
     LivenessResponse:
       type: object
       properties:
@@ -231,6 +300,247 @@ components:
       required:
         - status
         - message
+    RecipeIdParam:
+      type: object
+      properties:
+        id:
+          type: string
+          maxLength: 36
+          example: 64c8d958249fae54bae90bb9
+      required:
+        - id
+    RecipeFilterQuery:
+      allOf:
+        - $ref: "#/components/schemas/PaginationQuery"
+        - type: object
+          properties:
+            category:
+              type: string
+              description: Category ID
+              example: 6462a6cd4c3d0ddd28897f8f
+            area:
+              type: string
+              description: Area ID
+              example: 6462a6f04c3d0ddd28897f9b
+            ingredient:
+              type: string
+              description: Ingredient ID
+              example: 640c2dd963a319ea671e382c
+    PaginationQuery:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 1
+          default: 1
+          example: 1
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+          example: 10
+    PopularRecipesQuery:
+      type: object
+      properties:
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 50
+          default: 4
+          example: 4
+    CreateRecipeRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 2
+          maxLength: 255
+          example: Spaghetti Bolognese
+        description:
+          type: string
+          example: Classic Italian rich pasta dish
+        instructions:
+          type: string
+          minLength: 10
+          example: 1. Boil water. 2. Cook pasta...
+        categoryId:
+          type: string
+          maxLength: 32
+          example: 6462a6cd4c3d0ddd28897f8f
+        areaId:
+          type: string
+          maxLength: 32
+          example: 6462a6f04c3d0ddd28897f9b
+        time:
+          type: integer
+          minimum: 0
+          exclusiveMinimum: true
+          example: 45
+        ingredients:
+          anyOf:
+            - type: array
+              items:
+                $ref: "#/components/schemas/RecipeIngredientInput"
+            - type: string
+      required:
+        - title
+        - instructions
+        - categoryId
+        - areaId
+        - ingredients
+    RecipeIngredientInput:
+      type: object
+      properties:
+        id:
+          type: string
+          maxLength: 32
+          example: 64c8d958249fae54bae90bb1
+        measure:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: 200g
+      required:
+        - id
+        - measure
+    CreateRecipeMultipartRequest:
+      allOf:
+        - $ref: "#/components/schemas/CreateRecipeRequest"
+        - type: object
+          properties:
+            thumb:
+              type: string
+              format: binary
+              description: Recipe image file (jpg, png, webp; max 5MB)
+    RecipeCard:
+      allOf:
+        - $ref: "#/components/schemas/RecipeShortCard"
+        - type: object
+          properties:
+            time:
+              type: number
+              nullable: true
+              example: 45
+            favoritesCount:
+              type: integer
+              minimum: 0
+              example: 12
+            owner:
+              allOf:
+                - $ref: "#/components/schemas/PublicUser"
+                - description: Recipe owner information
+    RecipeShortCard:
+      allOf:
+        - $ref: "#/components/schemas/RecipeTinyCard"
+        - type: object
+          properties:
+            description:
+              type: string
+              nullable: true
+              example: Classic Italian rich pasta dish
+    RecipeTinyCard:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 64c8d958249fae54bae90bb9
+        title:
+          type: string
+          example: Recipe 1
+        thumb:
+          type: string
+          nullable: true
+          example: https://res.cloudinary.com/.../thumb.jpg
+      required:
+        - id
+        - title
+    RecipeDetails:
+      allOf:
+        - $ref: "#/components/schemas/RecipeCard"
+        - type: object
+          properties:
+            instructions:
+              type: string
+              nullable: true
+              example: 1. Cook pasta. 2. Make sauce...
+            category:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: cat-1
+                name:
+                  type: string
+                  example: Beef
+              required:
+                - id
+                - name
+            area:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: area-1
+                name:
+                  type: string
+                  example: Italian
+              required:
+                - id
+                - name
+            ingredients:
+              type: array
+              items:
+                $ref: "#/components/schemas/RecipeIngredientDetail"
+              description: Full ingredients list with descriptions
+          required:
+            - ingredients
+    RecipeIngredientDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          maxLength: 32
+          example: 640c2dd963a319ea671e382c
+        name:
+          type: string
+          maxLength: 255
+          example: Pears
+        description:
+          type: string
+          nullable: true
+          example: A sweet and juicy fruit with a soft, grainy texture and thin skin.
+        img:
+          type: string
+          nullable: true
+          format: uri
+          example: https://res.cloudinary.com/.../pears.jpg
+        measure:
+          type: string
+          nullable: true
+          example: 500g
+      required:
+        - id
+        - name
+    RecipesListResponse:
+      allOf:
+        - $ref: "#/components/schemas/PaginationMeta"
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/RecipeCard"
+          required:
+            - items
+    RecipeActionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Operation successful
+      required:
+        - message
     CurrentUserProfileResponse:
       type: object
       properties:
@@ -276,41 +586,21 @@ components:
         - recipesCount
         - followersCount
     UserFollowersListResponse:
-      type: object
-      properties:
-        total:
-          type: integer
-          minimum: 0
-          example: 1
-        page:
-          type: integer
-          minimum: 0
-          exclusiveMinimum: true
-          example: 1
-        totalPages:
-          type: integer
-          minimum: 0
-          example: 1
-        perPage:
-          type: integer
-          minimum: 0
-          exclusiveMinimum: true
-          example: 5
-        followers:
-          type: array
-          items:
-            $ref: "#/components/schemas/UserFollowerItem"
-      required:
-        - total
-        - page
-        - totalPages
-        - perPage
-        - followers
+      allOf:
+        - $ref: "#/components/schemas/PaginationMeta"
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/UserFollowerItem"
+          required:
+            - items
     UserFollowerItem:
       type: object
       properties:
         user:
-          $ref: "#/components/schemas/AuthUser"
+          $ref: "#/components/schemas/PublicUser"
         recipesCount:
           type: integer
           minimum: 0
@@ -318,78 +608,23 @@ components:
         topRecipes:
           type: array
           items:
-            $ref: "#/components/schemas/TinyRecipeItem"
+            $ref: "#/components/schemas/RecipeTinyCard"
           description: Up to 4 latest/top recipes
       required:
         - user
         - recipesCount
         - topRecipes
-    TinyRecipeItem:
-      type: object
-      properties:
-        id:
-          type: string
-          example: 64f1a2b3c4d5e6f7a8b9c0d2
-        title:
-          type: string
-          example: Recipe 1
-        image:
-          type: string
-          nullable: true
-          example: https://res.cloudinary.com/.../recipe1.jpg
-      required:
-        - id
-        - title
     UserRecipesListResponse:
-      type: object
-      properties:
-        total:
-          type: integer
-          minimum: 0
-          example: 1
-        page:
-          type: integer
-          minimum: 0
-          exclusiveMinimum: true
-          example: 1
-        totalPages:
-          type: integer
-          minimum: 0
-          example: 1
-        perPage:
-          type: integer
-          minimum: 0
-          exclusiveMinimum: true
-          example: 10
-        recipes:
-          type: array
-          items:
-            $ref: "#/components/schemas/ShortRecipeItem"
-      required:
-        - total
-        - page
-        - totalPages
-        - perPage
-        - recipes
-    ShortRecipeItem:
-      type: object
-      properties:
-        id:
-          type: string
-          example: 64f1a2b3c4d5e6f7a8b9c0d2
-        title:
-          type: string
-          example: Recipe 1
-        image:
-          type: string
-          nullable: true
-          example: https://res.cloudinary.com/.../recipe1.jpg
-        shortDescription:
-          type: string
-          example: Short description of Recipe 1
-      required:
-        - id
-        - title
+      allOf:
+        - $ref: "#/components/schemas/PaginationMeta"
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/RecipeShortCard"
+          required:
+            - items
     FollowActionResponse:
       type: object
       properties:
@@ -398,6 +633,13 @@ components:
           example: Successfully followed the user.
       required:
         - message
+    AvatarUploadRequest:
+      type: object
+      properties:
+        avatar:
+          type: string
+          format: binary
+          description: Avatar image file (jpg, png, webp; max 5MB)
     Area:
       type: object
       properties:
@@ -426,21 +668,15 @@ components:
       required:
         - id
         - name
-    Testimonial:
-      type: object
-      properties:
-        id:
-          type: string
-          example: 64f1a2b3c4d5e6f7a8b9c0d2
-        testimonial:
-          type: string
-          example: This is a testimonial message.
-        owner:
-          $ref: "#/components/schemas/AuthUser"
-      required:
-        - id
-        - testimonial
-        - owner
+    CreateRecipeMultipart:
+      allOf:
+        - $ref: "#/components/schemas/CreateRecipeRequest"
+        - type: object
+          properties:
+            thumb:
+              type: string
+              format: binary
+              description: Recipe image file (jpg, png, webp; max 5MB)
     AvatarUpload:
       type: object
       properties:
@@ -452,7 +688,7 @@ components:
 paths:
   /auth/register:
     post:
-      tags:
+      tags: &a1
         - Auth
       summary: Register a new user
       description: Creates a new user account and returns a session token with basic
@@ -489,8 +725,7 @@ paths:
                 $ref: "#/components/schemas/ApiErrorResponse"
   /auth/login:
     post:
-      tags:
-        - Auth
+      tags: *a1
       summary: Login user
       description: Authenticates a user by email and password and returns a session token.
       requestBody:
@@ -525,8 +760,7 @@ paths:
                 $ref: "#/components/schemas/ApiErrorResponse"
   /auth/logout:
     post:
-      tags:
-        - Auth
+      tags: *a1
       summary: Logout user
       description: Invalidates the current user session token.
       security:
@@ -545,7 +779,7 @@ paths:
                 $ref: "#/components/schemas/ApiErrorResponse"
   /areas:
     get:
-      tags: &a1
+      tags: &a2
         - Dictionaries
       summary: Get list of all areas
       responses:
@@ -559,7 +793,7 @@ paths:
                   $ref: "#/components/schemas/Area"
   /categories:
     get:
-      tags: *a1
+      tags: *a2
       summary: Get list of all categories
       responses:
         "200":
@@ -572,7 +806,7 @@ paths:
                   $ref: "#/components/schemas/Category"
   /ingredients:
     get:
-      tags: *a1
+      tags: *a2
       summary: Get list of all ingredients
       responses:
         "200":
@@ -606,17 +840,33 @@ paths:
                     - name
   /testimonials:
     get:
-      tags: *a1
-      summary: Get list of all testimonials
+      tags: *a2
+      summary: Get list of testimonials with pagination
+      parameters:
+        - schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+          required: false
+          name: page
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+            example: 10
+          required: false
+          name: limit
+          in: query
       responses:
         "200":
           description: List of testimonials retrieved successfully
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Testimonial"
+                $ref: "#/components/schemas/TestimonialsListResponse"
   /healthz:
     get:
       tags:
@@ -649,9 +899,397 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ReadinessResponse"
+  /recipes:
+    get:
+      tags: &a3
+        - Recipes
+      summary: Search recipes with filters and pagination
+      description: Filter recipes by category, area, or ingredient with pagination support.
+      parameters:
+        - schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+          required: false
+          name: page
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+            example: 10
+          required: false
+          name: limit
+          in: query
+        - schema:
+            type: string
+            description: Category ID
+            example: 6462a6cd4c3d0ddd28897f8f
+          required: false
+          description: Category ID
+          name: category
+          in: query
+        - schema:
+            type: string
+            description: Area ID
+            example: 6462a6f04c3d0ddd28897f9b
+          required: false
+          description: Area ID
+          name: area
+          in: query
+        - schema:
+            type: string
+            description: Ingredient ID
+            example: 640c2dd963a319ea671e382c
+          required: false
+          description: Ingredient ID
+          name: ingredient
+          in: query
+      responses:
+        "200":
+          description: List of filtered recipes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipesListResponse"
+        "400":
+          description: Invalid query parameters
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid query parameters
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+    post:
+      tags: *a3
+      summary: Create a new recipe
+      description: Creates a custom recipe for the authenticated user. Supports both
+        JSON body and multipart/form-data upload.
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/CreateRecipeMultipart"
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRecipeRequest"
+      responses:
+        "201":
+          description: Recipe created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeDetails"
+        "400":
+          description: Invalid input data or image format
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid input data or image format
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "422":
+          description: Validation failed
+          content:
+            application/json:
+              example:
+                status: error
+                message: Validation failed
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+  /recipes/popular:
+    get:
+      tags: *a3
+      summary: Get popular recipes
+      description: Returns top recipes sorted by number of users who added them to
+        favorites.
+      parameters:
+        - schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 4
+            example: 4
+          required: false
+          name: limit
+          in: query
+      responses:
+        "200":
+          description: List of popular recipes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RecipeCard"
+  /recipes/own:
+    get:
+      tags: *a3
+      summary: Get current user recipes
+      description: Returns recipes created by the authenticated user.
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+          required: false
+          name: page
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+            example: 10
+          required: false
+          name: limit
+          in: query
+      responses:
+        "200":
+          description: List of user own recipes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipesListResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+  /recipes/favorites:
+    get:
+      tags: *a3
+      summary: Get current user favorite recipes
+      description: Returns all recipes added to favorites by the authenticated user
+        with pagination.
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+          required: false
+          name: page
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+            example: 10
+          required: false
+          name: limit
+          in: query
+      responses:
+        "200":
+          description: List of favorite recipes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipesListResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+  /recipes/{id}:
+    get:
+      tags: *a3
+      summary: Get recipe details by ID
+      description: Returns full recipe information including area, category, owner,
+        and detailed ingredients.
+      parameters:
+        - schema:
+            type: string
+            maxLength: 36
+            example: 64c8d958249fae54bae90bb9
+          required: true
+          name: id
+          in: path
+      responses:
+        "200":
+          description: Recipe details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeDetails"
+        "404":
+          description: Recipe not found
+          content:
+            application/json:
+              example:
+                status: error
+                message: Recipe not found
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+    delete:
+      tags: *a3
+      summary: Delete own recipe
+      description: Deletes a recipe created by the authenticated user. User cannot
+        delete another user recipe.
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: string
+            maxLength: 36
+            example: 64c8d958249fae54bae90bb9
+          required: true
+          name: id
+          in: path
+      responses:
+        "200":
+          description: Recipe deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeActionResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "403":
+          description: Access denied. You can only delete your own recipes
+          content:
+            application/json:
+              example:
+                status: error
+                message: Access denied. You can only delete your own recipes
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "404":
+          description: Recipe not found
+          content:
+            application/json:
+              example:
+                status: error
+                message: Recipe not found
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+  /recipes/favorites/{id}:
+    post:
+      tags: *a3
+      summary: Add recipe to favorites
+      description: Adds the specified recipe to current user favorites list.
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: string
+            maxLength: 36
+            example: 64c8d958249fae54bae90bb9
+          required: true
+          name: id
+          in: path
+      responses:
+        "200":
+          description: Recipe added to favorites successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeActionResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "404":
+          description: Recipe not found
+          content:
+            application/json:
+              example:
+                status: error
+                message: Recipe not found
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "409":
+          description: Recipe is already in favorites
+          content:
+            application/json:
+              example:
+                status: error
+                message: Recipe is already in favorites
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+    delete:
+      tags: *a3
+      summary: Remove recipe from favorites
+      description: Removes the specified recipe from current user favorites list.
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: string
+            maxLength: 36
+            example: 64c8d958249fae54bae90bb9
+          required: true
+          name: id
+          in: path
+      responses:
+        "200":
+          description: Recipe removed from favorites successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeActionResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "404":
+          description: Recipe not found or not in favorites
+          content:
+            application/json:
+              example:
+                status: error
+                message: Recipe not found or not in favorites
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
   /users/me:
     get:
-      tags:
+      tags: &a4
         - Users
       summary: Get current user profile with statistics
       security:
@@ -674,8 +1312,7 @@ paths:
                 $ref: "#/components/schemas/ApiErrorResponse"
   /users/me/avatar:
     patch:
-      tags:
-        - Users
+      tags: *a4
       summary: Update current user avatar
       security:
         - bearerAuth: []
@@ -720,8 +1357,7 @@ paths:
                 $ref: "#/components/schemas/ApiErrorResponse"
   /users/me/following:
     get:
-      tags:
-        - Users
+      tags: *a4
       summary: Get users followed by current user (following)
       security:
         - bearerAuth: []
@@ -737,9 +1373,9 @@ paths:
         - schema:
             type: integer
             minimum: 1
-            maximum: 50
-            default: 5
-            example: 5
+            maximum: 100
+            default: 10
+            example: 10
           required: false
           name: limit
           in: query
@@ -761,15 +1397,14 @@ paths:
                 $ref: "#/components/schemas/ApiErrorResponse"
   /users/me/following/{id}:
     post:
-      tags:
-        - Users
+      tags: *a4
       summary: Follow a user by ID
       security:
         - bearerAuth: []
       parameters:
         - schema:
             type: string
-            maxLength: 32
+            maxLength: 36
             example: 64f1a2b3c4d5e6f7a8b9c0d1
           required: true
           name: id
@@ -818,15 +1453,14 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiErrorResponse"
     delete:
-      tags:
-        - Users
+      tags: *a4
       summary: Unfollow a user by ID
       security:
         - bearerAuth: []
       parameters:
         - schema:
             type: string
-            maxLength: 32
+            maxLength: 36
             example: 64f1a2b3c4d5e6f7a8b9c0d1
           required: true
           name: id
@@ -858,13 +1492,12 @@ paths:
                 $ref: "#/components/schemas/ApiErrorResponse"
   /users/{id}:
     get:
-      tags:
-        - Users
+      tags: *a4
       summary: Get public profile of another user by ID
       parameters:
         - schema:
             type: string
-            maxLength: 32
+            maxLength: 36
             example: 64f1a2b3c4d5e6f7a8b9c0d1
           required: true
           name: id
@@ -887,13 +1520,12 @@ paths:
                 $ref: "#/components/schemas/ApiErrorResponse"
   /users/{id}/followers:
     get:
-      tags:
-        - Users
+      tags: *a4
       summary: Get followers of a specific user by ID
       parameters:
         - schema:
             type: string
-            maxLength: 32
+            maxLength: 36
             example: 64f1a2b3c4d5e6f7a8b9c0d1
           required: true
           name: id
@@ -909,9 +1541,9 @@ paths:
         - schema:
             type: integer
             minimum: 1
-            maximum: 50
-            default: 5
-            example: 5
+            maximum: 100
+            default: 10
+            example: 10
           required: false
           name: limit
           in: query
@@ -933,13 +1565,12 @@ paths:
                 $ref: "#/components/schemas/ApiErrorResponse"
   /users/{id}/recipes:
     get:
-      tags:
-        - Users
+      tags: *a4
       summary: Get recipes created by a specific user by ID
       parameters:
         - schema:
             type: string
-            maxLength: 32
+            maxLength: 36
             example: 64f1a2b3c4d5e6f7a8b9c0d1
           required: true
           name: id
@@ -955,9 +1586,9 @@ paths:
         - schema:
             type: integer
             minimum: 1
-            maximum: 50
-            default: 5
-            example: 5
+            maximum: 100
+            default: 10
+            example: 10
           required: false
           name: limit
           in: query

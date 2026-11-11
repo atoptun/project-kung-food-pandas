@@ -1,5 +1,6 @@
-import { AuthUserSchema } from '../index';
+import { PublicUserSchema } from '../index';
 import { z } from '../zod';
+import { PaginationMetaSchema } from './pagination.schema';
 
 export const AreaResponseSchema = z
   .object({
@@ -29,11 +30,16 @@ export const TestimonialResponseSchema = z
   .object({
     id: z.string().openapi({ example: '64f1a2b3c4d5e6f7a8b9c0d2' }),
     testimonial: z.string().openapi({ example: 'This is a testimonial message.' }),
-    owner: AuthUserSchema,
+    owner: PublicUserSchema,
   })
   .openapi('Testimonial');
+
+export const TestimonialsListResponseSchema = PaginationMetaSchema.extend({
+  items: z.array(TestimonialResponseSchema),
+}).openapi('TestimonialsListResponse');
 
 export type Area = z.infer<typeof AreaResponseSchema>;
 export type Category = z.infer<typeof CategoryResponseSchema>;
 export type Ingredient = z.infer<typeof IngredientResponseSchema>;
 export type Testimonial = z.infer<typeof TestimonialResponseSchema>;
+export type TestimonialsListResponse = z.infer<typeof TestimonialsListResponseSchema>;

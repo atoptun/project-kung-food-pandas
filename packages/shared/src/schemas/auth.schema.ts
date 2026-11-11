@@ -28,6 +28,8 @@ export const AuthUserSchema = z
   })
   .openapi('AuthUser');
 
+export const PublicUserSchema = AuthUserSchema.omit({ email: true }).openapi('PublicUser');
+
 export const AuthResponseSchema = z
   .object({
     token: z.string().openapi({ example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' }),
@@ -38,4 +40,5 @@ export const AuthResponseSchema = z
 export type RegisterInput = z.infer<typeof RegisterSchema>;
 export type LoginInput = z.infer<typeof LoginSchema>;
 export type AuthUser = z.infer<typeof AuthUserSchema>;
+export type PublicUser = z.infer<typeof PublicUserSchema>;
 export type AuthResponse = z.infer<typeof AuthResponseSchema>;
