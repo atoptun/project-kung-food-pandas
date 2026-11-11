@@ -1,4 +1,5 @@
 import {
+  AvatarUploadSchema,
   CurrentUserProfileResponseSchema,
   FollowActionResponseSchema,
   PaginationQuerySchema,
@@ -6,33 +7,24 @@ import {
   UserIdParamSchema,
   UserPublicProfileResponseSchema,
   UserRecipesListResponseSchema,
-  z,
 } from '@repo/shared';
 
 import { errorResponse, jsonResponse } from './helper';
 import { registry } from './registry';
+
+const TAG = ['Users'];
 
 registry.register('CurrentUserProfileResponse', CurrentUserProfileResponseSchema);
 registry.register('UserPublicProfileResponse', UserPublicProfileResponseSchema);
 registry.register('UserFollowersListResponse', UserFollowersListResponseSchema);
 registry.register('UserRecipesListResponse', UserRecipesListResponseSchema);
 registry.register('FollowActionResponse', FollowActionResponseSchema);
+registry.register('AvatarUploadRequest', AvatarUploadSchema);
 
-const AvatarUploadSchema = z
-  .object({
-    avatar: z.any().openapi({
-      type: 'string',
-      format: 'binary',
-      description: 'Avatar image file (jpg, png, webp; max 5MB)',
-    }),
-  })
-  .openapi('AvatarUpload');
-
-// GET /users/me
 registry.registerPath({
   method: 'get',
   path: '/users/me',
-  tags: ['Users'],
+  tags: TAG,
   summary: 'Get current user profile with statistics',
   security: [{ bearerAuth: [] }],
   responses: {
@@ -44,11 +36,10 @@ registry.registerPath({
   },
 });
 
-// PATCH /users/me/avatar
 registry.registerPath({
   method: 'patch',
   path: '/users/me/avatar',
-  tags: ['Users'],
+  tags: TAG,
   summary: 'Update current user avatar',
   security: [{ bearerAuth: [] }],
   request: {
@@ -68,11 +59,10 @@ registry.registerPath({
   },
 });
 
-// GET /users/me/following
 registry.registerPath({
   method: 'get',
   path: '/users/me/following',
-  tags: ['Users'],
+  tags: TAG,
   summary: 'Get users followed by current user (following)',
   security: [{ bearerAuth: [] }],
   request: {
@@ -87,11 +77,10 @@ registry.registerPath({
   },
 });
 
-// POST /users/me/following/{id}
 registry.registerPath({
   method: 'post',
   path: '/users/me/following/{id}',
-  tags: ['Users'],
+  tags: TAG,
   summary: 'Follow a user by ID',
   security: [{ bearerAuth: [] }],
   request: {
@@ -106,11 +95,10 @@ registry.registerPath({
   },
 });
 
-// DELETE /users/me/following/{id}
 registry.registerPath({
   method: 'delete',
   path: '/users/me/following/{id}',
-  tags: ['Users'],
+  tags: TAG,
   summary: 'Unfollow a user by ID',
   security: [{ bearerAuth: [] }],
   request: {
@@ -123,11 +111,10 @@ registry.registerPath({
   },
 });
 
-// GET /users/{id}
 registry.registerPath({
   method: 'get',
   path: '/users/{id}',
-  tags: ['Users'],
+  tags: TAG,
   summary: 'Get public profile of another user by ID',
   request: {
     params: UserIdParamSchema,
@@ -141,11 +128,10 @@ registry.registerPath({
   },
 });
 
-// GET /users/{id}/followers
 registry.registerPath({
   method: 'get',
   path: '/users/{id}/followers',
-  tags: ['Users'],
+  tags: TAG,
   summary: 'Get followers of a specific user by ID',
   request: {
     params: UserIdParamSchema,
@@ -160,11 +146,10 @@ registry.registerPath({
   },
 });
 
-// GET /users/{id}/recipes
 registry.registerPath({
   method: 'get',
   path: '/users/{id}/recipes',
-  tags: ['Users'],
+  tags: TAG,
   summary: 'Get recipes created by a specific user by ID',
   request: {
     params: UserIdParamSchema,
