@@ -89,6 +89,72 @@ components:
       required:
         - token
         - user
+    AreaResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          maxLength: 32
+          example: 6462a6f04c3d0ddd28897f9b
+        name:
+          type: string
+          maxLength: 255
+          example: Ukrainian
+      required:
+        - id
+        - name
+    CategoryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          maxLength: 32
+          example: 6462a6cd4c3d0ddd28897f8f
+        name:
+          type: string
+          maxLength: 100
+          example: Dessert
+      required:
+        - id
+        - name
+    IngredientResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          maxLength: 32
+          example: 640c2dd963a319ea671e382c
+        name:
+          type: string
+          maxLength: 255
+          example: Pears
+        description:
+          type: string
+          nullable: true
+          example: A sweet and juicy fruit with a soft, grainy texture and thin skin.
+        img:
+          type: string
+          nullable: true
+          format: uri
+          example: https://res.cloudinary.com/.../pears.jpg
+      required:
+        - id
+        - name
+    TestimonialResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 64f1a2b3c4d5e6f7a8b9c0d2
+        testimonial:
+          type: string
+          example: This is a testimonial message.
+        owner:
+          $ref: "#/components/schemas/AuthUser"
+      required:
+        - id
+        - testimonial
+        - owner
     LivenessResponse:
       type: object
       properties:
@@ -332,6 +398,49 @@ components:
           example: Successfully followed the user.
       required:
         - message
+    Area:
+      type: object
+      properties:
+        id:
+          type: string
+          maxLength: 32
+          example: 6462a6f04c3d0ddd28897f9b
+        name:
+          type: string
+          maxLength: 255
+          example: Ukrainian
+      required:
+        - id
+        - name
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          maxLength: 32
+          example: 6462a6cd4c3d0ddd28897f8f
+        name:
+          type: string
+          maxLength: 100
+          example: Dessert
+      required:
+        - id
+        - name
+    Testimonial:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 64f1a2b3c4d5e6f7a8b9c0d2
+        testimonial:
+          type: string
+          example: This is a testimonial message.
+        owner:
+          $ref: "#/components/schemas/AuthUser"
+      required:
+        - id
+        - testimonial
+        - owner
     AvatarUpload:
       type: object
       properties:
@@ -434,6 +543,80 @@ paths:
                 message: Not authorized
               schema:
                 $ref: "#/components/schemas/ApiErrorResponse"
+  /areas:
+    get:
+      tags: &a1
+        - Dictionaries
+      summary: Get list of all areas
+      responses:
+        "200":
+          description: List of areas retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Area"
+  /categories:
+    get:
+      tags: *a1
+      summary: Get list of all categories
+      responses:
+        "200":
+          description: List of categories retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+  /ingredients:
+    get:
+      tags: *a1
+      summary: Get list of all ingredients
+      responses:
+        "200":
+          description: List of ingredients retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      maxLength: 32
+                      example: 640c2dd963a319ea671e382c
+                    name:
+                      type: string
+                      maxLength: 255
+                      example: Pears
+                    description:
+                      type: string
+                      nullable: true
+                      example: A sweet and juicy fruit with a soft, grainy texture and thin skin.
+                    img:
+                      type: string
+                      nullable: true
+                      format: uri
+                      example: https://res.cloudinary.com/.../pears.jpg
+                  required:
+                    - id
+                    - name
+  /testimonials:
+    get:
+      tags: *a1
+      summary: Get list of all testimonials
+      responses:
+        "200":
+          description: List of testimonials retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Testimonial"
   /healthz:
     get:
       tags:

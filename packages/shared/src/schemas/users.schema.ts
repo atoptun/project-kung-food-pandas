@@ -1,10 +1,6 @@
-import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
-import { z } from 'zod';
-
+import { z } from '../zod';
 import { AuthUserSchema } from './auth.schema';
 import { ShortRecipeItemSchema, TinyRecipeItemSchema } from './recipes.schema';
-
-extendZodWithOpenApi(z);
 
 export const UserIdParamSchema = z
   .object({

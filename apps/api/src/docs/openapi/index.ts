@@ -1,4 +1,5 @@
 import './auth.openapi';
+import './dictionaries.openapi';
 import './health.openapi';
 import './users.openapi';
 

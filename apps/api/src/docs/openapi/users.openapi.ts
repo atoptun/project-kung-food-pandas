@@ -28,7 +28,6 @@ const AvatarUploadSchema = z
   })
   .openapi('AvatarUpload');
 
-// GET /users/me
 registry.registerPath({
   method: 'get',
   path: '/users/me',
@@ -44,7 +43,6 @@ registry.registerPath({
   },
 });
 
-// PATCH /users/me/avatar
 registry.registerPath({
   method: 'patch',
   path: '/users/me/avatar',
@@ -68,7 +66,6 @@ registry.registerPath({
   },
 });
 
-// GET /users/me/following
 registry.registerPath({
   method: 'get',
   path: '/users/me/following',
@@ -87,7 +84,6 @@ registry.registerPath({
   },
 });
 
-// POST /users/me/following/{id}
 registry.registerPath({
   method: 'post',
   path: '/users/me/following/{id}',
@@ -106,7 +102,6 @@ registry.registerPath({
   },
 });
 
-// DELETE /users/me/following/{id}
 registry.registerPath({
   method: 'delete',
   path: '/users/me/following/{id}',
@@ -123,7 +118,6 @@ registry.registerPath({
   },
 });
 
-// GET /users/{id}
 registry.registerPath({
   method: 'get',
   path: '/users/{id}',
@@ -141,7 +135,6 @@ registry.registerPath({
   },
 });
 
-// GET /users/{id}/followers
 registry.registerPath({
   method: 'get',
   path: '/users/{id}/followers',
@@ -160,7 +153,6 @@ registry.registerPath({
   },
 });
 
-// GET /users/{id}/recipes
 registry.registerPath({
   method: 'get',
   path: '/users/{id}/recipes',
