@@ -9,5 +9,5 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "tests", "prisma.config.ts"]
+  "include": ["src", "tests", "prisma.config.ts", "prisma/seed.ts"]
 }

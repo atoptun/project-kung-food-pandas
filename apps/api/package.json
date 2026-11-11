@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "pnpm db:generate && pnpm docs:generate && tsup",
@@ -15,6 +18,7 @@
     "db:migrate": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
+    "db:seed": "prisma db seed",
     "docs:generate": "tsx src/docs/generate-openapi.ts",
     "docs:lint": "pnpm docs:generate && redocly lint openapi.yaml",
     "docs:bundle": "pnpm docs:generate && redocly bundle openapi.yaml -o openapi.bundled.yaml",
@@ -58,7 +62,6 @@
     "tsup": "^9.0.0",
     "tsx": "^4.19.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^5.1.0"
   }
 }

@@ -33,7 +33,8 @@ RUN pnpm build:api
 ARG DATABASE_URL
 ARG DIRECT_URL
 RUN if [ -n "$DIRECT_URL" ] || [ -n "$DATABASE_URL" ]; then \
-      pnpm --filter @repo/api db:migrate:deploy; \
+      pnpm --filter @repo/api db:migrate:deploy && \
+      pnpm --filter @repo/api db:seed; \
     fi
 
 # Create isolated production deployment with only production dependencies

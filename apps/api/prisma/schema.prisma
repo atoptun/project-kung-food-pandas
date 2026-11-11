@@ -18,8 +18,11 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  recipes      Recipe[]
+  testimonials Testimonial[]
+
   @@unique([email])
-  @@map("user")
+  @@map("users")
 }
 
 model Session {
@@ -35,7 +38,7 @@ model Session {
 
   @@unique([token])
   @@index([userId])
-  @@map("session")
+  @@map("sessions")
 }
 
 model Account {
@@ -55,7 +58,7 @@ model Account {
   updatedAt             DateTime  @updatedAt
 
   @@index([userId])
-  @@map("account")
+  @@map("accounts")
 }
 
 model Verification {
@@ -67,5 +70,81 @@ model Verification {
   updatedAt  DateTime @updatedAt
 
   @@index([identifier])
-  @@map("verification")
+  @@map("verifications")
+}
+
+// ===
+model Area {
+  id      String   @id @default(cuid())
+  name    String   @db.VarChar(255)
+  recipes Recipe[]
+
+  @@unique([name])
+  @@map("areas")
+}
+
+model Category {
+  id      String   @id @default(cuid())
+  name    String   @db.VarChar(100)
+  recipes Recipe[]
+
+  @@unique([name])
+  @@map("categories")
+}
+
+model Ingredient {
+  id          String  @id @default(cuid())
+  name        String? @db.VarChar(255)
+  description String?
+  img         String?
+
+  recipes RecipeIngredient[]
+
+  @@map("ingredients")
+}
+
+model Testimonial {
+  id          String @id @default(cuid())
+  ownerId     String @map("owner_id")
+  testimonial String @db.Text
+
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+  @@map("testimonials")
+}
+
+model Recipe {
+  id           String  @id @default(cuid())
+  title        String  @db.VarChar(255)
+  categoryId   String  @map("category_id")
+  areaId       String  @map("area_id")
+  instructions String?
+  description  String?
+  thumb        String?
+  preview      String?
+  time         Int?
+  ownerId      String  @map("owner_id")
+
+  owner       User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  category    Category           @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  area        Area               @relation(fields: [areaId], references: [id], onDelete: Restrict)
+  ingredients RecipeIngredient[]
+
+  @@index([ownerId])
+  @@index([areaId])
+  @@index([categoryId])
+  @@map("recipes")
+}
+
+model RecipeIngredient {
+  recipeId     String  @map("recipe_id")
+  ingredientId String  @map("ingredient_id")
+  measure      String? @db.VarChar(100)
+
+  recipe     Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@id([recipeId, ingredientId])
+  @@map("recipe_ingredients")
 }
