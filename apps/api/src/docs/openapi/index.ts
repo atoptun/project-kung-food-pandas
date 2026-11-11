@@ -22,12 +22,16 @@ export function generateOpenApiDocument() {
     },
     servers: [
       {
-        url: 'http://localhost:4000',
-        description: 'Local Development Server',
+        url: '/',
+        description: 'Current Server',
       },
       {
-        url: 'https://kung-food-pandas-api.onrender.com',
-        description: 'Production Server (Render)',
+        url: 'https://project-kung-food-pandas.onrender.com',
+        description: 'Production (Render)',
+      },
+      {
+        url: 'http://localhost:4000',
+        description: 'Local Development Server',
       },
     ],
   });
