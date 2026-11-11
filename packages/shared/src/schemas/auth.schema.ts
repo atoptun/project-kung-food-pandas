@@ -20,8 +20,14 @@ export const LoginSchema = z
 
 export const AuthUserSchema = z
   .object({
+    id: z.string().max(32).openapi({ example: '64f1a2b3c4d5e6f7a8b9c0d1' }),
     email: z.email().openapi({ example: 'panda@panda.com' }),
     name: z.string().openapi({ example: 'Panda' }),
+    avatar: z
+      .string()
+      .nullable()
+      .optional()
+      .openapi({ example: 'https://res.cloudinary.com/.../avatar.jpg' }),
   })
   .openapi('AuthUser');
 

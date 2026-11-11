@@ -23,7 +23,7 @@
     "docs:lint": "pnpm docs:generate && redocly lint openapi.yaml",
     "docs:bundle": "pnpm docs:generate && redocly bundle openapi.yaml -o openapi.bundled.yaml",
     "docs:build": "pnpm docs:generate && redocly build-docs openapi.yaml -o docs-dist/index.html",
-    "docs:preview": "pnpm docs:generate && redocly preview-docs openapi.yaml"
+    "docs:preview": "pnpm docs:build && npx open-cli docs-dist/index.html"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^9.1.0",
