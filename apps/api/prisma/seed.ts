@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import type { Prisma } from '@/generated/prisma/client';
+import type { Area, Category, Prisma, User } from '@/generated/prisma/client';
 import prisma from '@/lib/prisma';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -55,6 +55,9 @@ async function createUsers() {
       name: true,
       email: true,
       avatar: true,
+      emailVerified: true,
+      createdAt: true,
+      updatedAt: true,
     },
   });
 }
@@ -255,9 +258,9 @@ function mapRawRecipe(raw: RawMongoRecipe): Prisma.RecipeCreateInput {
 }
 
 type CreateRecipesParams = {
-  users: Prisma.User[] | null;
-  areas: Prisma.Area[] | null;
-  categories: Prisma.Category[] | null;
+  users: User[] | null;
+  areas: Area[] | null;
+  categories: Category[] | null;
   // ingredients: Prisma.Ingredient[] | null;
 };
 
@@ -284,6 +287,8 @@ async function createRecipes({ users, areas, categories }: CreateRecipesParams) 
     // const ingredient = ingredients?.filter((ingredient) => ingredient.id === recipe?.ingredients?.[0]?.ingredient?.connect?.id);
 
     if (user && area && category) {
+      const ingredientList = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+
       const rawRecipe: Prisma.RecipeCreateInput = {
         id: recipe.id,
         title: recipe.title,
@@ -296,7 +301,7 @@ async function createRecipes({ users, areas, categories }: CreateRecipesParams) 
         area: { connect: { name: area.name } },
         category: { connect: { name: category.name } },
         ingredients: {
-          create: recipe.ingredients?.create?.map((ingredient) => ({
+          create: ingredientList.map((ingredient) => ({
             ingredient: { connect: { id: ingredient.ingredient.connect.id } },
             measure: ingredient.measure,
           })),
