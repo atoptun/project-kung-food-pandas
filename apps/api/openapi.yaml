@@ -57,6 +57,10 @@ components:
     AuthUser:
       type: object
       properties:
+        id:
+          type: string
+          maxLength: 32
+          example: 64f1a2b3c4d5e6f7a8b9c0d1
         email:
           type: string
           format: email
@@ -64,7 +68,12 @@ components:
         name:
           type: string
           example: Panda
+        avatar:
+          type: string
+          nullable: true
+          example: https://res.cloudinary.com/.../avatar.jpg
       required:
+        - id
         - email
         - name
     AuthResponse:
@@ -154,6 +163,180 @@ components:
       required:
         - status
         - message
+    CurrentUserProfileResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/AuthUser"
+        recipesCount:
+          type: integer
+          minimum: 0
+          example: 12
+        favoritesCount:
+          type: integer
+          minimum: 0
+          example: 5
+        followersCount:
+          type: integer
+          minimum: 0
+          example: 48
+        followingCount:
+          type: integer
+          minimum: 0
+          example: 15
+      required:
+        - user
+        - recipesCount
+        - favoritesCount
+        - followersCount
+        - followingCount
+    UserPublicProfileResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/AuthUser"
+        recipesCount:
+          type: integer
+          minimum: 0
+          example: 12
+        followersCount:
+          type: integer
+          minimum: 0
+          example: 48
+      required:
+        - user
+        - recipesCount
+        - followersCount
+    UserFollowersListResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          minimum: 0
+          example: 1
+        page:
+          type: integer
+          minimum: 0
+          exclusiveMinimum: true
+          example: 1
+        totalPages:
+          type: integer
+          minimum: 0
+          example: 1
+        perPage:
+          type: integer
+          minimum: 0
+          exclusiveMinimum: true
+          example: 5
+        followers:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserFollowerItem"
+      required:
+        - total
+        - page
+        - totalPages
+        - perPage
+        - followers
+    UserFollowerItem:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/AuthUser"
+        recipesCount:
+          type: integer
+          minimum: 0
+          example: 2
+        topRecipes:
+          type: array
+          items:
+            $ref: "#/components/schemas/TinyRecipeItem"
+          description: Up to 4 latest/top recipes
+      required:
+        - user
+        - recipesCount
+        - topRecipes
+    TinyRecipeItem:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 64f1a2b3c4d5e6f7a8b9c0d2
+        title:
+          type: string
+          example: Recipe 1
+        image:
+          type: string
+          nullable: true
+          example: https://res.cloudinary.com/.../recipe1.jpg
+      required:
+        - id
+        - title
+    UserRecipesListResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          minimum: 0
+          example: 1
+        page:
+          type: integer
+          minimum: 0
+          exclusiveMinimum: true
+          example: 1
+        totalPages:
+          type: integer
+          minimum: 0
+          example: 1
+        perPage:
+          type: integer
+          minimum: 0
+          exclusiveMinimum: true
+          example: 10
+        recipes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShortRecipeItem"
+      required:
+        - total
+        - page
+        - totalPages
+        - perPage
+        - recipes
+    ShortRecipeItem:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 64f1a2b3c4d5e6f7a8b9c0d2
+        title:
+          type: string
+          example: Recipe 1
+        image:
+          type: string
+          nullable: true
+          example: https://res.cloudinary.com/.../recipe1.jpg
+        shortDescription:
+          type: string
+          example: Short description of Recipe 1
+      required:
+        - id
+        - title
+    FollowActionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Successfully followed the user.
+      required:
+        - message
+    AvatarUpload:
+      type: object
+      properties:
+        avatar:
+          type: string
+          format: binary
+          description: Avatar image file (jpg, png, webp; max 5MB)
   parameters: {}
 paths:
   /auth/register:
@@ -212,12 +395,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/AuthResponse"
         "401":
-          description: Invalid email or password
+          description: Invalid credentials
           content:
             application/json:
               example:
                 status: error
-                message: Invalid email or password
+                message: Invalid credentials
               schema:
                 $ref: "#/components/schemas/ApiErrorResponse"
         "422":
@@ -281,3 +464,331 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ReadinessResponse"
+  /users/me:
+    get:
+      tags:
+        - Users
+      summary: Get current user profile with statistics
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current user profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrentUserProfileResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+  /users/me/avatar:
+    patch:
+      tags:
+        - Users
+      summary: Update current user avatar
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/AvatarUpload"
+      responses:
+        "200":
+          description: Avatar updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrentUserProfileResponse"
+        "400":
+          description: Invalid image file or size exceeds limit
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid image file or size exceeds limit
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "422":
+          description: Validation failed
+          content:
+            application/json:
+              example:
+                status: error
+                message: Validation failed
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+  /users/me/following:
+    get:
+      tags:
+        - Users
+      summary: Get users followed by current user (following)
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+          required: false
+          name: page
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 5
+            example: 5
+          required: false
+          name: limit
+          in: query
+      responses:
+        "200":
+          description: List of followed users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserFollowersListResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+  /users/me/following/{id}:
+    post:
+      tags:
+        - Users
+      summary: Follow a user by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: string
+            maxLength: 32
+            example: 64f1a2b3c4d5e6f7a8b9c0d1
+          required: true
+          name: id
+          in: path
+      responses:
+        "200":
+          description: Successfully followed the user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowActionResponse"
+        "400":
+          description: Cannot follow yourself
+          content:
+            application/json:
+              example:
+                status: error
+                message: Cannot follow yourself
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              example:
+                status: error
+                message: User not found
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "409":
+          description: Already following this user
+          content:
+            application/json:
+              example:
+                status: error
+                message: Already following this user
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+    delete:
+      tags:
+        - Users
+      summary: Unfollow a user by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: string
+            maxLength: 32
+            example: 64f1a2b3c4d5e6f7a8b9c0d1
+          required: true
+          name: id
+          in: path
+      responses:
+        "200":
+          description: Successfully unfollowed the user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowActionResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "404":
+          description: User not found or not currently followed
+          content:
+            application/json:
+              example:
+                status: error
+                message: User not found or not currently followed
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get public profile of another user by ID
+      parameters:
+        - schema:
+            type: string
+            maxLength: 32
+            example: 64f1a2b3c4d5e6f7a8b9c0d1
+          required: true
+          name: id
+          in: path
+      responses:
+        "200":
+          description: User public profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserPublicProfileResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              example:
+                status: error
+                message: User not found
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+  /users/{id}/followers:
+    get:
+      tags:
+        - Users
+      summary: Get followers of a specific user by ID
+      parameters:
+        - schema:
+            type: string
+            maxLength: 32
+            example: 64f1a2b3c4d5e6f7a8b9c0d1
+          required: true
+          name: id
+          in: path
+        - schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+          required: false
+          name: page
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 5
+            example: 5
+          required: false
+          name: limit
+          in: query
+      responses:
+        "200":
+          description: List of user followers retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserFollowersListResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              example:
+                status: error
+                message: User not found
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+  /users/{id}/recipes:
+    get:
+      tags:
+        - Users
+      summary: Get recipes created by a specific user by ID
+      parameters:
+        - schema:
+            type: string
+            maxLength: 32
+            example: 64f1a2b3c4d5e6f7a8b9c0d1
+          required: true
+          name: id
+          in: path
+        - schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+          required: false
+          name: page
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 5
+            example: 5
+          required: false
+          name: limit
+          in: query
+      responses:
+        "200":
+          description: List of user recipes retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserRecipesListResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              example:
+                status: error
+                message: User not found
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
