@@ -1,5 +1,13 @@
 import * as stylex from '@stylexjs/stylex';
-import { type KeyboardEvent, useEffect, useId, useRef, useState } from 'react';
+import {
+  type KeyboardEvent,
+  type Ref,
+  useEffect,
+  useId,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 
 import Icon from '@/shared/Icon/Icon';
 
@@ -12,6 +20,7 @@ type SelectOption = {
 };
 
 type SelectProps = {
+  ref?: Ref<HTMLButtonElement>;
   options: readonly SelectOption[];
   value: string;
   onValueChange: (value: string) => void;
@@ -22,6 +31,7 @@ type SelectProps = {
 };
 
 function Select({
+  ref,
   placeholder,
   options,
   onValueChange,
@@ -35,6 +45,8 @@ function Select({
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+
+  useImperativeHandle(ref, () => buttonRef.current!, []);
 
   useEffect(() => {
     if (!isOpen) return;
