@@ -1,5 +1,5 @@
 import * as stylex from '@stylexjs/stylex';
-import { type ComponentPropsWithoutRef, useState } from 'react';
+import { type ComponentPropsWithRef, useState } from 'react';
 
 import eyeOffIcon from '@/assets/icons/eye-off.svg';
 import eyeOnIcon from '@/assets/icons/eye-on.svg';
@@ -7,7 +7,7 @@ import Icon from '@/shared/Icon/Icon';
 
 import { styles, variants } from './input.stylex';
 
-type InputProps = Omit<ComponentPropsWithoutRef<'input'>, 'className' | 'style'> & {
+type InputProps = Omit<ComponentPropsWithRef<'input'>, 'className' | 'style'> & {
   variant?: keyof typeof variants;
   xstyle?: stylex.StyleXStyles;
 };

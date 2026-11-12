@@ -1,12 +1,12 @@
 import * as stylex from '@stylexjs/stylex';
-import type { ComponentPropsWithoutRef } from 'react';
+import type { ComponentPropsWithRef } from 'react';
 
 import checkIcon from '@/assets/icons/check.svg';
 
 import { styles } from './checkbox.stylex';
 
 type CheckboxProps = Omit<
-  ComponentPropsWithoutRef<'input'>,
+  ComponentPropsWithRef<'input'>,
   'className' | 'style' | 'type' | 'children'
 > & {
   xstyle?: stylex.StyleXStyles;

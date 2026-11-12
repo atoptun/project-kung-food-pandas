@@ -54,6 +54,16 @@ export const CustomMaxLength = {
   },
 } satisfies Story;
 
+export const Uncontrolled = {
+  args: { value: undefined, defaultValue: 'Initial text' },
+  render: (args) => (
+    <form {...stylex.props(demoStyles.container)}>
+      <Textarea {...args} />
+      <button type="reset">Reset</button>
+    </form>
+  ),
+} satisfies Story;
+
 export const WithText = {
   args: {
     ...Default.args,

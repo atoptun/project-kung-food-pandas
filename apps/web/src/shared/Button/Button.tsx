@@ -1,9 +1,9 @@
 import * as stylex from '@stylexjs/stylex';
-import type { ComponentPropsWithoutRef, ReactElement } from 'react';
+import type { ComponentPropsWithRef, ReactElement } from 'react';
 
 import { styles, variants } from './button.stylex';
 
-type ButtonProps = Omit<ComponentPropsWithoutRef<'button'>, 'className' | 'style'> & {
+type ButtonProps = Omit<ComponentPropsWithRef<'button'>, 'className' | 'style'> & {
   variant?: keyof typeof variants;
   fullWidth?: boolean;
   xstyle?: stylex.StyleXStyles;
