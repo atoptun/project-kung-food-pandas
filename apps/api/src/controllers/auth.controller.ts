@@ -4,6 +4,8 @@ import type { Request, Response } from 'express';
 
 import { auth } from '@/lib/auth';
 
+// NOT USED. USE 'BetterAuth' INSTEAD. KEEPING FOR REFERENCE.
+
 export class AuthController {
   register = async (
     req: Request<Record<string, string>, AuthResponse, RegisterInput>,

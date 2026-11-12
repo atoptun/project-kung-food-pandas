@@ -6,7 +6,9 @@ import prisma from '@/lib/prisma';
 
 import { createAuthUser } from '../helpers/auth';
 
-describe('Auth Endpoints', () => {
+// NOT USED. USE 'BetterAuth' INSTEAD. KEEPING FOR REFERENCE.
+
+describe.skip('Auth Endpoints', () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });

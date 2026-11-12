@@ -9,6 +9,8 @@ import {
 import { errorResponse, jsonBody, jsonResponse } from './helper';
 import { registry } from './registry';
 
+// NOT USED. USE 'BetterAuth' INSTEAD. KEEPING FOR REFERENCE.
+
 const TAG = ['Auth'];
 
 registry.register('RegisterRequest', RegisterSchema);
