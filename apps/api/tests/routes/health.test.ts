@@ -19,8 +19,6 @@ describe('Health & Readiness Endpoints', () => {
   });
 
   it('GET /readyz returns 200 when database query succeeds', async () => {
-    const spy = vi.spyOn(prisma, '$queryRaw').mockResolvedValueOnce([1]);
-
     const response = await request(app).get('/readyz');
 
     expect(response.status).toBe(200);
@@ -31,8 +29,6 @@ describe('Health & Readiness Endpoints', () => {
         database: 'up',
       },
     });
-
-    spy.mockRestore();
   });
 
   it('GET /readyz returns 503 when database query fails', async () => {
