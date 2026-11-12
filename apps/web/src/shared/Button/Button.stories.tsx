@@ -73,3 +73,11 @@ export const FullWidth = {
 export const CustomWidth = {
   args: { children: 'Publish', xstyle: demoStyles.customWidth },
 } satisfies Story;
+
+export const ButtonMobile = {
+  name: 'Button Mobile / 320px',
+  args: { ...Default.args },
+  globals: {
+    viewport: { value: 'mobileSmall', isRotated: false },
+  },
+} satisfies Story;

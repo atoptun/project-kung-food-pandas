@@ -36,3 +36,10 @@ export const Circle = {} satisfies Story;
 export const CircleDisabled = {
   args: { disabled: true },
 } satisfies Story;
+
+export const CircleMobile = {
+  name: 'Circle Button Mobile / 320px',
+  globals: {
+    viewport: { value: 'mobileSmall', isRotated: false },
+  },
+} satisfies Story;
