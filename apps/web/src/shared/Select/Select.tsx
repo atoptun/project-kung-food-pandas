@@ -1,8 +1,6 @@
 import * as stylex from '@stylexjs/stylex';
 import { type KeyboardEvent, useEffect, useId, useRef, useState } from 'react';
 
-import chevronDownIcon from '@/assets/icons/chevron-down.svg';
-import chevronUpIcon from '@/assets/icons/chevron-up.svg';
 import Icon from '@/shared/Icon/Icon';
 
 import { styles } from './select.stylex';
@@ -133,7 +131,7 @@ function Select({
           {selectedLabel || placeholder}
         </span>
 
-        <Icon xstyle={styles.icon} src={isOpen ? chevronUpIcon : chevronDownIcon} />
+        <Icon xstyle={styles.icon} name={isOpen ? 'chevron-up' : 'chevron-down'} />
       </button>
 
       {name && <input type="hidden" name={name} value={value} disabled={disabled} />}

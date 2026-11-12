@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import heartIcon from '@/assets/icons/heart.svg';
 import Icon from '@/shared/Icon/Icon';
 
 import Button from './Button';
@@ -13,7 +12,7 @@ const meta = {
   },
   args: {
     'aria-label': 'Add to favorites',
-    children: <Icon src={heartIcon} />,
+    children: <Icon name="heart" />,
   },
   argTypes: {
     children: { control: false },

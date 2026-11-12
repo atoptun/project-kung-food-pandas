@@ -1,8 +1,6 @@
 import * as stylex from '@stylexjs/stylex';
 import { type ComponentPropsWithRef, useState } from 'react';
 
-import eyeOffIcon from '@/assets/icons/eye-off.svg';
-import eyeOnIcon from '@/assets/icons/eye-on.svg';
 import Icon from '@/shared/Icon/Icon';
 
 import { styles, variants } from './input.stylex';
@@ -41,7 +39,7 @@ function Input({ variant = 'outline', xstyle, type = 'text', ...props }: InputPr
           disabled={props.disabled}
           onClick={() => setIsPasswordVisible((visible) => !visible)}
         >
-          <Icon src={isPasswordVisible ? eyeOnIcon : eyeOffIcon} />
+          <Icon name={isPasswordVisible ? 'eye-on' : 'eye-off'} />
         </button>
       )}
     </div>

@@ -1,7 +1,7 @@
 import * as stylex from '@stylexjs/stylex';
 import type { ComponentPropsWithRef } from 'react';
 
-import checkIcon from '@/assets/icons/check.svg';
+import Icon from '@/shared/Icon/Icon';
 
 import { styles } from './checkbox.stylex';
 
@@ -14,10 +14,13 @@ type CheckboxProps = Omit<
 
 export default function Checkbox({ xstyle, ...props }: CheckboxProps) {
   return (
-    <input
-      {...props}
-      type="checkbox"
-      {...stylex.props(styles.checkbox(`url("${checkIcon}")`), xstyle)}
-    />
+    <span {...stylex.props(styles.wrapper)}>
+      <input
+        {...props}
+        type="checkbox"
+        {...stylex.props(stylex.defaultMarker(), styles.checkbox, xstyle)}
+      />
+      <Icon name="check" xstyle={styles.checkmark} />
+    </span>
   );
 }

@@ -1,16 +1,33 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import heartIcon from '@/assets/icons/heart.svg';
-
 import Icon from './Icon';
 
 const meta = {
   title: 'Shared/UI/Icon',
   component: Icon,
   parameters: { layout: 'centered' },
-  args: { src: heartIcon },
+  args: { name: 'heart' },
   argTypes: {
-    src: { control: false },
+    name: {
+      control: 'select',
+      options: [
+        'arrow-up-right',
+        'check',
+        'chevron-down',
+        'chevron-up',
+        'cross',
+        'eye-off',
+        'eye-on',
+        'facebook',
+        'heart',
+        'instagram',
+        'minus',
+        'plus',
+        'trash',
+        'upload-photo',
+        'youtube',
+      ],
+    },
     size: { control: { type: 'number', min: 1, max: 128, step: 1 } },
     xstyle: { control: false },
   },
