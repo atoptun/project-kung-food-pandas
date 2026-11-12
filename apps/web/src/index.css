@@ -1,13 +1,65 @@
+@import 'modern-normalize/modern-normalize.css' layer(reset);
 @import '@fontsource-variable/mulish/wght.css';
 
-body {
-  margin: 0;
-  font-family: 'Mulish Variable', sans-serif;
-  font-weight: 500;
-}
+/* Component styles take precedence over these global defaults. */
+@layer reset {
+  body {
+    margin: 0;
+    font-family: 'Mulish Variable', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.02%;
+  }
 
-input,
-textarea,
-select {
-  font: inherit;
+  @media (min-width: 768px) {
+    body {
+      font-size: 16px;
+      line-height: 24px;
+    }
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  ul,
+  ol,
+  dl,
+  dd,
+  figure,
+  blockquote {
+    margin: 0;
+  }
+
+  ul,
+  ol {
+    padding: 0;
+    list-style: none;
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    display: block;
+    max-width: 100%;
+  }
+
+  img,
+  video {
+    height: auto;
+  }
 }

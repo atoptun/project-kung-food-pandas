@@ -9,7 +9,7 @@ const sourceDirectory = fileURLToPath(new URL('./src', import.meta.url));
 export default defineConfig({
   plugins: [
     stylex.vite({
-      useCSSLayers: true,
+      useCSSLayers: { before: ['reset'] },
       aliases: {
         '@/*': [`${sourceDirectory}/*`],
       },

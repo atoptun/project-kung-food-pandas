@@ -17,6 +17,7 @@
     "@fontsource-variable/mulish": "^5.3.0",
     "@repo/shared": "workspace:*",
     "@stylexjs/stylex": "^0.19.1",
+    "modern-normalize": "^3.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "zod": "^4.6.7"
