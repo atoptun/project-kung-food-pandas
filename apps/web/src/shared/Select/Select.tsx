@@ -34,6 +34,7 @@ function Select({
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const listId = useId();
+  const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
@@ -45,6 +46,19 @@ function Select({
     );
     const first = list?.querySelector<HTMLLIElement>('[role="option"]:not([aria-disabled="true"])');
     (selected ?? first ?? list)?.focus();
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      if (event.target instanceof Node && !containerRef.current?.contains(event.target)) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown, true);
+    return () => document.removeEventListener('pointerdown', handlePointerDown, true);
   }, [isOpen]);
 
   const selectedLabel = options.find((option) => option.value === value)?.label;
@@ -92,6 +106,7 @@ function Select({
 
   return (
     <div
+      ref={containerRef}
       {...stylex.props(styles.wrapper)}
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) setIsOpen(false);
