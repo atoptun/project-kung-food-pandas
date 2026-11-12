@@ -5,6 +5,8 @@ import { AuthController } from '@/controllers/auth.controller';
 import { authenticate } from '@/middlewares/auth.middleware';
 import { validateBody } from '@/middlewares/validate.middleware';
 
+// NOT USED. USE 'BetterAuth' INSTEAD. KEEPING FOR REFERENCE.
+
 export const authRouter: Router = Router();
 
 const controller = new AuthController();
