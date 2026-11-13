@@ -14,6 +14,7 @@
     "build": "turbo run build",
     "build:api": "pnpm --filter @repo/api... build",
     "build:web": "pnpm --filter @repo/web... build",
+    "build:shared": "pnpm --filter @repo/shared build",
     "start:api": "pnpm --filter @repo/api start",
     "preview:web": "pnpm --filter @repo/web preview",
     "storybook:web": "pnpm --filter @repo/web storybook",

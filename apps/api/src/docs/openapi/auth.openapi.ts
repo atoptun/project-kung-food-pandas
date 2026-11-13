@@ -1,17 +1,28 @@
-import { AuthResponseSchema, AuthUserSchema, LoginSchema, RegisterSchema } from '@repo/shared';
+import {
+  AuthResponseSchema,
+  AuthUserSchema,
+  LoginSchema,
+  PublicUserSchema,
+  RegisterSchema,
+} from '@repo/shared';
 
 import { errorResponse, jsonBody, jsonResponse } from './helper';
 import { registry } from './registry';
 
+// NOT USED. USE 'BetterAuth' INSTEAD. KEEPING FOR REFERENCE.
+
+const TAG = ['Auth'];
+
 registry.register('RegisterRequest', RegisterSchema);
 registry.register('LoginRequest', LoginSchema);
 registry.register('AuthUser', AuthUserSchema);
+registry.register('PublicUser', PublicUserSchema);
 registry.register('AuthResponse', AuthResponseSchema);
 
 registry.registerPath({
   method: 'post',
   path: '/auth/register',
-  tags: ['Auth'],
+  tags: TAG,
   summary: 'Register a new user',
   description: 'Creates a new user account and returns a session token with basic user profile.',
   request: {
@@ -27,7 +38,7 @@ registry.registerPath({
 registry.registerPath({
   method: 'post',
   path: '/auth/login',
-  tags: ['Auth'],
+  tags: TAG,
   summary: 'Login user',
   description: 'Authenticates a user by email and password and returns a session token.',
   request: {
@@ -43,7 +54,7 @@ registry.registerPath({
 registry.registerPath({
   method: 'post',
   path: '/auth/logout',
-  tags: ['Auth'],
+  tags: TAG,
   summary: 'Logout user',
   description: 'Invalidates the current user session token.',
   security: [{ bearerAuth: [] }],

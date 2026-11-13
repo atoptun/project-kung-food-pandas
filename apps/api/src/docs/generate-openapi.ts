@@ -9,7 +9,7 @@ import { generateOpenApiDocument } from './openapi';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const outputPath = path.resolve(__dirname, '../../openapi.yaml');
 
-const document = generateOpenApiDocument();
+const document = await generateOpenApiDocument();
 const yamlContent = YAML.stringify(document);
 
 fs.writeFileSync(outputPath, yamlContent, 'utf8');

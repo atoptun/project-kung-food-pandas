@@ -1,6 +1,7 @@
 import type { ApiErrorResponse } from '@repo/shared';
 import { APIError } from 'better-auth/api';
 import type { NextFunction, Request, Response } from 'express';
+import { MulterError } from 'multer';
 import { ZodError } from 'zod';
 
 import logger from '@/config/logger';
@@ -43,6 +44,14 @@ export function errorHandler(
       })),
     });
     return;
+  }
+
+  // Multer (file upload) errors
+  if (err instanceof MulterError) {
+    return res.status(400).json({
+      status: 'error',
+      message: err.code === 'LIMIT_FILE_SIZE' ? 'File size exceeds the 5 MB limit' : err.message,
+    });
   }
 
   if (err instanceof HttpError) {

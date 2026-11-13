@@ -1,7 +1,4 @@
-import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
-import { z } from 'zod';
-
-extendZodWithOpenApi(z);
+import { z } from '../zod';
 
 export const RegisterSchema = z
   .object({
@@ -20,10 +17,18 @@ export const LoginSchema = z
 
 export const AuthUserSchema = z
   .object({
+    id: z.string().max(32).openapi({ example: '64f1a2b3c4d5e6f7a8b9c0d1' }),
     email: z.email().openapi({ example: 'panda@panda.com' }),
     name: z.string().openapi({ example: 'Panda' }),
+    avatar: z
+      .string()
+      .nullable()
+      .optional()
+      .openapi({ example: 'https://res.cloudinary.com/.../avatar.jpg' }),
   })
   .openapi('AuthUser');
+
+export const PublicUserSchema = AuthUserSchema.omit({ email: true }).openapi('PublicUser');
 
 export const AuthResponseSchema = z
   .object({
@@ -35,4 +40,5 @@ export const AuthResponseSchema = z
 export type RegisterInput = z.infer<typeof RegisterSchema>;
 export type LoginInput = z.infer<typeof LoginSchema>;
 export type AuthUser = z.infer<typeof AuthUserSchema>;
+export type PublicUser = z.infer<typeof PublicUserSchema>;
 export type AuthResponse = z.infer<typeof AuthResponseSchema>;

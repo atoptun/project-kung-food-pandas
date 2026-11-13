@@ -1,8 +1,13 @@
 import { Router } from 'express';
 
-import { handleLiveness, handleReadiness } from '@/controllers/health.controller';
+import { HealthController } from '@/controllers/health.controller';
+import prisma from '@/lib/prisma';
+import { HealthService } from '@/services/health.service';
+
+const service = new HealthService(prisma);
+const controller = new HealthController(service);
 
 export const healthRouter: Router = Router();
 
-healthRouter.get(['/healthz', '/health'], handleLiveness);
-healthRouter.get(['/readyz', '/ready'], handleReadiness);
+healthRouter.get(['/healthz', '/health'], controller.handleLiveness);
+healthRouter.get(['/readyz', '/ready'], controller.handleReadiness);

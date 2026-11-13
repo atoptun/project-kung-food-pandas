@@ -4,6 +4,8 @@ import type { Request, Response } from 'express';
 
 import { auth } from '@/lib/auth';
 
+// NOT USED. USE 'BetterAuth' INSTEAD. KEEPING FOR REFERENCE.
+
 export class AuthController {
   register = async (
     req: Request<Record<string, string>, AuthResponse, RegisterInput>,
@@ -16,8 +18,10 @@ export class AuthController {
     res.status(201).json({
       token: result.token ?? '',
       user: {
+        id: result.user.id,
         name: result.user.name,
         email: result.user.email,
+        avatar: result.user.image ?? null,
       },
     });
   };
@@ -33,8 +37,10 @@ export class AuthController {
     res.status(200).json({
       token: result.token,
       user: {
+        id: result.user.id,
         name: result.user.name,
         email: result.user.email,
+        avatar: result.user.image ?? null,
       },
     });
   };

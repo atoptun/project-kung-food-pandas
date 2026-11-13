@@ -18,8 +18,9 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  recipes      Recipe[]
-  testimonials Testimonial[]
+  recipes         Recipe[]
+  testimonials    Testimonial[]
+  favoriteRecipes FavoriteRecipe[]
 
   @@unique([email])
   @@map("users")
@@ -104,9 +105,10 @@ model Ingredient {
 }
 
 model Testimonial {
-  id          String @id @default(cuid())
-  ownerId     String @map("owner_id")
-  testimonial String @db.Text
+  id          String   @id @default(cuid())
+  ownerId     String   @map("owner_id")
+  testimonial String   @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
 
   owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
@@ -126,10 +128,11 @@ model Recipe {
   time         Int?
   ownerId      String  @map("owner_id")
 
-  owner       User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  category    Category           @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  area        Area               @relation(fields: [areaId], references: [id], onDelete: Restrict)
-  ingredients RecipeIngredient[]
+  owner           User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  category        Category           @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  area            Area               @relation(fields: [areaId], references: [id], onDelete: Restrict)
+  ingredients     RecipeIngredient[]
+  favoriteRecipes FavoriteRecipe[]
 
   @@index([ownerId])
   @@index([areaId])
@@ -147,4 +150,16 @@ model RecipeIngredient {
 
   @@id([recipeId, ingredientId])
   @@map("recipe_ingredients")
+}
+
+model FavoriteRecipe {
+  userId    String   @map("user_id")
+  recipeId  String   @map("recipe_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, recipeId])
+  @@map("favorite_recipes")
 }
