@@ -1,4 +1,5 @@
 import { mkdir } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 
 import type { NextFunction, Request, Response } from 'express';
@@ -7,7 +8,7 @@ import multer from 'multer';
 
 import { BadRequestError } from '@/errors/http.error';
 
-const destination = resolve('tmp', 'uploads');
+const destination = resolve(tmpdir(), 'kung-food-pandas-uploads');
 
 const allowMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
