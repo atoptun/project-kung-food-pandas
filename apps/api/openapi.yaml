@@ -61,6 +61,11 @@ components:
           type: string
           maxLength: 100
           example: Dessert
+        image:
+          type: string
+          nullable: true
+          format: uri
+          example: https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Desserts.jpg
       required:
         - id
         - name
@@ -634,6 +639,11 @@ components:
           type: string
           maxLength: 100
           example: Dessert
+        image:
+          type: string
+          nullable: true
+          format: uri
+          example: https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Desserts.jpg
       required:
         - id
         - name

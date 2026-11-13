@@ -13,6 +13,10 @@ export const CategoryResponseSchema = z
   .object({
     id: z.string().max(32).openapi({ example: '6462a6cd4c3d0ddd28897f8f' }),
     name: z.string().max(100).openapi({ example: 'Dessert' }),
+    image: z.url().nullish().openapi({
+      example:
+        'https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Desserts.jpg',
+    }),
   })
   .openapi('Category');
 

@@ -87,6 +87,7 @@ model Area {
 model Category {
   id      String   @id @default(cuid())
   name    String   @db.VarChar(100)
+  image   String?
   recipes Recipe[]
 
   @@unique([name])
