@@ -116,6 +116,7 @@ registry.registerPath({
   path: '/users/{id}',
   tags: TAG,
   summary: 'Get public profile of another user by ID',
+  security: [{ bearerAuth: [] }],
   request: {
     params: UserIdParamSchema,
   },
@@ -124,6 +125,7 @@ registry.registerPath({
       'User public profile retrieved successfully',
       UserPublicProfileResponseSchema,
     ),
+    401: errorResponse('Not authorized'),
     404: errorResponse('User not found'),
   },
 });
@@ -133,6 +135,7 @@ registry.registerPath({
   path: '/users/{id}/followers',
   tags: TAG,
   summary: 'Get followers of a specific user by ID',
+  security: [{ bearerAuth: [] }],
   request: {
     params: UserIdParamSchema,
     query: PaginationQuerySchema,
@@ -142,6 +145,7 @@ registry.registerPath({
       'List of user followers retrieved successfully',
       UserFollowersListResponseSchema,
     ),
+    401: errorResponse('Not authorized'),
     404: errorResponse('User not found'),
   },
 });
@@ -151,12 +155,14 @@ registry.registerPath({
   path: '/users/{id}/recipes',
   tags: TAG,
   summary: 'Get recipes created by a specific user by ID',
+  security: [{ bearerAuth: [] }],
   request: {
     params: UserIdParamSchema,
     query: PaginationQuerySchema,
   },
   responses: {
     200: jsonResponse('List of user recipes retrieved successfully', UserRecipesListResponseSchema),
+    401: errorResponse('Not authorized'),
     404: errorResponse('User not found'),
   },
 });

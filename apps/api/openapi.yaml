@@ -1498,6 +1498,8 @@ paths:
     get:
       tags: *a3
       summary: Get public profile of another user by ID
+      security:
+        - bearerAuth: []
       parameters:
         - schema:
             type: string
@@ -1513,6 +1515,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserPublicProfileResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
         "404":
           description: User not found
           content:
@@ -1526,6 +1537,8 @@ paths:
     get:
       tags: *a3
       summary: Get followers of a specific user by ID
+      security:
+        - bearerAuth: []
       parameters:
         - schema:
             type: string
@@ -1558,6 +1571,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserFollowersListResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
         "404":
           description: User not found
           content:
@@ -1571,6 +1593,8 @@ paths:
     get:
       tags: *a3
       summary: Get recipes created by a specific user by ID
+      security:
+        - bearerAuth: []
       parameters:
         - schema:
             type: string
@@ -1603,6 +1627,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserRecipesListResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
         "404":
           description: User not found
           content:
