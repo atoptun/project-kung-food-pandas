@@ -13,6 +13,7 @@ import { errorHandler } from '@/middlewares/error-handler.middleware';
 import { notFound } from '@/middlewares/not-found.middleware';
 // import { authRouter } from '@/routes/auth.routes';
 import { healthRouter } from '@/routes/health.routes';
+import { usersRouter } from '@/routes/users.routes';
 
 export async function createApp(): Promise<Express> {
   const app = express();
@@ -43,6 +44,7 @@ export async function createApp(): Promise<Express> {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
   app.use(healthRouter);
+  app.use('/users', usersRouter);
   // NOT USED. USE 'BetterAuth' INSTEAD. KEEPING FOR REFERENCE.
   // app.use('/auth', authRouter);
 
