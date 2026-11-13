@@ -14,6 +14,8 @@ import { notFound } from '@/middlewares/not-found.middleware';
 // import { authRouter } from '@/routes/auth.routes';
 import { healthRouter } from '@/routes/health.routes';
 
+import { testimonialsRouter } from './routes/testimonials.route';
+
 export async function createApp(): Promise<Express> {
   const app = express();
 
@@ -45,6 +47,8 @@ export async function createApp(): Promise<Express> {
   app.use(healthRouter);
   // NOT USED. USE 'BetterAuth' INSTEAD. KEEPING FOR REFERENCE.
   // app.use('/auth', authRouter);
+
+  app.use('/testimonials', testimonialsRouter);
 
   app.use(notFound);
   app.use(errorHandler);

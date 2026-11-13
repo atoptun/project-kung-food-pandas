@@ -105,9 +105,10 @@ model Ingredient {
 }
 
 model Testimonial {
-  id          String @id @default(cuid())
-  ownerId     String @map("owner_id")
-  testimonial String @db.Text
+  id          String   @id @default(cuid())
+  ownerId     String   @map("owner_id")
+  testimonial String   @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
 
   owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
