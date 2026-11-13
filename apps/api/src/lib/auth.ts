@@ -11,6 +11,7 @@ export const auth = betterAuth({
   }),
   secret: env.BETTER_AUTH_SECRET,
   baseURL: env.BETTER_AUTH_URL,
+  trustedOrigins: env.CORS_ORIGINS,
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day
@@ -19,6 +20,21 @@ export const auth = betterAuth({
     database: {
       joins: true,
     },
+    useSecureCookies: env.IS_PROD,
+    crossSubDomainCookies: {
+      enabled: false,
+    },
+    defaultCookieAttributes: env.IS_PROD
+      ? {
+          sameSite: 'none',
+          secure: true,
+          httpOnly: true,
+        }
+      : {
+          sameSite: 'lax',
+          secure: false,
+          httpOnly: true,
+        },
   },
   user: {
     fields: {
