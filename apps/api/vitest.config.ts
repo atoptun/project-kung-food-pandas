@@ -24,7 +24,7 @@ export default defineConfig({
   plugins: [],
   test: {
     setupFiles: [
-      // './tests/migrate-test.ts', // ONLY LOCAL: for migrate the test base before running the tests
+      './tests/migrate-test.ts', // ONLY LOCAL: for migrate the test base before running the tests
       './tests/setup.ts',
     ],
     fileParallelism: false,
