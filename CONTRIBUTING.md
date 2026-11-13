@@ -86,16 +86,20 @@ pnpm add -D -w <root-tool-package>
 
 ### Development & Production
 
-| Command            | Description                                                           |
-| ------------------ | --------------------------------------------------------------------- |
-| `pnpm dev`         | Run all packages (`shared`, `api`, `web`) in watch mode via Turborepo |
-| `pnpm dev:api`     | Run only the backend API (`http://localhost:4000`)                    |
-| `pnpm dev:web`     | Run only the frontend Vite SPA (`http://localhost:5173`)              |
-| `pnpm build`       | Build all packages and applications                                   |
-| `pnpm build:api`   | Build `@repo/shared` and `@repo/api` for production (Render)          |
-| `pnpm build:web`   | Build `@repo/shared` and `@repo/web` for production (Vercel)          |
-| `pnpm start:api`   | Start the compiled production backend (`apps/api/dist/server.js`)     |
-| `pnpm preview:web` | Preview the production frontend bundle locally                        |
+| Command                    | Description                                                           |
+| -------------------------- | --------------------------------------------------------------------- |
+| `pnpm dev`                 | Run all packages (`shared`, `api`, `web`) in watch mode via Turborepo |
+| `pnpm dev:api`             | Run only the backend API (`http://localhost:4000`)                    |
+| `pnpm dev:web`             | Run only the frontend Vite SPA (`http://localhost:5173`)              |
+| `pnpm build`               | Build all packages and applications                                   |
+| `pnpm build:api`           | Build `@repo/shared` and `@repo/api` for production (Render)          |
+| `pnpm build:web`           | Build `@repo/shared` and `@repo/web` for production (Vercel)          |
+| `pnpm start:api`           | Start the compiled production backend (`apps/api/dist/server.js`)     |
+| `pnpm preview:web`         | Preview the production frontend bundle locally                        |
+| `pnpm storybook:web`       | Run frontend Storybook (`http://localhost:6006`)                      |
+| `pnpm build-storybook:web` | Build frontend Storybook into `apps/web/storybook-static`             |
+
+Storybook commands forward to `@repo/web` through pnpm's workspace filter. They do not start the API or database. If a story imports `@repo/shared`, build it first with `pnpm --filter @repo/shared build`.
 
 ### Database (Prisma + PostgreSQL)
 

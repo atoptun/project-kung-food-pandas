@@ -1,3 +1,4 @@
+import stylex from '@stylexjs/eslint-plugin';
 import { defineConfig } from 'eslint/config';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
@@ -15,9 +16,12 @@ export default defineConfig([
       },
     },
     plugins: {
+      '@stylexjs': stylex,
       'react-hooks': reactHooks,
     },
     rules: {
+      '@stylexjs/valid-styles': 'error',
+      '@stylexjs/no-conflicting-props': 'error',
       ...reactHooks.configs.recommended.rules,
     },
   },

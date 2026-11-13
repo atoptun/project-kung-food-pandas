@@ -9,6 +9,7 @@ export const baseEslintConfig = defineConfig([
   globalIgnores([
     '**/node_modules/**',
     '**/dist/**',
+    '**/storybook-static/**',
     '**/docs-dist/**',
     '**/coverage/**',
     '**/.turbo/**',
