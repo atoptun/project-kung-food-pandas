@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react';
 
-import Icon from '@/shared/Icon/Icon';
+import Icon from '@/components/shared/icon/icon';
 
 import { styles } from './select.stylex';
 

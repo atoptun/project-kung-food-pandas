@@ -8,12 +8,12 @@ const demoStyles = stylex.create({
 });
 
 const meta = {
-  title: 'Shared/UI/Input',
+  title: 'Shared/UI/input',
   component: Input,
   parameters: {
     layout: 'centered',
   },
-  args: { 'aria-label': 'Input text' },
+  args: { 'aria-label': 'input text' },
   argTypes: {
     variant: { control: 'select', options: ['outline', 'underline'] },
     xstyle: { control: false },
@@ -27,7 +27,7 @@ type Story = StoryObj<typeof meta>;
 export const Outline = {
   args: {
     variant: 'outline',
-    placeholder: 'Input text',
+    placeholder: 'input text',
   },
 } satisfies Story;
 

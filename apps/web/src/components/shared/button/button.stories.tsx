@@ -3,7 +3,7 @@ import * as stylex from '@stylexjs/stylex';
 
 import { colors } from '@/styles/tokens.stylex';
 
-import Button from './Button';
+import Button from './button';
 
 const demoStyles = stylex.create({
   darkSurface: { backgroundColor: colors.black, padding: 24, borderRadius: 16 },
@@ -11,7 +11,7 @@ const demoStyles = stylex.create({
 });
 
 const meta = {
-  title: 'Shared/UI/Button',
+  title: 'Shared/UI/button',
   component: Button,
   parameters: {
     layout: 'centered',
@@ -77,6 +77,18 @@ export const CustomWidth = {
 export const ButtonMobile = {
   name: 'Button Mobile / 320px',
   args: { ...Default.args },
+  globals: {
+    viewport: { value: 'mobileSmall', isRotated: false },
+  },
+} satisfies Story;
+
+export const CircleShape = {
+  args: { variant: 'outline', shape: 'circle', children: '+' },
+} satisfies Story;
+
+export const CircleButtonMobile = {
+  name: 'Button Mobile / 320px',
+  args: { ...CircleShape.args },
   globals: {
     viewport: { value: 'mobileSmall', isRotated: false },
   },

@@ -5,12 +5,12 @@ import { fn } from 'storybook/test';
 import Select from './Select';
 
 const meta = {
-  title: 'Shared/UI/Select',
+  title: 'Shared/UI/select',
   component: Select,
   parameters: { layout: 'centered' },
   args: {
     'aria-label': 'Category',
-    placeholder: 'Select a category',
+    placeholder: 'select a category',
     value: '',
     options: [
       { value: 'beef', label: 'Beef' },

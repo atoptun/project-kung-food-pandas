@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import Checkbox from './Checkbox';
+import Checkbox from './checkbox';
 
 const meta = {
-  title: 'Shared/UI/Checkbox',
+  title: 'Shared/UI/checkbox',
   component: Checkbox,
   parameters: { layout: 'centered' },
-  args: { 'aria-label': 'Select recipe' },
+  args: { 'aria-label': 'select recipe' },
   argTypes: {
     defaultChecked: { control: 'boolean' },
     disabled: { control: 'boolean' },

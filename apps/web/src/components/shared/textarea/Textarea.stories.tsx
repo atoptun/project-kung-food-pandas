@@ -9,7 +9,7 @@ const demoStyles = stylex.create({
 });
 
 const meta = {
-  title: 'Shared/UI/Textarea',
+  title: 'Shared/UI/textarea',
   component: Textarea,
   parameters: {
     layout: 'padded',
@@ -43,7 +43,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default = {
   args: {
-    placeholder: 'Input text',
+    placeholder: 'input text',
   },
 } satisfies Story;
 
