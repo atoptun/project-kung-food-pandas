@@ -15,8 +15,8 @@ function HomePage() {
 
         {!!data?.items.length && (
           <ul>
-            {data.items.map(({ testimonial }) => (
-              <li>{testimonial}</li>
+            {data.items.map(({ id, testimonial }) => (
+              <li key={id}>{testimonial}</li>
             ))}
           </ul>
         )}
