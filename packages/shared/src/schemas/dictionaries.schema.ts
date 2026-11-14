@@ -1,6 +1,10 @@
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+
 import { PublicUserSchema } from '../index';
 import { z } from '../zod';
 import { PaginationMetaSchema } from './pagination.schema';
+
+extendZodWithOpenApi(z);
 
 export const AreaResponseSchema = z
   .object({
@@ -41,6 +45,14 @@ export const TestimonialResponseSchema = z
 export const TestimonialsListResponseSchema = PaginationMetaSchema.extend({
   items: z.array(TestimonialResponseSchema),
 }).openapi('TestimonialsListResponse');
+
+export const AreasListResponseSchema = z.array(AreaResponseSchema).openapi('AreasList');
+export const CategoriesListResponseSchema = z
+  .array(CategoryResponseSchema)
+  .openapi('CategoriesList');
+export const IngredientsListResponseSchema = z
+  .array(IngredientResponseSchema)
+  .openapi('IngredientsList');
 
 export type Area = z.infer<typeof AreaResponseSchema>;
 export type Category = z.infer<typeof CategoryResponseSchema>;

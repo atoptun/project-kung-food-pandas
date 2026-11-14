@@ -11,6 +11,7 @@ import { generateOpenApiDocument } from '@/docs/openapi';
 import { auth } from '@/lib/auth';
 import { errorHandler } from '@/middlewares/error-handler.middleware';
 import { notFound } from '@/middlewares/not-found.middleware';
+import { dictionariesRouter } from '@/routes/dictionaries.routes';
 // import { authRouter } from '@/routes/auth.routes';
 import { healthRouter } from '@/routes/health.routes';
 import { usersRouter } from '@/routes/users.routes';
@@ -49,8 +50,6 @@ export async function createApp(): Promise<Express> {
   app.use('/users', usersRouter);
   // NOT USED. USE 'BetterAuth' INSTEAD. KEEPING FOR REFERENCE.
   // app.use('/auth', authRouter);
-
-  app.use('/testimonials', testimonialsRouter);
 
   app.use(notFound);
   app.use(errorHandler);
