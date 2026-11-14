@@ -51,6 +51,9 @@ export async function createApp(): Promise<Express> {
   // NOT USED. USE 'BetterAuth' INSTEAD. KEEPING FOR REFERENCE.
   // app.use('/auth', authRouter);
 
+  // Routes Dictionaries
+  app.use(dictionariesRouter);
+
   app.use(notFound);
   app.use(errorHandler);
 
