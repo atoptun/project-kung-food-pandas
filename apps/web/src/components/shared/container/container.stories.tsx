@@ -21,7 +21,7 @@ const demoStyles = stylex.create({
 });
 
 const meta = {
-  title: 'Shared/UI/Container',
+  title: 'Shared/UI/container',
   component: Container,
   parameters: {
     layout: 'fullscreen',
