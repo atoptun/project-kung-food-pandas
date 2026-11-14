@@ -33,23 +33,14 @@ export const styles = stylex.create({
     width: { default: 48, [breakpoints.tablet]: 56 },
     paddingInline: 0,
     paddingBlock: 0,
-    borderRadius: 30,
-    borderColor: {
-      default: colors.border,
-      ':not(:disabled):hover': 'transparent',
-      ':disabled': colors.border,
-    },
-    backgroundColor: {
-      default: 'transparent',
-      ':not(:disabled):hover': colors.black,
-      ':disabled': 'transparent',
-    },
-    color: {
-      default: colors.black,
-      ':not(:disabled):hover': colors.white,
-      ':disabled': colors.black,
-    },
-    opacity: { default: 1, ':disabled': 0.5 },
+  },
+});
+
+export const shapes = stylex.create({
+  circle: {
+    width: { default: 48, [breakpoints.tablet]: 56 },
+    paddingInline: 0,
+    paddingBlock: 0,
   },
 });
 

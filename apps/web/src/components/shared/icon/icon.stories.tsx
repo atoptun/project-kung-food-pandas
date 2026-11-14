@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import Icon from './Icon';
+import Icon from './icon';
 
 const meta = {
-  title: 'Shared/UI/Icon',
+  title: 'Shared/UI/icon',
   component: Icon,
   parameters: { layout: 'centered' },
   args: { name: 'heart' },

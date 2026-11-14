@@ -1,7 +1,7 @@
 import * as stylex from '@stylexjs/stylex';
 import { type ComponentPropsWithRef, useState } from 'react';
 
-import Icon from '@/shared/Icon/Icon';
+import Icon from '@/components/shared/icon/icon';
 
 import { styles, variants } from './input.stylex';
 
