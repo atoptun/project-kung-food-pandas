@@ -63,7 +63,7 @@ export function buildCloudinaryUrl(
   url?: string | null,
   options: BuildCloudinaryUrlOptions = {},
 ): string {
-  if (!url || !url.includes('cloudinary.com') || !url.includes('/upload/')) {
+  if (!url || !url.includes('cloudinary.com') || !url.match(/(\/(?:image|video)\/upload\/)/)) {
     return url ?? '';
   }
 
@@ -85,7 +85,7 @@ export function buildCloudinaryUrl(
   }
 
   const transformString = transformations.join(',');
-  return url.replace('/upload/', `/upload/${transformString}/`);
+  return url.replace(/(\/(?:image|video)\/upload\/)/, `$1${transformString}/`);
 }
 
 /**

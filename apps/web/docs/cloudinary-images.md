@@ -15,7 +15,7 @@ Cloudinary automatically applies:
 For fixed-size elements (avatars, ingredient badges, recipe thumbnails), use `getCloudinarySrcSet()`. It generates `1x` and `2x` (Retina) URLs automatically.
 
 ```tsx
-import { getCloudinarySrcSet } from '@/shared/utils/cloudinary';
+import { getCloudinarySrcSet } from '@/utils/cloudinary';
 
 export function UserAvatar({ avatarUrl, name }: { avatarUrl?: string; name: string }) {
   const avatar = getCloudinarySrcSet(avatarUrl, 'avatarHeader');
@@ -41,7 +41,7 @@ export function UserAvatar({ avatarUrl, name }: { avatarUrl?: string; name: stri
 If you need fine-grained control or custom dimensions:
 
 ```tsx
-import { buildCloudinaryUrl } from '@/shared/utils/cloudinary';
+import { buildCloudinaryUrl } from '@/utils/cloudinary';
 
 // 1. Using a preset with high-DPI (e.g. 2x)
 const highResThumbnail = buildCloudinaryUrl(recipe.thumb, {

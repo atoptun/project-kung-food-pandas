@@ -7,15 +7,19 @@ import { type AppStore, setupStore } from '@/redux/app';
 import { routes } from '@/routes';
 
 type TestRenderOptions = Omit<RenderOptions, 'wrapper'> & {
+  ui?: ReactElement;
   initialEntries?: string[];
   store?: AppStore;
 };
 
-export function renderWithProviders(
-  _ui?: ReactElement,
-  { initialEntries = ['/'], store = setupStore(), ...options }: TestRenderOptions = {},
-): RenderResult & { store: AppStore } {
-  const testRouter = createMemoryRouter(routes, {
+export function renderWithProviders({
+  ui,
+  initialEntries = ['/'],
+  store = setupStore(),
+  ...options
+}: TestRenderOptions = {}): RenderResult & { store: AppStore } {
+  // If a single UI component is passed, render it inside a root route `*` so that any initialEntries match
+  const testRouter = createMemoryRouter(ui ? [{ path: '*', element: ui }] : routes, {
     initialEntries,
   });
 
