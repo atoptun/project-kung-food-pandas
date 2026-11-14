@@ -80,6 +80,7 @@ export default function Pagination({ page, totalPages, onPageChange }: Paginatio
                 xstyle={[styles.button, isCurrent && styles.current]}
                 aria-label={`Page ${pageNumber}`}
                 aria-current={isCurrent ? 'page' : undefined}
+                disabled={isCurrent}
                 aria-disabled={isCurrent || undefined}
                 onClick={() => {
                   if (!isCurrent) onPageChange(pageNumber);

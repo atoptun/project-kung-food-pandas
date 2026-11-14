@@ -26,6 +26,9 @@ export const styles = stylex.create({
     outlineWidth: { default: 0, ':focus-visible': 2 },
     outlineStyle: { default: 'none', ':focus-visible': 'solid' },
   },
+  link: {
+    textDecoration: 'none',
+  },
   fullWidth: {
     width: '100%',
   },
