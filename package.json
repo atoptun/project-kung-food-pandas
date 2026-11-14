@@ -36,6 +36,10 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,cjs,json,md,yml,yaml,css}\"",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
+    "check": "pnpm format:check && turbo run check",
+    "check:web": "pnpm --filter @repo/web check",
+    "check:api": "pnpm --filter @repo/api check",
+    "check:shared": "pnpm --filter @repo/shared check",
     "prepare": "husky"
   },
   "devDependencies": {
