@@ -128,6 +128,9 @@ openapi.bundled.yaml
 # Stores Visual Studio Code versions used for testing Visual Studio Code extensions
 .vscode-test
 
+# WebStorm IDE
+.idea/
+
 # pnpm
 .pnpm-store
 
