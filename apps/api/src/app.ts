@@ -11,6 +11,7 @@ import { errorHandler } from '@/middlewares/error-handler.middleware';
 import { notFound } from '@/middlewares/not-found.middleware';
 import { authRouter } from '@/routes/auth.routes';
 import { healthRouter } from '@/routes/health.routes';
+import { usersRouter } from '@/routes/users.routes';
 
 export function createApp(): Express {
   const app = express();
@@ -40,6 +41,7 @@ export function createApp(): Express {
 
   app.use(healthRouter);
   app.use('/auth', authRouter);
+  app.use('/users', usersRouter);
 
   app.use(notFound);
   app.use(errorHandler);

@@ -154,6 +154,93 @@ components:
       required:
         - status
         - message
+    FollowActionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Successfully followed user
+      required:
+        - message
+    FollowListResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/FollowUser"
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+      required:
+        - users
+        - pagination
+    FollowUser:
+      type: object
+      properties:
+        id:
+          type: string
+          example: cm123user456
+        name:
+          type: string
+          example: Panda
+        avatar:
+          type: string
+          nullable: true
+        recipes:
+          type: array
+          items:
+            $ref: "#/components/schemas/FollowRecipe"
+      required:
+        - id
+        - name
+        - avatar
+        - recipes
+    FollowRecipe:
+      type: object
+      properties:
+        id:
+          type: string
+          example: recipe-123
+        title:
+          type: string
+          example: Kung Pao Chicken
+        thumb:
+          type: string
+          nullable: true
+        preview:
+          type: string
+          nullable: true
+        time:
+          type: integer
+          nullable: true
+      required:
+        - id
+        - title
+        - thumb
+        - preview
+        - time
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 0
+          exclusiveMinimum: true
+        limit:
+          type: integer
+          minimum: 0
+          exclusiveMinimum: true
+        totalCount:
+          type: integer
+          minimum: 0
+        totalPages:
+          type: integer
+          minimum: 0
+      required:
+        - page
+        - limit
+        - totalCount
+        - totalPages
   parameters: {}
 paths:
   /auth/register:
@@ -212,12 +299,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/AuthResponse"
         "401":
-          description: Invalid email or password
+          description: Invalid credentials
           content:
             application/json:
               example:
                 status: error
-                message: Invalid email or password
+                message: Invalid credentials
               schema:
                 $ref: "#/components/schemas/ApiErrorResponse"
         "422":
@@ -281,3 +368,223 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ReadinessResponse"
+  /users/me/following:
+    get:
+      operationId: listFollowing
+      tags:
+        - Users
+      summary: List users followed by the current user
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+          required: false
+          name: page
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+            example: 10
+          required: false
+          name: limit
+          in: query
+      responses:
+        "200":
+          description: Following list
+          headers: &a1
+            X-Total-Count:
+              description: Total number of matching users, before pagination.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowListResponse"
+        "400":
+          description: Invalid pagination parameters
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid pagination parameters
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+  /users/{id}/followers:
+    get:
+      operationId: listFollowers
+      tags:
+        - Users
+      summary: List followers of a user
+      description: This endpoint requires authentication; follower lists are private.
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 1
+            example: cm123user456
+          required: true
+          name: id
+          in: path
+        - schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+          required: false
+          name: page
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+            example: 10
+          required: false
+          name: limit
+          in: query
+      responses:
+        "200":
+          description: Followers list
+          headers: *a1
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowListResponse"
+        "400":
+          description: Invalid parameters or pagination
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid parameters or pagination
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              example:
+                status: error
+                message: User not found
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+  /users/me/following/{id}:
+    post:
+      operationId: followUser
+      tags:
+        - Users
+      summary: Follow a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 1
+            example: cm123user456
+          required: true
+          name: id
+          in: path
+      responses:
+        "201":
+          description: Follow created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowActionResponse"
+        "400":
+          description: Cannot follow yourself
+          content:
+            application/json:
+              example:
+                status: error
+                message: Cannot follow yourself
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              example:
+                status: error
+                message: User not found
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "409":
+          description: Already following this user
+          content:
+            application/json:
+              example:
+                status: error
+                message: Already following this user
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+    delete:
+      operationId: unfollowUser
+      tags:
+        - Users
+      summary: Unfollow a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 1
+            example: cm123user456
+          required: true
+          name: id
+          in: path
+      responses:
+        "204":
+          description: Follow removed
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Not authorized
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "404":
+          description: User or follow relationship not found
+          content:
+            application/json:
+              example:
+                status: error
+                message: User or follow relationship not found
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
