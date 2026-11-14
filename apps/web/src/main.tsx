@@ -3,11 +3,10 @@ import './index.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router';
 
 import { store } from '@/redux/app';
 
-import { App } from './App';
+import { App } from './app';
 
 const rootElement = document.getElementById('root');
 
@@ -18,9 +17,7 @@ if (!rootElement) {
 createRoot(rootElement).render(
   <StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <App />
     </Provider>
   </StrictMode>,
 );

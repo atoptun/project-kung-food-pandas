@@ -1,7 +1,6 @@
 import { cleanup, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { App } from '@/App';
 import { api } from '@/redux/api';
 import { type AppStore, setupStore } from '@/redux/app';
 
@@ -38,7 +37,7 @@ describe('App', () => {
     );
     vi.stubGlobal('fetch', fetchMock);
 
-    renderWithProviders(<App />, { store });
+    renderWithProviders({ store });
 
     await waitFor(() => {
       expect(document.title).toBe('Home | Foodies');
@@ -48,7 +47,7 @@ describe('App', () => {
   });
 
   it('renders the recipe page at /recipe/:id', async () => {
-    renderWithProviders(<App />, { store, initialEntries: ['/recipe/1'] });
+    renderWithProviders({ store, initialEntries: ['/recipe/1'] });
 
     await waitFor(() => {
       expect(document.title).toBe('Recipe | Foodies');
@@ -56,7 +55,7 @@ describe('App', () => {
   });
 
   it('renders the recipe add page at /recipe/add', async () => {
-    renderWithProviders(<App />, { store, initialEntries: ['/recipe/add'] });
+    renderWithProviders({ store, initialEntries: ['/recipe/add'] });
 
     await waitFor(() => {
       expect(document.title).toBe('Recipe Add | Foodies');
@@ -64,7 +63,7 @@ describe('App', () => {
   });
 
   it('opens the user profile at /user/:id', async () => {
-    renderWithProviders(<App />, { store, initialEntries: ['/user/1'] });
+    renderWithProviders({ store, initialEntries: ['/user/1'] });
 
     await waitFor(() => {
       expect(document.title).toBe('User Profile | Foodies');
@@ -72,7 +71,7 @@ describe('App', () => {
   });
 
   it('renders the not found page at /*', async () => {
-    renderWithProviders(<App />, { store, initialEntries: ['/not-exist-page'] });
+    renderWithProviders({ store, initialEntries: ['/not-exist-page'] });
 
     await waitFor(() => {
       expect(document.title).toBe('Not Found | Foodies');

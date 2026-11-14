@@ -18,6 +18,7 @@ type TextareaProps = Omit<
   xstyle?: stylex.StyleXStyles;
   maxLength?: number;
 };
+
 function Textarea({
   xstyle,
   maxLength = 1000,
@@ -69,7 +70,7 @@ function Textarea({
       />
 
       <div {...stylex.props(styles.toggle)}>
-        {isControlled ? value.length : characterCount}/
+        {isControlled ? (value?.length ?? 0) : characterCount}/
         <span {...stylex.props(styles.span)}>{maxLength}</span>
       </div>
     </div>

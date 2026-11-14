@@ -6,7 +6,6 @@ function HomePage() {
 
   return (
     <>
-      <title>Home | Foodies</title>
       <Container>
         <h1>Home</h1>
 
