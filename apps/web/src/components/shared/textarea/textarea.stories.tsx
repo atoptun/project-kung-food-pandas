@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import * as stylex from '@stylexjs/stylex';
 import { useArgs } from 'storybook/preview-api';
 
-import Textarea from './Textarea';
+import Textarea from './textarea';
 
 const demoStyles = stylex.create({
   container: { width: '100%', maxWidth: 400 },

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import * as stylex from '@stylexjs/stylex';
 
-import Input from './Input';
+import Input from './input';
 
 const demoStyles = stylex.create({
   stack: { display: 'grid', gap: 24, width: '100%' },

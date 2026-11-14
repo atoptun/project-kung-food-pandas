@@ -1,7 +1,7 @@
 import { cleanup, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { App } from '@/App';
+import { App } from '@/app';
 import { api } from '@/redux/api';
 import { type AppStore, setupStore } from '@/redux/app';
 
