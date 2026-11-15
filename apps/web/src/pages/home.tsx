@@ -1,8 +1,8 @@
+import { useTestimonialsQuery } from '@/api/testimonials/testimonials.queries';
 import Container from '@/components/shared/container/container';
-import { useGetTestimonialsQuery } from '@/redux/api';
 
 function HomePage() {
-  const { data, isLoading, isError } = useGetTestimonialsQuery();
+  const { data, isLoading, isError } = useTestimonialsQuery();
 
   return (
     <>

@@ -1,0 +1,29 @@
+[
+  {
+    "id": "64f1a2b3c4d5e6f7a8b9c0d1",
+    "testimonial": "Mock testimonial 1. Foodies has completely transformed how I cook at home. The recipes are easy to follow and the ingredient lists are always accurate!",
+    "owner": {
+      "id": "user-101",
+      "name": "Sarah Jenkins",
+      "avatar": "https://res.cloudinary.com/demo/image/upload/v1612345678/sample.jpg"
+    }
+  },
+  {
+    "id": "64f1a2b3c4d5e6f7a8b9c0d2",
+    "testimonial": "Mock testimonial 2. I love the detailed cooking instructions and community vibe. Finding inspiration for dinner has never been this simple.",
+    "owner": {
+      "id": "user-102",
+      "name": "Marco Rossi",
+      "avatar": null
+    }
+  },
+  {
+    "id": "64f1a2b3c4d5e6f7a8b9c0d3",
+    "testimonial": "Mock testimonial 3. The search and category filters are super fast. I can quickly discover desserts or pasta dishes with whatever is in my fridge.",
+    "owner": {
+      "id": "user-103",
+      "name": "Olena Kovalenko",
+      "avatar": "https://res.cloudinary.com/demo/image/upload/v1612345678/sample.jpg"
+    }
+  }
+]
