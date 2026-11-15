@@ -1,7 +1,7 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 
-import { PublicUserSchema } from '../index';
 import { z } from '../zod';
+import { PublicUserSchema } from './auth.schema';
 import { PaginationMetaSchema } from './pagination.schema';
 
 extendZodWithOpenApi(z);
