@@ -16,8 +16,6 @@ import { dictionariesRouter } from '@/routes/dictionaries.routes';
 import { healthRouter } from '@/routes/health.routes';
 import { usersRouter } from '@/routes/users.routes';
 
-import { testimonialsRouter } from './routes/testimonials.route';
-
 export async function createApp(): Promise<Express> {
   const app = express();
 
