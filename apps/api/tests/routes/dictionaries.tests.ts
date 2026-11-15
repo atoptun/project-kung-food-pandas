@@ -20,8 +20,8 @@ describe('Dictionaries Endpoints (Public Access & Contracts)', () => {
   describe('GET /categories', () => {
     it('returns 200 and array of categories without authentication', async () => {
       const mockCategories = [
-        { id: '6462a6cd4c3d0ddd28897f8f', name: 'Dessert', img: null },
-        { id: '6462a6cd4c3d0ddd28897f90', name: 'Seafood', img: null },
+        { id: '6462a6cd4c3d0ddd28897f8f', name: 'Dessert', image: null },
+        { id: '6462a6cd4c3d0ddd28897f90', name: 'Seafood', image: null },
       ];
       vi.mocked(prisma.category.findMany).mockResolvedValue(mockCategories);
 
