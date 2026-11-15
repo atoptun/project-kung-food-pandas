@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const ClientEnvSchema = z.object({
-  VITE_API_URL: z.string().url().default('http://localhost:4000'),
+  VITE_API_URL: z.url().default('http://localhost:4000'),
 });
 
 export const clientEnv = ClientEnvSchema.parse({
