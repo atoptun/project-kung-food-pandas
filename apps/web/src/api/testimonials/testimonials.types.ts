@@ -1,1 +1,1 @@
-export type { TestimonialsListResponse } from '@repo/shared';
+export type { Testimonial, TestimonialsListResponse } from '@repo/shared';

@@ -41,9 +41,15 @@
     "@typescript/native": "npm:typescript@^7.0.2",
     "@vitejs/plugin-react": "^6.3.0",
     "jsdom": "^31.0.0",
+    "msw": "^3.0.6",
     "storybook": "^10.6.7",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "vite": "^8.3.7",
     "vitest": "^5.1.0"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }
