@@ -1,34 +1,46 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, type RenderOptions, type RenderResult } from '@testing-library/react';
 import type { ReactElement, ReactNode } from 'react';
-import { Provider } from 'react-redux';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 
-import { type AppStore, setupStore } from '@/redux/app';
 import { routes } from '@/routes';
+
+export function createTestQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        gcTime: Infinity,
+      },
+      mutations: {
+        retry: false,
+      },
+    },
+  });
+}
 
 type TestRenderOptions = Omit<RenderOptions, 'wrapper'> & {
   ui?: ReactElement;
   initialEntries?: string[];
-  store?: AppStore;
+  queryClient?: QueryClient;
 };
 
 export function renderWithProviders({
   ui,
   initialEntries = ['/'],
-  store = setupStore(),
+  queryClient = createTestQueryClient(),
   ...options
-}: TestRenderOptions = {}): RenderResult & { store: AppStore } {
-  // If a single UI component is passed, render it inside a root route `*` so that any initialEntries match
+}: TestRenderOptions = {}): RenderResult & { queryClient: QueryClient } {
   const testRouter = createMemoryRouter(ui ? [{ path: '*', element: ui }] : routes, {
     initialEntries,
   });
 
   function TestProviders({ children }: { children: ReactNode }) {
-    return <Provider store={store}>{children}</Provider>;
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
   }
 
   return {
-    store,
+    queryClient,
     ...render(<RouterProvider router={testRouter} />, { wrapper: TestProviders, ...options }),
   };
 }

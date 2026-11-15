@@ -1,53 +1,46 @@
 import { cleanup, screen, waitFor } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { http, HttpResponse } from 'msw';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { api } from '@/redux/api';
-import { type AppStore, setupStore } from '@/redux/app';
-
-import { renderWithProviders } from './test-utils';
+import { server } from './mocks/server';
+import { createTestQueryClient, renderWithProviders } from './test-utils';
 
 describe('App', () => {
-  let store: AppStore;
+  let queryClient = createTestQueryClient();
 
   beforeEach(() => {
-    store = setupStore();
+    queryClient = createTestQueryClient();
   });
 
   afterEach(() => {
     cleanup();
-    store.dispatch(api.util.resetApiState());
-    vi.unstubAllGlobals();
+    queryClient.clear();
   });
 
-  it('opens the home page at /', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(
-      Response.json({
-        items: [
-          {
-            id: 'testimonial-1',
-            testimonial: 'A test review of Foodies.',
-            owner: { id: 'user-1', name: 'Test User', avatar: null },
-          },
-        ],
-        total: 1,
-        page: 1,
-        totalPages: 1,
-        limit: 10,
-      }),
-    );
-    vi.stubGlobal('fetch', fetchMock);
-
-    renderWithProviders({ store });
+  it('opens the home page at / and displays testimonials from MSW', async () => {
+    renderWithProviders({ queryClient });
 
     await waitFor(() => {
       expect(document.title).toBe('Home | Foodies');
     });
-    expect(await screen.findByText('A test review of Foodies.')).toBeInTheDocument();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    expect(await screen.findByText(/Mock testimonial 1/i)).toBeInTheDocument();
+  });
+
+  it('displays error message when testimonials fetch fails', async () => {
+    server.use(
+      http.get('*/testimonials', () => {
+        return new HttpResponse(null, { status: 500 });
+      }),
+    );
+
+    renderWithProviders({ queryClient });
+
+    expect(await screen.findByText('Не вдалося завантажити відгуки.')).toBeInTheDocument();
   });
 
   it('renders the recipe page at /recipe/:id', async () => {
-    renderWithProviders({ store, initialEntries: ['/recipe/1'] });
+    renderWithProviders({ queryClient, initialEntries: ['/recipe/1'] });
 
     await waitFor(() => {
       expect(document.title).toBe('Recipe | Foodies');
@@ -55,7 +48,7 @@ describe('App', () => {
   });
 
   it('renders the recipe add page at /recipe/add', async () => {
-    renderWithProviders({ store, initialEntries: ['/recipe/add'] });
+    renderWithProviders({ queryClient, initialEntries: ['/recipe/add'] });
 
     await waitFor(() => {
       expect(document.title).toBe('Recipe Add | Foodies');
@@ -63,7 +56,7 @@ describe('App', () => {
   });
 
   it('opens the user profile at /user/:id', async () => {
-    renderWithProviders({ store, initialEntries: ['/user/1'] });
+    renderWithProviders({ queryClient, initialEntries: ['/user/1'] });
 
     await waitFor(() => {
       expect(document.title).toBe('User Profile | Foodies');
@@ -71,7 +64,7 @@ describe('App', () => {
   });
 
   it('renders the not found page at /*', async () => {
-    renderWithProviders({ store, initialEntries: ['/not-exist-page'] });
+    renderWithProviders({ queryClient, initialEntries: ['/not-exist-page'] });
 
     await waitFor(() => {
       expect(document.title).toBe('Not Found | Foodies');

@@ -1,4 +1,4 @@
-import { delay, http, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 import type { Testimonial, TestimonialsListResponse } from '@/api/testimonials/testimonials.types';
 
@@ -8,8 +8,7 @@ const mockTestimonials: Testimonial[] = testimonialsData;
 
 export const testimonialsHandlers = [
   // GET /testimonials
-  http.get('*/testimonials', async () => {
-    await delay(50);
+  http.get('*/testimonials', () => {
     return HttpResponse.json<TestimonialsListResponse>({
       items: mockTestimonials,
       total: mockTestimonials.length,
