@@ -16,6 +16,8 @@ import { dictionariesRouter } from '@/routes/dictionaries.routes';
 import { healthRouter } from '@/routes/health.routes';
 import { usersRouter } from '@/routes/users.routes';
 
+import { testimonialsRouter } from './routes/testimonials.routes';
+
 export async function createApp(): Promise<Express> {
   const app = express();
 
@@ -51,6 +53,8 @@ export async function createApp(): Promise<Express> {
 
   // Routes Dictionaries
   app.use(dictionariesRouter);
+
+  app.use('/testimonials', testimonialsRouter);
 
   app.use(notFound);
   app.use(errorHandler);
