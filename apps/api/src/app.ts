@@ -14,9 +14,8 @@ import { notFound } from '@/middlewares/not-found.middleware';
 import { dictionariesRouter } from '@/routes/dictionaries.routes';
 // import { authRouter } from '@/routes/auth.routes';
 import { healthRouter } from '@/routes/health.routes';
+import { testimonialsRouter } from '@/routes/testimonials.routes';
 import { usersRouter } from '@/routes/users.routes';
-
-import { testimonialsRouter } from './routes/testimonials.routes';
 
 export async function createApp(): Promise<Express> {
   const app = express();
