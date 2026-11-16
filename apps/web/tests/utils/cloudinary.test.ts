@@ -1,6 +1,21 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildCloudinaryUrl, getCloudinarySrcSet } from '@/utils/cloudinary';
+import { buildCloudinaryUrl, getCloudinarySrcSet, isCloudinaryUrl } from '@/utils/cloudinary';
+
+describe('isCloudinaryUrl', () => {
+  it('returns true for valid Cloudinary upload URLs', () => {
+    expect(isCloudinaryUrl('https://res.cloudinary.com/demo/image/upload/sample.jpg')).toBe(true);
+    expect(isCloudinaryUrl('https://res.cloudinary.com/demo/video/upload/promo.mp4')).toBe(true);
+  });
+
+  it('returns false for external URLs or local assets', () => {
+    expect(isCloudinaryUrl('https://images.unsplash.com/photo-1546069901')).toBe(false);
+    expect(isCloudinaryUrl('/assets/no-image.png')).toBe(false);
+    expect(isCloudinaryUrl('https://google.com/avatar.jpg')).toBe(false);
+    expect(isCloudinaryUrl(null)).toBe(false);
+    expect(isCloudinaryUrl('')).toBe(false);
+  });
+});
 
 describe('buildCloudinaryUrl', () => {
   describe('Success cases', () => {
@@ -118,7 +133,7 @@ describe('getCloudinarySrcSet', () => {
   });
 
   it('handles empty or null URL safely', () => {
-    const emptyResult = getCloudinarySrcSet(null, 'recipeCardDesktop');
+    const emptyResult = getCloudinarySrcSet(null, 'recipeCard');
     expect(emptyResult.src).toBe('');
     expect(emptyResult.srcSet).toBeUndefined();
   });

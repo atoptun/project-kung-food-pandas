@@ -10,7 +10,7 @@ export type ImagePreset =
 
   // Recipes
   | 'recipeCardMobile' // 343x250, c_fill
-  | 'recipeCardDesktop' // 342x369, c_fill
+  | 'recipeCard' // 342x369, c_fill
   | 'recipeMini' // 60x60, c_fill
   | 'recipeDetail' // 551x400, c_fill
 
@@ -36,7 +36,7 @@ export const PRESET_CONFIGS: Record<ImagePreset, PresetConfig> = {
   ingredientMobile: { w: 55, h: 55, c: 'fill', g: 'auto' },
 
   recipeCardMobile: { w: 343, h: 250, c: 'fill', g: 'auto' },
-  recipeCardDesktop: { w: 342, h: 369, c: 'fill', g: 'auto' },
+  recipeCard: { w: 342, h: 369, c: 'fill', g: 'auto' },
   recipeMini: { w: 60, h: 60, c: 'fill', g: 'auto' },
   recipeDetail: { w: 551, h: 400, c: 'fill', g: 'auto' },
 
@@ -56,6 +56,15 @@ export interface BuildCloudinaryUrlOptions {
 }
 
 /**
+ * Checks whether the given string is a valid transformable Cloudinary upload URL.
+ */
+export function isCloudinaryUrl(url?: string | null): url is string {
+  return Boolean(
+    url && url.includes('cloudinary.com') && url.match(/(\/(?:image|video)\/upload\/)/),
+  );
+}
+
+/**
  * Transforms Cloudinary image URLs with automatic format (AVIF/WebP), quality, resizing and DPR.
  * Safely returns the original string if not a valid Cloudinary upload URL.
  */
@@ -63,7 +72,7 @@ export function buildCloudinaryUrl(
   url?: string | null,
   options: BuildCloudinaryUrlOptions = {},
 ): string {
-  if (!url || !url.includes('cloudinary.com') || !url.match(/(\/(?:image|video)\/upload\/)/)) {
+  if (!isCloudinaryUrl(url)) {
     return url ?? '';
   }
 
