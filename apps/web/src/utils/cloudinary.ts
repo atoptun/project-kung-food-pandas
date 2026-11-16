@@ -5,8 +5,8 @@ export type ImagePreset =
   | 'avatarProfile' // 120x120, c_fill, g_face
 
   // Ingredients
-  | 'ingredient' // 100x100, c_fill
-  | 'ingredientSmall' // 85x85, c_fill
+  | 'ingredient' // 60x60, c_fill
+  | 'ingredientMobile' // 55x55, c_fill
 
   // Recipes
   | 'recipeCardMobile' // 343x250, c_fill
@@ -32,8 +32,8 @@ export const PRESET_CONFIGS: Record<ImagePreset, PresetConfig> = {
   avatarTestimonial: { w: 60, h: 60, c: 'fill', g: 'face' },
   avatarProfile: { w: 120, h: 120, c: 'fill', g: 'face' },
 
-  ingredient: { w: 100, h: 100, c: 'fill', g: 'auto' },
-  ingredientSmall: { w: 85, h: 85, c: 'fill', g: 'auto' },
+  ingredient: { w: 60, h: 60, c: 'fill', g: 'auto' },
+  ingredientMobile: { w: 55, h: 55, c: 'fill', g: 'auto' },
 
   recipeCardMobile: { w: 343, h: 250, c: 'fill', g: 'auto' },
   recipeCardDesktop: { w: 342, h: 369, c: 'fill', g: 'auto' },
@@ -88,15 +88,26 @@ export function buildCloudinaryUrl(
   return url.replace(/(\/(?:image|video)\/upload\/)/, `$1${transformString}/`);
 }
 
+export interface CloudinarySrcSetResult {
+  src: string;
+  srcSet?: string;
+}
+
 /**
- * Returns src and srcSet attributes for responsive high-DPI (Retina 1x/2x) rendering.
+ * Returns src and optional srcSet attributes for responsive high-DPI (Retina 1x/2x) rendering.
+ * If url is not a valid Cloudinary image, srcSet is undefined.
  */
-export function getCloudinarySrcSet(url?: string | null, preset?: ImagePreset) {
+export function getCloudinarySrcSet(
+  url?: string | null,
+  preset?: ImagePreset,
+): CloudinarySrcSetResult {
   const src = buildCloudinaryUrl(url, { preset, dpr: 1 });
   const src2x = buildCloudinaryUrl(url, { preset, dpr: 2 });
 
+  const hasRetinaVariant = Boolean(src && src2x && src !== src2x);
+
   return {
     src,
-    srcSet: `${src} 1x, ${src2x} 2x`,
+    srcSet: hasRetinaVariant ? `${src} 1x, ${src2x} 2x` : undefined,
   };
 }

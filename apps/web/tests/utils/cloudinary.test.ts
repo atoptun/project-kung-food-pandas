@@ -102,4 +102,24 @@ describe('getCloudinarySrcSet', () => {
       `${src} 1x, https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,dpr_2.0,w_343,h_250,c_fill,g_auto/category.jpg 2x`,
     );
   });
+
+  it('returns undefined srcSet for non-Cloudinary or local URLs', () => {
+    const externalUrl = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c';
+    const result = getCloudinarySrcSet(externalUrl, 'ingredient');
+
+    expect(result.src).toBe(externalUrl);
+    expect(result.srcSet).toBeUndefined();
+
+    const localUrl = '/assets/no-image.png';
+    const localResult = getCloudinarySrcSet(localUrl, 'avatarHeader');
+
+    expect(localResult.src).toBe(localUrl);
+    expect(localResult.srcSet).toBeUndefined();
+  });
+
+  it('handles empty or null URL safely', () => {
+    const emptyResult = getCloudinarySrcSet(null, 'recipeCardDesktop');
+    expect(emptyResult.src).toBe('');
+    expect(emptyResult.srcSet).toBeUndefined();
+  });
 });
