@@ -77,7 +77,7 @@ function SignUpForm({ titleId, onSuccess, onSwitchToSignIn }: SignUpFormProps) {
       </form>
 
       <p {...stylex.props(styles.switchText)}>
-        I already have an account?{' '}
+        Already have an account?{' '}
         <button type="button" {...stylex.props(styles.switchButton)} onClick={onSwitchToSignIn}>
           Sign in
         </button>

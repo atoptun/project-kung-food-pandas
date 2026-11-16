@@ -1,4 +1,4 @@
-import { fireEvent, screen, within } from '@testing-library/react';
+import { act, fireEvent, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { mockAuthAccount } from '@/mocks/handlers/auth';
@@ -56,6 +56,7 @@ describe('Layout', () => {
       fireEvent.click(burger);
 
       const menu = screen.getByRole('dialog', { name: 'Menu' });
+      expect(burger).toHaveAttribute('aria-controls', menu.id);
       expect(within(menu).getByRole('link', { name: 'Home' })).toBeInTheDocument();
       expect(within(menu).getByRole('link', { name: 'Add recipe' })).toBeInTheDocument();
       expect(document.body.style.overflow).toBe('hidden');
@@ -80,6 +81,30 @@ describe('Layout', () => {
 
       expect(router.state.location.pathname).toBe('/recipe/add');
       expect(screen.queryByRole('dialog', { name: 'Menu' })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('User bar', () => {
+    it('closes the account menu when focus moves outside', async () => {
+      renderWithProviders({ user: mockAuthAccount });
+
+      const banner = screen.getByRole('banner');
+      fireEvent.click(await within(banner).findByRole('button', { name: /Victoria/ }));
+      expect(within(banner).getByRole('menu', { name: 'Account' })).toBeInTheDocument();
+
+      act(() => within(banner).getByRole('link', { name: 'Foodies home' }).focus());
+
+      expect(within(banner).queryByRole('menu', { name: 'Account' })).not.toBeInTheDocument();
+    });
+
+    it('opens the logout dialog from the account menu', async () => {
+      renderWithProviders({ user: mockAuthAccount });
+
+      const banner = screen.getByRole('banner');
+      fireEvent.click(await within(banner).findByRole('button', { name: /Victoria/ }));
+      fireEvent.click(within(banner).getByRole('menuitem', { name: 'Log out' }));
+
+      expect(screen.getByRole('dialog', { name: 'Are you logging out?' })).toBeInTheDocument();
     });
   });
 

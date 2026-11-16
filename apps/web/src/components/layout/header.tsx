@@ -1,4 +1,5 @@
 import * as stylex from '@stylexjs/stylex';
+import { useId } from 'react';
 
 import Container from '@/components/shared/container/container';
 import Icon from '@/components/shared/icon/icon';
@@ -18,6 +19,7 @@ type HeaderProps = {
 
 function Header({ theme = 'light' }: HeaderProps) {
   const { user, isPending } = useAuth();
+  const mobileMenuId = useId();
   const isMobileMenuOpen = useUIStore((state) => state.isMobileMenuOpen);
   const openMobileMenu = useUIStore((state) => state.openMobileMenu);
 
@@ -50,7 +52,7 @@ function Header({ theme = 'light' }: HeaderProps) {
                 {...stylex.props(header.burger)}
                 aria-label="Open menu"
                 aria-expanded={isMobileMenuOpen}
-                aria-controls="mobile-menu"
+                aria-controls={isMobileMenuOpen ? mobileMenuId : undefined}
                 onClick={openMobileMenu}
               >
                 <Icon name="burger" size={28} />
@@ -62,7 +64,7 @@ function Header({ theme = 'light' }: HeaderProps) {
         </div>
       </Container>
 
-      {user && <MobileMenu user={user} />}
+      {user && <MobileMenu id={mobileMenuId} user={user} />}
     </header>
   );
 }

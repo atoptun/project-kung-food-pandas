@@ -27,14 +27,20 @@ function UserBar({ user }: UserBarProps) {
 
     menuRef.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
 
-    function handlePointerDown(event: PointerEvent) {
+    // Close when a pointer press or keyboard focus lands outside the bar. Listening on the
+    // document (not onBlur) keeps item clicks working in Safari, where buttons get no focus.
+    function handleOutside(event: Event) {
       if (event.target instanceof Node && !wrapperRef.current?.contains(event.target)) {
         setIsOpen(false);
       }
     }
 
-    document.addEventListener('pointerdown', handlePointerDown, true);
-    return () => document.removeEventListener('pointerdown', handlePointerDown, true);
+    document.addEventListener('pointerdown', handleOutside, true);
+    document.addEventListener('focusin', handleOutside);
+    return () => {
+      document.removeEventListener('pointerdown', handleOutside, true);
+      document.removeEventListener('focusin', handleOutside);
+    };
   }, [isOpen]);
 
   const closeMenu = (returnFocus = false) => {
@@ -61,13 +67,7 @@ function UserBar({ user }: UserBarProps) {
   };
 
   return (
-    <div
-      ref={wrapperRef}
-      {...stylex.props(userBar.wrapper)}
-      onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setIsOpen(false);
-      }}
-    >
+    <div ref={wrapperRef} {...stylex.props(userBar.wrapper)}>
       <button
         ref={triggerRef}
         type="button"

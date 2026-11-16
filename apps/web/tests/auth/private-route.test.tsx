@@ -15,6 +15,8 @@ describe('Private routes', () => {
 
       expect(await screen.findByRole('dialog', { name: 'Sign in' })).toBeInTheDocument();
       expect(router.state.location.pathname).toBe('/');
+      // The one-off request is cleared, so Back/refresh does not reopen the dialog.
+      expect(router.state.location.state).toBeNull();
     },
   );
 

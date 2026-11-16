@@ -14,7 +14,9 @@ import UserBar from './user-bar';
 
 type MobileMenuUser = Pick<AuthSessionUser, 'id' | 'name' | 'image'>;
 
-function MobileMenuPanel({ user, onClose }: { user: MobileMenuUser; onClose: () => void }) {
+type MobileMenuPanelProps = { id: string; user: MobileMenuUser; onClose: () => void };
+
+function MobileMenuPanel({ id, user, onClose }: MobileMenuPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
 
   useDialogBehavior(panelRef, onClose);
@@ -22,7 +24,7 @@ function MobileMenuPanel({ user, onClose }: { user: MobileMenuUser; onClose: () 
   return (
     <div
       ref={panelRef}
-      id="mobile-menu"
+      id={id}
       role="dialog"
       aria-modal="true"
       aria-label="Menu"
@@ -55,14 +57,17 @@ function MobileMenuPanel({ user, onClose }: { user: MobileMenuUser; onClose: () 
   );
 }
 
-/** Full-screen navigation for mobile. Open state lives in `useUIStore`. */
-function MobileMenu({ user }: { user: MobileMenuUser }) {
+/**
+ * Full-screen navigation for mobile. Open state lives in `useUIStore`;
+ * `id` comes from the burger button (useId) so its aria-controls points here.
+ */
+function MobileMenu({ id, user }: { id: string; user: MobileMenuUser }) {
   const isOpen = useUIStore((state) => state.isMobileMenuOpen);
   const close = useUIStore((state) => state.closeMobileMenu);
 
   if (!isOpen) return null;
 
-  return createPortal(<MobileMenuPanel user={user} onClose={close} />, document.body);
+  return createPortal(<MobileMenuPanel id={id} user={user} onClose={close} />, document.body);
 }
 
 export default MobileMenu;

@@ -89,6 +89,26 @@ describe('Modal', () => {
     expect(document.body.style.overflow).toBe('auto');
   });
 
+  it('keeps the page locked until the last of nested dialogs closes', () => {
+    document.body.style.overflow = 'auto';
+    const outer = render(
+      <Modal isOpen onClose={vi.fn()} aria-label="Outer modal">
+        <p>Outer</p>
+      </Modal>,
+    );
+    const inner = render(
+      <Modal isOpen onClose={vi.fn()} aria-label="Inner modal">
+        <p>Inner</p>
+      </Modal>,
+    );
+
+    inner.unmount();
+    expect(document.body.style.overflow).toBe('hidden');
+
+    outer.unmount();
+    expect(document.body.style.overflow).toBe('auto');
+  });
+
   it('moves focus inside and traps Tab navigation', () => {
     renderModal();
 

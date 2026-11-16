@@ -1,5 +1,7 @@
 import { type RefObject, useEffect, useRef } from 'react';
 
+import { lockBodyScroll } from '@/utils/scroll-lock';
+
 const FOCUSABLE_SELECTOR = [
   'a[href]',
   'button:not([disabled])',
@@ -30,8 +32,7 @@ export function useDialogBehavior(
 
   useEffect(() => {
     const previouslyFocused = document.activeElement as HTMLElement | null;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    const unlockScroll = lockBodyScroll();
 
     const container = containerRef.current;
     if (container) {
@@ -39,7 +40,7 @@ export function useDialogBehavior(
     }
 
     return () => {
-      document.body.style.overflow = previousOverflow;
+      unlockScroll();
       if (previouslyFocused?.isConnected) {
         previouslyFocused.focus();
       }
