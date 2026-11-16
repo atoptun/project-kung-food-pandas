@@ -43,10 +43,14 @@ export function RecipeCard({
 
   return (
     <article {...stylex.props(styles.card, xstyle)}>
-      <Link to={recipeHref} tabIndex={-1} aria-hidden="true" {...stylex.props(styles.imageLink)}>
+      <Link
+        to={recipeHref}
+        aria-label={`View recipe: ${title}`}
+        {...stylex.props(styles.imageLink)}
+      >
         <ResponsiveImage
           src={image}
-          alt={title}
+          alt=""
           preset={{
             mobile: 'recipeCardMobile',
             desktop: 'recipeCard',

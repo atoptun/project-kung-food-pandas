@@ -10,7 +10,7 @@ export const styles = stylex.create({
     alignItems: 'center',
     width: '100%',
     minWidth: 0,
-    boxSizing: 'border-box',
+    paddingRight: 20,
     gap: {
       default: 10,
       [breakpoints.tablet]: 14,

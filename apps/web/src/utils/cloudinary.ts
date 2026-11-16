@@ -55,13 +55,13 @@ export interface BuildCloudinaryUrlOptions {
   dpr?: number;
 }
 
+const CLOUDINARY_UPLOAD_REGEX = /\/(?:image|video)\/upload\//;
+
 /**
  * Checks whether the given string is a valid transformable Cloudinary upload URL.
  */
 export function isCloudinaryUrl(url?: string | null): url is string {
-  return Boolean(
-    url && url.includes('cloudinary.com') && url.match(/(\/(?:image|video)\/upload\/)/),
-  );
+  return Boolean(url && url.includes('cloudinary.com') && CLOUDINARY_UPLOAD_REGEX.test(url));
 }
 
 /**

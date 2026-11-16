@@ -13,7 +13,7 @@ export interface ResponsiveImagePresetConfig {
 
 export interface ResponsiveImageProps {
   src?: string | null;
-  alt: string;
+  alt?: string;
   preset: ResponsiveImagePresetConfig;
   placeholderSize?: number;
   wrapperXstyle?: stylex.StyleXStyles;
@@ -70,7 +70,7 @@ export function ResponsiveImage({
       ) : (
         <img
           {...stylex.props(styles.img, imgXstyle)}
-          src={mob1x}
+          src={src}
           alt={alt}
           loading="lazy"
           decoding="async"

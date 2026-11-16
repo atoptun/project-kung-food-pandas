@@ -12,7 +12,6 @@ export interface IngredientItemProps {
   measure: string;
   image?: string | null;
   onRemove?: (id: string) => void;
-  isRemoving?: boolean;
   xstyle?: stylex.StyleXStyles;
 }
 
