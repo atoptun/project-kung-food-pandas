@@ -1,6 +1,6 @@
 import { MutationCache, QueryClient } from '@tanstack/react-query';
 
-import { notify } from '@/stores/notifications.store';
+import { notify } from '@/lib/notify';
 import { getErrorMessage } from '@/utils/error-message';
 
 declare module '@tanstack/react-query' {

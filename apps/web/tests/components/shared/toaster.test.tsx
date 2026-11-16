@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createQueryClient } from '@/api/query-client';
 import Toaster from '@/components/shared/toaster/toaster';
-import { notify } from '@/stores/notifications.store';
+import { notify } from '@/lib/notify';
 import { getErrorMessage } from '@/utils/error-message';
 
 import { renderWithProviders } from '../../test-utils';
@@ -30,7 +30,11 @@ describe('Notifications', () => {
     vi.useRealTimers();
   });
 
+  // react-hot-toast keeps a dismissed toast mounted for 1s to play the exit animation.
+  const finishExitAnimation = () => act(() => vi.advanceTimersByTime(1000));
+
   it('shows an error notification that can be dismissed', () => {
+    vi.useFakeTimers();
     renderWithProviders({ ui: <Toaster /> });
 
     act(() => notify.error('Something went wrong'));
@@ -38,6 +42,7 @@ describe('Notifications', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('Something went wrong');
 
     fireEvent.click(screen.getByRole('button', { name: 'Dismiss notification' }));
+    finishExitAnimation();
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
@@ -48,8 +53,20 @@ describe('Notifications', () => {
     act(() => notify.error('Temporary error'));
     expect(screen.getByRole('alert')).toBeInTheDocument();
 
-    act(() => vi.advanceTimersByTime(6000));
+    act(() => vi.advanceTimersByTime(5000));
+    finishExitAnimation();
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('shows a single toast for repeated identical errors', () => {
+    renderWithProviders({ ui: <Toaster /> });
+
+    act(() => {
+      notify.error('Network error');
+      notify.error('Network error');
+    });
+
+    expect(screen.getAllByRole('alert')).toHaveLength(1);
   });
 
   it('notifies about failed mutations through the shared query client', async () => {
