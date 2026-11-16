@@ -1,6 +1,21 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildCloudinaryUrl, getCloudinarySrcSet } from '@/utils/cloudinary';
+import { buildCloudinaryUrl, getCloudinarySrcSet, isCloudinaryUrl } from '@/utils/cloudinary';
+
+describe('isCloudinaryUrl', () => {
+  it('returns true for valid Cloudinary upload URLs', () => {
+    expect(isCloudinaryUrl('https://res.cloudinary.com/demo/image/upload/sample.jpg')).toBe(true);
+    expect(isCloudinaryUrl('https://res.cloudinary.com/demo/video/upload/promo.mp4')).toBe(true);
+  });
+
+  it('returns false for external URLs or local assets', () => {
+    expect(isCloudinaryUrl('https://images.unsplash.com/photo-1546069901')).toBe(false);
+    expect(isCloudinaryUrl('/assets/no-image.png')).toBe(false);
+    expect(isCloudinaryUrl('https://google.com/avatar.jpg')).toBe(false);
+    expect(isCloudinaryUrl(null)).toBe(false);
+    expect(isCloudinaryUrl('')).toBe(false);
+  });
+});
 
 describe('buildCloudinaryUrl', () => {
   describe('Success cases', () => {
@@ -101,5 +116,25 @@ describe('getCloudinarySrcSet', () => {
     expect(srcSet).toBe(
       `${src} 1x, https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,dpr_2.0,w_343,h_250,c_fill,g_auto/category.jpg 2x`,
     );
+  });
+
+  it('returns undefined srcSet for non-Cloudinary or local URLs', () => {
+    const externalUrl = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c';
+    const result = getCloudinarySrcSet(externalUrl, 'ingredient');
+
+    expect(result.src).toBe(externalUrl);
+    expect(result.srcSet).toBeUndefined();
+
+    const localUrl = '/assets/no-image.png';
+    const localResult = getCloudinarySrcSet(localUrl, 'avatarHeader');
+
+    expect(localResult.src).toBe(localUrl);
+    expect(localResult.srcSet).toBeUndefined();
+  });
+
+  it('handles empty or null URL safely', () => {
+    const emptyResult = getCloudinarySrcSet(null, 'recipeCard');
+    expect(emptyResult.src).toBe('');
+    expect(emptyResult.srcSet).toBeUndefined();
   });
 });

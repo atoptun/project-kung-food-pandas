@@ -30,7 +30,8 @@ type IconProps = {
     | 'plus'
     | 'trash'
     | 'upload-photo'
-    | 'youtube';
+    | 'youtube'
+    | 'no-image';
   size?: number;
   xstyle?: stylex.StyleXStyles;
 };
