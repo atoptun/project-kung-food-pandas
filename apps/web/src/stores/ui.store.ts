@@ -7,24 +7,13 @@ interface UIState {
   toggleMobileMenu: () => void;
 }
 
+// Page scroll lock is handled by the mobile menu dialog itself (useDialogBehavior).
 export const useUIStore = create<UIState>((set, get) => ({
   isMobileMenuOpen: false,
 
-  openMobileMenu: () => {
-    document.body.style.overflow = 'hidden';
-    set({ isMobileMenuOpen: true });
-  },
+  openMobileMenu: () => set({ isMobileMenuOpen: true }),
 
-  closeMobileMenu: () => {
-    document.body.style.overflow = '';
-    set({ isMobileMenuOpen: false });
-  },
+  closeMobileMenu: () => set({ isMobileMenuOpen: false }),
 
-  toggleMobileMenu: () => {
-    if (get().isMobileMenuOpen) {
-      get().closeMobileMenu();
-    } else {
-      get().openMobileMenu();
-    }
-  },
+  toggleMobileMenu: () => set({ isMobileMenuOpen: !get().isMobileMenuOpen }),
 }));
