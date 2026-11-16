@@ -17,6 +17,7 @@ const meta = {
     layout: 'centered',
   },
   argTypes: {
+    to: { control: 'text' },
     variant: { control: 'select', options: ['solid', 'outline', 'inverse'] },
     fullWidth: { control: 'boolean' },
     xstyle: { control: false },
@@ -92,4 +93,9 @@ export const CircleButtonMobile = {
   globals: {
     viewport: { value: 'mobileSmall', isRotated: false },
   },
+} satisfies Story;
+
+export const AsLink = {
+  args: { to: '/recipe/add', children: 'Add recipe' },
+  parameters: { controls: { exclude: ['disabled', 'type'] } },
 } satisfies Story;
