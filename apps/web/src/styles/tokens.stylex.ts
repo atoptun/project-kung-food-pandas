@@ -15,7 +15,7 @@ export const radii = stylex.defineConsts({
   pill: 30,
   card: 16,
   modal: 30,
-  modalMobile: 24,
+  modalMobile: 20,
   circle: '50%',
 });
 
@@ -26,7 +26,8 @@ export const breakpoints = stylex.defineConsts({
 });
 
 export const fonts = stylex.defineConsts({
-  family: "'Mulish', sans-serif",
+  // @fontsource-variable/mulish registers the face as 'Mulish Variable'
+  family: "'Mulish Variable', 'Mulish', sans-serif",
 });
 
 export const fontWeights = stylex.defineConsts({

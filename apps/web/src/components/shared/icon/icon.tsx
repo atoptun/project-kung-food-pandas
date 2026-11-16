@@ -16,6 +16,7 @@ const styles = stylex.create({
 type IconProps = {
   name:
     | 'arrow-up-right'
+    | 'burger'
     | 'check'
     | 'chevron-down'
     | 'chevron-up'
