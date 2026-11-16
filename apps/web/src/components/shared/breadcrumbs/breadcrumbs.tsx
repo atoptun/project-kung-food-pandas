@@ -20,7 +20,7 @@ function Breadcrumbs({ items }: BreadcrumbsType) {
           const isCurrent = index === items.length - 1;
 
           return (
-            <li key={to ?? label}>
+            <li key={label}>
               {index > 0 && (
                 <span aria-hidden="true" {...stylex.props(styles.separator)}>
                   /
