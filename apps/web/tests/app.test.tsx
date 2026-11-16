@@ -2,6 +2,8 @@ import { cleanup, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
+import { mockAuthAccount } from '@/mocks/handlers/auth';
+
 import { server } from './mocks/server';
 import { createTestQueryClient, renderWithProviders } from './test-utils';
 
@@ -48,7 +50,7 @@ describe('App', () => {
   });
 
   it('renders the recipe add page at /recipe/add', async () => {
-    renderWithProviders({ queryClient, initialEntries: ['/recipe/add'] });
+    renderWithProviders({ queryClient, initialEntries: ['/recipe/add'], user: mockAuthAccount });
 
     await waitFor(() => {
       expect(document.title).toBe('Recipe Add | Foodies');
@@ -56,7 +58,7 @@ describe('App', () => {
   });
 
   it('opens the user profile at /user/:id', async () => {
-    renderWithProviders({ queryClient, initialEntries: ['/user/1'] });
+    renderWithProviders({ queryClient, initialEntries: ['/user/1'], user: mockAuthAccount });
 
     await waitFor(() => {
       expect(document.title).toBe('User Profile | Foodies');

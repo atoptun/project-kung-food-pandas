@@ -4,6 +4,11 @@
     <path d="M5.25 12.75L12.75 5.25" />
     <path d="M5.25 5.25H12.75V12.75" />
   </symbol>
+  <symbol viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" id="burger">
+    <path d="M3.5 8.167H24.5" />
+    <path d="M3.5 14H24.5" />
+    <path d="M3.5 19.833H24.5" />
+  </symbol>
   <symbol viewBox="0 0 10 8" fill="none" id="check">
     <path d="M0.557617 4.6792L3.55762 6.6792L9.05762 0.679199" stroke-width="2.01011"
       stroke="currentColor" />

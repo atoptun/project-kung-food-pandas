@@ -1,6 +1,7 @@
 import { lazy } from 'react';
 import type { RouteObject } from 'react-router';
 
+import PrivateRoute from '@/components/auth/private-route';
 import Layout from '@/components/layout/layout';
 
 const HomePage = lazy(() => import('@/pages/home'));
@@ -12,6 +13,8 @@ const NotFoundPage = lazy(() => import('@/pages/not-found'));
 export interface RouteHandle {
   title: string;
   crumb?: string;
+  /** `dark` renders the header on the dark hero card (home page). */
+  headerTheme?: 'light' | 'dark';
 }
 
 export const routes: RouteObject[] = [
@@ -21,11 +24,15 @@ export const routes: RouteObject[] = [
       {
         path: '/',
         element: <HomePage />,
-        handle: { title: 'Home' } satisfies RouteHandle,
+        handle: { title: 'Home', headerTheme: 'dark' } satisfies RouteHandle,
       },
       {
         path: '/recipe/add',
-        element: <RecipeAddPage />,
+        element: (
+          <PrivateRoute>
+            <RecipeAddPage />
+          </PrivateRoute>
+        ),
         handle: { title: 'Recipe Add', crumb: 'Add recipe' } satisfies RouteHandle,
       },
       {
@@ -35,7 +42,11 @@ export const routes: RouteObject[] = [
       },
       {
         path: '/user/:id',
-        element: <UserProfilePage />,
+        element: (
+          <PrivateRoute>
+            <UserProfilePage />
+          </PrivateRoute>
+        ),
         handle: { title: 'User Profile', crumb: 'User profile' } satisfies RouteHandle,
       },
       {

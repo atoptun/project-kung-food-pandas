@@ -1,6 +1,8 @@
 import { Suspense, useEffect } from 'react';
 import { Outlet, useMatches } from 'react-router';
 
+import AuthModal from '@/components/auth/auth-modal';
+import Toaster from '@/components/shared/toaster/toaster';
 import type { RouteHandle } from '@/routes';
 
 import Footer from './footer';
@@ -8,23 +10,23 @@ import Header from './header';
 
 function Layout() {
   const matches = useMatches();
+  const handle = matches.at(-1)?.handle as RouteHandle | undefined;
 
   useEffect(() => {
-    const currentMatch = matches.at(-1);
-    const handle = currentMatch?.handle as RouteHandle | undefined;
-
     document.title = `${handle?.title ?? 'Not Found'} | Foodies`;
-  }, [matches]);
+  }, [handle]);
 
   return (
     <>
-      <Header />
+      <Header theme={handle?.headerTheme} />
       <main>
         <Suspense fallback={<p>Завантаження...</p>}>
           <Outlet />
         </Suspense>
       </main>
       <Footer />
+      <AuthModal />
+      <Toaster />
     </>
   );
 }
