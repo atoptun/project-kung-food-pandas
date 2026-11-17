@@ -25,13 +25,15 @@ const meta = {
   render: function Render(args) {
     const [, updateArgs] = useArgs();
     return (
-      <Select
-        {...args}
-        onValueChange={(value) => {
-          args.onValueChange(value);
-          updateArgs({ value });
-        }}
-      />
+      <div style={{ width: 343, maxWidth: '100%' }}>
+        <Select
+          {...args}
+          onValueChange={(value) => {
+            args.onValueChange(value);
+            updateArgs({ value });
+          }}
+        />
+      </div>
     );
   },
   argTypes: {

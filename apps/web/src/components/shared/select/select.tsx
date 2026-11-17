@@ -28,6 +28,7 @@ type SelectProps = {
   disabled?: boolean;
   name?: string;
   'aria-label': string;
+  visibleItemsCount?: number;
 };
 
 function Select({
@@ -39,6 +40,7 @@ function Select({
   disabled,
   name,
   'aria-label': ariaLabel,
+  visibleItemsCount = 5,
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const listId = useId();
@@ -139,7 +141,7 @@ function Select({
           }
         }}
       >
-        <span {...stylex.props(!selectedLabel && styles.placeholder)}>
+        <span {...stylex.props(styles.valueText, !selectedLabel && styles.placeholder)}>
           {selectedLabel || placeholder}
         </span>
 
@@ -150,7 +152,7 @@ function Select({
 
       {isOpen && (
         <ul
-          {...stylex.props(styles.toggle)}
+          {...stylex.props(styles.toggle, styles.setVisibleItemsCount(visibleItemsCount))}
           ref={listRef}
           id={listId}
           role="listbox"
