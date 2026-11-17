@@ -1,37 +1,81 @@
 import type {
+  CurrentUserProfileResponse,
   FollowActionResponse,
-  FollowListResponse,
   PaginationQuery,
-  UserIdParams,
+  UserFollowersListResponse,
+  UserIdParam,
+  UserPublicProfileResponse,
+  UserRecipesListResponse,
 } from '@repo/shared';
 import type { Request, Response } from 'express';
 
-import { BadRequestError, ConflictError, NotFoundError } from '@/errors/http.error';
+import {
+  BadRequestError,
+  ConflictError,
+  NotFoundError,
+  UnauthorizedError,
+  UnprocessableEntityError,
+} from '@/errors/http.error';
+import cloudinary from '@/lib/cloudinary';
 import prisma from '@/lib/prisma';
+import { UsersService } from '@/services/users.service';
+
+const service = new UsersService(prisma, cloudinary);
+
+const followUserSelect = {
+  id: true,
+  name: true,
+  avatar: true,
+  _count: { select: { recipes: true } },
+  recipes: {
+    select: { id: true, title: true, thumb: true },
+    orderBy: { id: 'desc' },
+    take: 4,
+  },
+} as const;
+
+function getAuthUserId(req: Request): string {
+  if (!req.user) {
+    throw new UnauthorizedError('Not authorized');
+  }
+  return req.user.id;
+}
 
 export class UsersController {
+  getCurrentProfile = async (req: Request, res: Response<CurrentUserProfileResponse>) => {
+    const profile = await service.getCurrentProfile(getAuthUserId(req));
+    res.status(200).json(profile);
+  };
+
+  getPublicProfile = async (
+    req: Request<UserIdParam>,
+    res: Response<UserPublicProfileResponse>,
+  ) => {
+    const profile = await service.getPublicProfile(req.params.id);
+    res.status(200).json(profile);
+  };
+
+  updateAvatar = async (req: Request, res: Response<CurrentUserProfileResponse>) => {
+    const userId = getAuthUserId(req);
+    if (!req.file) {
+      throw new UnprocessableEntityError('Validation failed', [
+        { path: 'avatar', message: 'Avatar file is required' },
+      ]);
+    }
+    const profile = await service.updateAvatar(userId, req.file.path);
+    res.status(200).json(profile);
+  };
+
   getFollowing = async (
     req: Request,
-    res: Response<FollowListResponse, { query: PaginationQuery }>,
+    res: Response<UserFollowersListResponse, { query: PaginationQuery }>,
   ) => {
     const { page, limit } = res.locals.query;
-    const followerId = req.user!.id;
-    const [follows, totalCount] = await Promise.all([
+    const followerId = getAuthUserId(req);
+    const [follows, total] = await Promise.all([
       prisma.userFollow.findMany({
         where: { followerId },
-        include: {
-          following: {
-            select: {
-              id: true,
-              name: true,
-              avatar: true,
-              recipes: {
-                select: { id: true, title: true, thumb: true, preview: true, time: true },
-                orderBy: { id: 'asc' },
-              },
-            },
-          },
-        },
+        include: { following: { select: followUserSelect } },
         orderBy: [{ createdAt: 'desc' }, { followingId: 'asc' }],
         skip: (page - 1) * limit,
         take: limit,
@@ -39,39 +83,26 @@ export class UsersController {
       prisma.userFollow.count({ where: { followerId } }),
     ]);
 
-    return this.sendList(
-      res,
-      follows.map(({ following }) => following),
-      page,
-      limit,
-      totalCount,
-    );
+    const items = follows.map(({ following }) => ({
+      user: { id: following.id, name: following.name, avatar: following.avatar },
+      recipesCount: following._count.recipes,
+      topRecipes: following.recipes,
+    }));
+    return this.sendList(res, items, page, limit, total);
   };
 
   getFollowers = async (
-    req: Request<UserIdParams>,
-    res: Response<FollowListResponse, { query: PaginationQuery }>,
+    req: Request<UserIdParam>,
+    res: Response<UserFollowersListResponse, { query: PaginationQuery }>,
   ) => {
     const { id: followingId } = req.params;
     const { page, limit } = res.locals.query;
     await this.ensureUserExists(followingId);
 
-    const [follows, totalCount] = await Promise.all([
+    const [follows, total] = await Promise.all([
       prisma.userFollow.findMany({
         where: { followingId },
-        include: {
-          follower: {
-            select: {
-              id: true,
-              name: true,
-              avatar: true,
-              recipes: {
-                select: { id: true, title: true, thumb: true, preview: true, time: true },
-                orderBy: { id: 'asc' },
-              },
-            },
-          },
-        },
+        include: { follower: { select: followUserSelect } },
         orderBy: [{ createdAt: 'desc' }, { followerId: 'asc' }],
         skip: (page - 1) * limit,
         take: limit,
@@ -79,17 +110,16 @@ export class UsersController {
       prisma.userFollow.count({ where: { followingId } }),
     ]);
 
-    return this.sendList(
-      res,
-      follows.map(({ follower }) => follower),
-      page,
-      limit,
-      totalCount,
-    );
+    const items = follows.map(({ follower }) => ({
+      user: { id: follower.id, name: follower.name, avatar: follower.avatar },
+      recipesCount: follower._count.recipes,
+      topRecipes: follower.recipes,
+    }));
+    return this.sendList(res, items, page, limit, total);
   };
 
-  follow = async (req: Request<UserIdParams>, res: Response<FollowActionResponse>) => {
-    const followerId = req.user!.id;
+  follow = async (req: Request<UserIdParam>, res: Response<FollowActionResponse>) => {
+    const followerId = getAuthUserId(req);
     const { id: followingId } = req.params;
 
     if (followerId === followingId) {
@@ -105,11 +135,11 @@ export class UsersController {
       throw new ConflictError('Already following this user');
     }
 
-    return res.status(201).json({ message: 'Successfully followed user' });
+    return res.status(201).json({ message: 'Successfully followed the user.' });
   };
 
-  unfollow = async (req: Request<UserIdParams>, res: Response) => {
-    const followerId = req.user!.id;
+  unfollow = async (req: Request<UserIdParam>, res: Response) => {
+    const followerId = getAuthUserId(req);
     const { id: followingId } = req.params;
     await this.ensureUserExists(followingId);
 
@@ -121,6 +151,29 @@ export class UsersController {
     return res.status(204).send();
   };
 
+  getUserRecipes = async (
+    req: Request<UserIdParam>,
+    res: Response<UserRecipesListResponse, { query: PaginationQuery }>,
+  ) => {
+    const { id: ownerId } = req.params;
+    const { page, limit } = res.locals.query;
+    await this.ensureUserExists(ownerId);
+    const where = { ownerId };
+    const [items, total] = await Promise.all([
+      prisma.recipe.findMany({
+        where,
+        select: { id: true, title: true, thumb: true, description: true },
+        orderBy: { id: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.recipe.count({ where }),
+    ]);
+    return res
+      .status(200)
+      .json({ items, total, page, totalPages: Math.ceil(total / limit), limit });
+  };
+
   private ensureUserExists = async (id: string) => {
     const user = await prisma.user.findUnique({ where: { id }, select: { id: true } });
     if (!user) {
@@ -129,17 +182,16 @@ export class UsersController {
   };
 
   private sendList = (
-    res: Response<FollowListResponse>,
-    users: FollowListResponse['users'],
+    res: Response<UserFollowersListResponse>,
+    items: UserFollowersListResponse['items'],
     page: number,
     limit: number,
-    totalCount: number,
+    total: number,
   ) => {
-    res.setHeader('X-Total-Count', totalCount);
-    return res.status(200).json({
-      users,
-      pagination: { page, limit, totalCount, totalPages: Math.ceil(totalCount / limit) },
-    });
+    res.setHeader('X-Total-Count', total);
+    return res
+      .status(200)
+      .json({ items, total, page, totalPages: Math.ceil(total / limit), limit });
   };
 }
 

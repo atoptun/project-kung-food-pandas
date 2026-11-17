@@ -8,3 +8,8 @@ apis:
 rules:
   operation-4xx-response: off
   security-defined: off
+  no-unused-components: off
+
+  operation-summary: off
+  struct: warn
+  operation-operationId: off

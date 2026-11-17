@@ -1,13 +1,29 @@
+import { fileURLToPath } from 'node:url';
+
+import stylex from '@stylexjs/unplugin';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
+const sourceDirectory = fileURLToPath(new URL('./src', import.meta.url));
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    stylex.vite({
+      useCSSLayers: { before: ['reset'] },
+      aliases: {
+        '@/*': [`${sourceDirectory}/*`],
+      },
+      unstable_moduleResolution: {
+        type: 'commonJS',
+      },
+    }),
+    react(),
+  ],
   // Load `.env.local` from the monorepo root directory
   envDir: '../../',
   resolve: {
     alias: {
-      '@': new URL('./src', import.meta.url).pathname,
+      '@': sourceDirectory,
     },
   },
   server: {

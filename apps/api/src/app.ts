@@ -1,3 +1,4 @@
+import { toNodeHandler } from 'better-auth/node';
 import cors from 'cors';
 import express, { type Express } from 'express';
 import helmet from 'helmet';
@@ -7,13 +8,15 @@ import swaggerUi from 'swagger-ui-express';
 import env from '@/config/env';
 import logger from '@/config/logger';
 import { generateOpenApiDocument } from '@/docs/openapi';
+import { auth } from '@/lib/auth';
 import { errorHandler } from '@/middlewares/error-handler.middleware';
 import { notFound } from '@/middlewares/not-found.middleware';
-import { authRouter } from '@/routes/auth.routes';
 import { healthRouter } from '@/routes/health.routes';
 import { usersRouter } from '@/routes/users.routes';
 
-export function createApp(): Express {
+import { testimonialsRouter } from './routes/testimonials.route';
+
+export async function createApp(): Promise<Express> {
   const app = express();
 
   app.use(
@@ -33,15 +36,17 @@ export function createApp(): Express {
     }),
   );
 
+  app.all('/api/auth/*any', toNodeHandler(auth));
+
   app.use(express.json());
   app.use(pinoHttp({ logger }));
 
-  const openApiDocument = generateOpenApiDocument();
+  const openApiDocument = await generateOpenApiDocument();
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
   app.use(healthRouter);
-  app.use('/auth', authRouter);
   app.use('/users', usersRouter);
+  app.use('/testimonials', testimonialsRouter);
 
   app.use(notFound);
   app.use(errorHandler);
@@ -49,4 +54,4 @@ export function createApp(): Express {
   return app;
 }
 
-export const app = createApp();
+export const app = await createApp();

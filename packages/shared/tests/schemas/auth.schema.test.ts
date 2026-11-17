@@ -50,8 +50,10 @@ describe('Auth Schemas', () => {
       const parsed = AuthResponseSchema.safeParse({
         token: 'sample-session-token',
         user: {
+          id: '64f1a2b3c4d5e6f7a8b9c0d1',
           name: 'Panda Chef',
           email: 'panda@panda.com',
+          avatar: 'https://res.cloudinary.com/.../avatar.jpg',
         },
       });
 

@@ -37,6 +37,7 @@ jobs:
       - name: Build shared package & Redocly HTML documentation
         run: |
           pnpm --filter @repo/shared build
+          pnpm db:generate
           pnpm docs:build
 
       - name: Upload Pages artifact

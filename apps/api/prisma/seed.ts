@@ -100,12 +100,14 @@ async function createAreas() {
 type RawMongoCategory = {
   _id: { $oid: string };
   name: string;
+  image: string;
 };
 
 function mapRawCategory(raw: RawMongoCategory): Prisma.CategoryCreateInput {
   return {
     id: raw._id.$oid,
     name: raw.name,
+    image: raw.image,
   };
 }
 
@@ -122,12 +124,25 @@ async function createCategories() {
     console.error('No categories data found.');
     return null;
   }
-  await prisma.category.createMany({ data: categories, skipDuplicates: true });
+
+  await prisma.$transaction(
+    categories.map((category) =>
+      prisma.category.upsert({
+        where: { id: category.id },
+        update: {
+          name: category.name,
+          image: category.image,
+        },
+        create: category,
+      }),
+    ),
+  );
 
   return await prisma.category.findMany({
     select: {
       id: true,
       name: true,
+      image: true,
     },
   });
 }

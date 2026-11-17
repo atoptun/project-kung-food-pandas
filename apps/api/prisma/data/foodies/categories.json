@@ -3,90 +3,105 @@
     "_id": {
       "$oid": "6462a6cd4c3d0ddd28897f8a"
     },
-    "name": "Seafood"
+    "name": "Seafood",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604019/kfp/categories/Seafood.jpg"
   },
   {
     "_id": {
       "$oid": "6462a6cd4c3d0ddd28897f8b"
     },
-    "name": "Lamb"
+    "name": "Lamb",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Lamb.jpg"
   },
   {
     "_id": {
       "$oid": "6462a6cd4c3d0ddd28897f8c"
     },
-    "name": "Starter"
+    "name": "Starter",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604021/kfp/categories/Starter.jpg"
   },
   {
     "_id": {
       "$oid": "6462a6cd4c3d0ddd28897f8d"
     },
-    "name": "Chicken"
+    "name": "Chicken",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Chicken.jpg"
   },
   {
     "_id": {
       "$oid": "6462a6cd4c3d0ddd28897f8e"
     },
-    "name": "Beef"
+    "name": "Beef",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Beef.jpg"
   },
   {
     "_id": {
       "$oid": "6462a6cd4c3d0ddd28897f8f"
     },
-    "name": "Dessert"
+    "name": "Dessert",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Desserts.jpg"
   },
   {
     "_id": {
       "$oid": "6462a6cd4c3d0ddd28897f90"
     },
-    "name": "Vegan"
+    "name": "Vegan",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604021/kfp/categories/Vegan.jpg"
   },
   {
     "_id": {
       "$oid": "6462a6cd4c3d0ddd28897f91"
     },
-    "name": "Pork"
+    "name": "Pork",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604018/kfp/categories/Pork.jpg"
   },
   {
     "_id": {
       "$oid": "6462a6cd4c3d0ddd28897f92"
     },
-    "name": "Vegetarian"
+    "name": "Vegetarian",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604022/kfp/categories/Vegetarian.jpg"
   },
   {
     "_id": {
       "$oid": "6462a6cd4c3d0ddd28897f93"
     },
-    "name": "Miscellaneous"
+    "name": "Miscellaneous",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604017/kfp/categories/Miscellaneous.jpg"
   },
   {
     "_id": {
       "$oid": "6462a6cd4c3d0ddd28897f94"
     },
-    "name": "Pasta"
+    "name": "Pasta",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604018/kfp/categories/Pasta.jpg"
   },
   {
     "_id": {
       "$oid": "6462a6cd4c3d0ddd28897f95"
     },
-    "name": "Breakfast"
+    "name": "Breakfast",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Breakfast.jpg"
   },
   {
     "_id": {
       "$oid": "6462a6cd4c3d0ddd28897f96"
     },
-    "name": "Side"
+    "name": "Side",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604019/kfp/categories/Side.jpg"
   },
   {
     "_id": {
       "$oid": "6462a6cd4c3d0ddd28897f97"
     },
-    "name": "Goat"
+    "name": "Goat",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604017/kfp/categories/Goat.jpg"
   },
   {
     "_id": {
       "$oid": "6462a6cd4c3d0ddd28897f98"
     },
-    "name": "Soup"
+    "name": "Soup",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604020/kfp/categories/Soup.jpg"
   }
 ]

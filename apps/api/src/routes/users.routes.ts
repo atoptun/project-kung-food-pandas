@@ -1,13 +1,18 @@
-import { PaginationQuerySchema, UserIdParamsSchema } from '@repo/shared';
+import { PaginationQuerySchema, UserIdParamSchema } from '@repo/shared';
 import { Router } from 'express';
 
 import { usersController } from '@/controllers/users.controller';
 import { authenticate } from '@/middlewares/auth.middleware';
+import { uploadSingle } from '@/middlewares/upload.middleware';
 import { validateParams, validateQuery } from '@/middlewares/validate.middleware';
 
-export const usersRouter = Router();
+export const usersRouter: Router = Router();
 
 usersRouter.use(authenticate);
+
+usersRouter.get('/me', usersController.getCurrentProfile);
+usersRouter.patch('/me/avatar', uploadSingle('avatar'), usersController.updateAvatar);
+usersRouter.get('/:id', validateParams(UserIdParamSchema), usersController.getPublicProfile);
 usersRouter.get(
   '/me/following',
   validateQuery(PaginationQuerySchema),
@@ -15,13 +20,19 @@ usersRouter.get(
 );
 usersRouter.get(
   '/:id/followers',
-  validateParams(UserIdParamsSchema),
+  validateParams(UserIdParamSchema),
   validateQuery(PaginationQuerySchema),
   usersController.getFollowers,
 );
-usersRouter.post('/me/following/:id', validateParams(UserIdParamsSchema), usersController.follow);
+usersRouter.post('/me/following/:id', validateParams(UserIdParamSchema), usersController.follow);
 usersRouter.delete(
   '/me/following/:id',
-  validateParams(UserIdParamsSchema),
+  validateParams(UserIdParamSchema),
   usersController.unfollow,
+);
+usersRouter.get(
+  '/:id/recipes',
+  validateParams(UserIdParamSchema),
+  validateQuery(PaginationQuerySchema),
+  usersController.getUserRecipes,
 );
