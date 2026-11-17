@@ -63,7 +63,12 @@ export function useFavorites() {
     select: (mutation) => (mutation.state.variables as FavoriteToggleVariables | undefined)?.id,
   });
 
-  const { mutate } = useMutation<void, Error, FavoriteToggleVariables, FavoriteToggleContext>({
+  const { mutate, mutateAsync } = useMutation<
+    void,
+    Error,
+    FavoriteToggleVariables,
+    FavoriteToggleContext
+  >({
     mutationKey: FAVORITE_MUTATION_KEY,
     mutationFn: ({ id, add }) => (add ? favoritesApi.add(id) : favoritesApi.remove(id)),
     onMutate: async ({ id, add }) => {
@@ -113,5 +118,8 @@ export function useFavorites() {
     [isAuthPending, isAuthenticated, openSignIn, pendingIds, mutate, favoriteIds],
   );
 
-  return { isFavorite, isFavoritePending, toggleFavorite };
+  // Profile rows already establish membership; removal does not depend on the full ids query.
+  const removeFavorite = (id: string) => mutateAsync({ id, add: false });
+
+  return { isFavorite, isFavoritePending, toggleFavorite, removeFavorite };
 }
