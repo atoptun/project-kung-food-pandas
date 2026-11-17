@@ -26,6 +26,15 @@ describe('App', () => {
       expect(document.title).toBe('Home | Foodies');
     });
 
+    // Wait for lazy loaded HomePage to resolve and render Hero
+    expect(
+      await screen.findByRole('heading', { level: 1, name: /improve your culinary skills/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/dive into a world of delicious recipes/i)).toBeInTheDocument();
+    const addRecipeButtons = screen.getAllByRole('link', { name: /add recipe/i });
+    expect(addRecipeButtons.length).toBeGreaterThanOrEqual(1);
+    expect(addRecipeButtons.some((btn) => btn.getAttribute('href') === '/recipe/add')).toBe(true);
+
     expect(await screen.findByText(/Mock testimonial 1/i)).toBeInTheDocument();
   });
 

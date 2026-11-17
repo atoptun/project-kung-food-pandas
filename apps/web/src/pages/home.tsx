@@ -1,4 +1,5 @@
 import { useTestimonialsQuery } from '@/api/testimonials/testimonials.queries';
+import Hero from '@/components/home/hero/hero';
 import Container from '@/components/shared/container/container';
 
 function HomePage() {
@@ -6,9 +7,8 @@ function HomePage() {
 
   return (
     <>
+      <Hero />
       <Container>
-        <h1>Home</h1>
-
         {isLoading && <p>Завантаження...</p>}
         {isError && <p>Не вдалося завантажити відгуки.</p>}
 
