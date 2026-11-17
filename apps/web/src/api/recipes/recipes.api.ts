@@ -1,5 +1,6 @@
 import { apiClient } from '../client';
 import type {
+  PaginationQuery,
   RecipeCard,
   RecipeDetails,
   RecipeFilterQuery,
@@ -10,6 +11,13 @@ export const recipesApi = {
   getList: async (filters: RecipeFilterQuery): Promise<RecipesListResponse> => {
     const response = await apiClient.get<RecipesListResponse>('/recipes', { params: filters });
     return response.data;
+  },
+
+  getOwn: async (params: PaginationQuery): Promise<RecipesListResponse> =>
+    (await apiClient.get<RecipesListResponse>('/recipes/own', { params })).data,
+
+  remove: async (id: string): Promise<void> => {
+    await apiClient.delete(`/recipes/${encodeURIComponent(id)}`);
   },
 
   getById: async (id: string): Promise<RecipeDetails> => {
