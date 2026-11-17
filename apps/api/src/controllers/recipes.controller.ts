@@ -39,6 +39,21 @@ export class RecipesController {
     res.status(200).json(await this.service.own(getAuthUserId(req), res.locals.query));
   };
 
+  favorites = async (
+    req: Request,
+    res: Response<RecipesListResponse, { query: PaginationQuery }>,
+  ) => {
+    res.status(200).json(await this.service.favorites(getAuthUserId(req), res.locals.query));
+  };
+
+  addFavorite = async (req: Request<RecipeIdParam>, res: Response<RecipeActionResponse>) => {
+    res.status(200).json(await this.service.addFavorite(req.params.id, getAuthUserId(req)));
+  };
+
+  removeFavorite = async (req: Request<RecipeIdParam>, res: Response<RecipeActionResponse>) => {
+    res.status(200).json(await this.service.removeFavorite(req.params.id, getAuthUserId(req)));
+  };
+
   byAuthor = async (
     req: Request<UserIdParam>,
     res: Response<UserRecipesListResponse, { query: PaginationQuery }>,

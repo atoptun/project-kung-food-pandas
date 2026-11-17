@@ -10,8 +10,13 @@ import type {
 import type { v2 as Cloudinary } from 'cloudinary';
 
 import logger from '@/config/logger';
-import { ForbiddenError, NotFoundError, UnprocessableEntityError } from '@/errors/http.error';
-import type { Prisma, PrismaClient } from '@/generated/prisma/client';
+import {
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+  UnprocessableEntityError,
+} from '@/errors/http.error';
+import { Prisma, type PrismaClient } from '@/generated/prisma/client';
 
 const cardSelect = {
   id: true,
@@ -78,6 +83,41 @@ export class RecipesService {
 
   own = async (ownerId: string, pagination: PaginationQuery) =>
     this.listPaginated({ ownerId }, pagination);
+
+  favorites = async (userId: string, pagination: PaginationQuery) =>
+    this.listPaginated({ favoriteRecipes: { some: { userId } } }, pagination);
+
+  addFavorite = async (recipeId: string, userId: string) => {
+    const recipe = await this.db.recipe.findUnique({
+      where: { id: recipeId },
+      select: { id: true },
+    });
+    if (!recipe) throw new NotFoundError('Recipe not found');
+
+    try {
+      // The composite primary key also prevents duplicates from concurrent requests.
+      await this.db.favoriteRecipe.create({ data: { userId, recipeId } });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') throw new ConflictError('Recipe is already in favorites');
+        // The recipe may have been deleted after the existence check.
+        if (
+          error.code === 'P2003' &&
+          !(await this.db.recipe.findUnique({ where: { id: recipeId }, select: { id: true } }))
+        ) {
+          throw new NotFoundError('Recipe not found');
+        }
+      }
+      throw error;
+    }
+    return { message: 'Recipe added to favorites successfully' };
+  };
+
+  removeFavorite = async (recipeId: string, userId: string) => {
+    const { count } = await this.db.favoriteRecipe.deleteMany({ where: { userId, recipeId } });
+    if (!count) throw new NotFoundError('Recipe not found or not in favorites');
+    return { message: 'Recipe removed from favorites successfully' };
+  };
 
   byAuthor = async (
     ownerId: string,

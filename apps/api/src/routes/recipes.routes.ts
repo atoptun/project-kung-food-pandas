@@ -23,6 +23,24 @@ export const recipesRouter: Router = Router();
 recipesRouter.get('/', validateQuery(RecipeFilterQuerySchema), controller.list);
 recipesRouter.get('/popular', validateQuery(PopularRecipesQuerySchema), controller.popular);
 recipesRouter.get('/own', authenticate, validateQuery(PaginationQuerySchema), controller.own);
+recipesRouter.get(
+  '/favorites',
+  authenticate,
+  validateQuery(PaginationQuerySchema),
+  controller.favorites,
+);
+recipesRouter.post(
+  '/favorites/:id',
+  authenticate,
+  validateParams(RecipeIdParamSchema),
+  controller.addFavorite,
+);
+recipesRouter.delete(
+  '/favorites/:id',
+  authenticate,
+  validateParams(RecipeIdParamSchema),
+  controller.removeFavorite,
+);
 recipesRouter.post(
   '/',
   authenticate,
