@@ -1,6 +1,10 @@
 {
   "extends": "@repo/typescript-config/node.json",
   "compilerOptions": {
+    "skipLibCheck": true,
+    "incremental": true,
+    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo",
+    "allowImportingTsExtensions": true,
     "outDir": "dist",
     "declaration": false,
     "declarationMap": false,
@@ -9,5 +13,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "tests", "prisma.config.ts", "prisma/seed.ts"]
+  "include": ["src", "tests", "prisma.config.ts", "prisma/seed.ts"],
+  "exclude": ["node_modules", "dist", "build"]
 }
