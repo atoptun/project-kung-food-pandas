@@ -1,8 +1,32 @@
 import '../src/index.css';
 
 import type { Preview } from '@storybook/react-vite';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router';
 import type { IndexEntry } from 'storybook/internal/types';
+
+import { allMockHandlers, worker } from '../src/mocks/browser';
+
+let mswStarted: Promise<ServiceWorkerRegistration | undefined> | null = null;
+
+async function initMsw() {
+  if (typeof window === 'undefined') return;
+
+  if (!mswStarted) {
+    worker.use(...allMockHandlers);
+    mswStarted = worker.start();
+  }
+
+  await mswStarted;
+}
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 const preview: Preview & {
   parameters: {
@@ -60,11 +84,19 @@ const preview: Preview & {
       },
     },
   },
+  loaders: [
+    async () => {
+      await initMsw();
+    },
+  ],
+
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      </QueryClientProvider>
     ),
   ],
 };
