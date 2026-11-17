@@ -15,6 +15,10 @@ export const queryKeys = {
   },
   users: {
     all: ['users'] as const,
+    profile: (viewerId: string, id: string) => ['users', 'profile', viewerId, id] as const,
+    followingIds: (viewerId: string) => ['users', 'following-ids', viewerId] as const,
+    list: (viewerId: string, id: string, tab: string, page: number) =>
+      ['users', 'list', viewerId, id, tab, page] as const,
   },
   categories: {
     all: ['categories'] as const,
