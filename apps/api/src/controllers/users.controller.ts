@@ -39,7 +39,13 @@ export class UsersController {
       prisma.userFollow.count({ where: { followerId } }),
     ]);
 
-    return this.sendList(res, follows.map(({ following }) => following), page, limit, totalCount);
+    return this.sendList(
+      res,
+      follows.map(({ following }) => following),
+      page,
+      limit,
+      totalCount,
+    );
   };
 
   getFollowers = async (
@@ -73,13 +79,16 @@ export class UsersController {
       prisma.userFollow.count({ where: { followingId } }),
     ]);
 
-    return this.sendList(res, follows.map(({ follower }) => follower), page, limit, totalCount);
+    return this.sendList(
+      res,
+      follows.map(({ follower }) => follower),
+      page,
+      limit,
+      totalCount,
+    );
   };
 
-  follow = async (
-    req: Request<UserIdParams>,
-    res: Response<FollowActionResponse>,
-  ) => {
+  follow = async (req: Request<UserIdParams>, res: Response<FollowActionResponse>) => {
     const followerId = req.user!.id;
     const { id: followingId } = req.params;
 

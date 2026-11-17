@@ -8,18 +8,18 @@ import { validateParams, validateQuery } from '@/middlewares/validate.middleware
 export const usersRouter = Router();
 
 usersRouter.use(authenticate);
-usersRouter.get('/me/following', validateQuery(PaginationQuerySchema), usersController.getFollowing);
+usersRouter.get(
+  '/me/following',
+  validateQuery(PaginationQuerySchema),
+  usersController.getFollowing,
+);
 usersRouter.get(
   '/:id/followers',
   validateParams(UserIdParamsSchema),
   validateQuery(PaginationQuerySchema),
   usersController.getFollowers,
 );
-usersRouter.post(
-  '/me/following/:id',
-  validateParams(UserIdParamsSchema),
-  usersController.follow,
-);
+usersRouter.post('/me/following/:id', validateParams(UserIdParamsSchema), usersController.follow);
 usersRouter.delete(
   '/me/following/:id',
   validateParams(UserIdParamsSchema),

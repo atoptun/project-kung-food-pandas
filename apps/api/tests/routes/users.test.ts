@@ -58,16 +58,18 @@ describe('User follow endpoints', () => {
     expect(listResponse.status).toBe(200);
     expect(listResponse.headers['x-total-count']).toBe('1');
     expect(listResponse.body).toMatchObject({
-      users: [{
-        id: followed.user.id,
-        name: followed.user.name,
-        recipes: [{ title: 'Panda noodles' }],
-      }],
+      users: [
+        {
+          id: followed.user.id,
+          name: followed.user.name,
+          recipes: [{ title: 'Panda noodles' }],
+        },
+      ],
       pagination: { page: 1, limit: 10, totalCount: 1, totalPages: 1 },
     });
-    expect(
-      await prisma.userFollow.count({ where: { followerId: follower.user.id } }),
-    ).toBe(listResponse.body.pagination.totalCount);
+    expect(await prisma.userFollow.count({ where: { followerId: follower.user.id } })).toBe(
+      listResponse.body.pagination.totalCount,
+    );
     expect(await prisma.userFollow.count({ where: { followingId: followed.user.id } })).toBe(1);
     expect(await prisma.userFollow.count()).toBe(1);
   });
@@ -119,7 +121,12 @@ describe('User follow endpoints', () => {
 
     expect(response.status).toBe(200);
     expect(response.body.users).toHaveLength(1);
-    expect(response.body.pagination).toMatchObject({ page: 2, limit: 1, totalCount: 2, totalPages: 2 });
+    expect(response.body.pagination).toMatchObject({
+      page: 2,
+      limit: 1,
+      totalCount: 2,
+      totalPages: 2,
+    });
     expect(response.headers['x-total-count']).toBe('2');
     expect(allFollowersResponse.body.users).toEqual(
       expect.arrayContaining([
