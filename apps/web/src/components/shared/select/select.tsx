@@ -5,8 +5,6 @@ import {
   useEffect,
   useId,
   useImperativeHandle,
-  useLayoutEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -45,35 +43,12 @@ function Select({
   visibleItemsCount = 5,
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [itemHeight, setItemHeight] = useState<number | undefined>(undefined);
   const listId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
   useImperativeHandle(ref, () => buttonRef.current!, []);
-
-  useLayoutEffect(() => {
-    if (!isOpen || !listRef.current || itemHeight !== undefined) return;
-
-    const firstOption = listRef.current.querySelector<HTMLLIElement>('li');
-    if (!firstOption) return;
-
-    const measuredHeight = firstOption.getBoundingClientRect().height;
-    if (measuredHeight > 0) {
-      setItemHeight(measuredHeight);
-    }
-  }, [isOpen, itemHeight]);
-
-  const maxListHeight = useMemo(() => {
-    if (!visibleItemsCount) return undefined;
-    // Default estimated item height is 24px if not yet measured
-    const height = itemHeight ?? 24;
-    const gap = 6;
-    const paddingBlock = 32; // 16px top + 16px bottom
-
-    return visibleItemsCount * height + (visibleItemsCount - 1) * gap + paddingBlock;
-  }, [visibleItemsCount, itemHeight]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -177,7 +152,7 @@ function Select({
 
       {isOpen && (
         <ul
-          {...stylex.props(styles.toggle, styles.toggleMaxHeight(maxListHeight))}
+          {...stylex.props(styles.toggle, styles.setVisibleItemsCount(visibleItemsCount))}
           ref={listRef}
           id={listId}
           role="listbox"

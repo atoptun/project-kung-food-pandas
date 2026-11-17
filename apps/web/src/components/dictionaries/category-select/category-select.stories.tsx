@@ -31,6 +31,7 @@ const meta = {
   args: {
     value: '',
     onValueChange: fn(),
+    visibleItemsCount: 6,
   },
   render: (args) => <StatefulCategorySelect {...args} />,
 } satisfies Meta<typeof CategorySelect>;

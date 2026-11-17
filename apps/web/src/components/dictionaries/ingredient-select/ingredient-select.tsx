@@ -11,7 +11,7 @@ export interface IngredientSelectProps {
   placeholder?: string;
   disabled?: boolean;
   name?: string;
-  'aria-label'?: string;
+  ariaLabel?: string;
   includeAllOption?: boolean;
   allOptionLabel?: string;
   visibleItemsCount?: number;
@@ -24,7 +24,7 @@ export function IngredientSelect({
   placeholder = 'Select ingredient',
   disabled,
   name,
-  'aria-label': ariaLabel = 'Select ingredient',
+  ariaLabel = 'Select ingredient',
   includeAllOption = false,
   allOptionLabel = 'All ingredients',
   visibleItemsCount = 5,

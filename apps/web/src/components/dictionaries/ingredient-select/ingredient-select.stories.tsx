@@ -31,6 +31,7 @@ const meta = {
   args: {
     value: '',
     onValueChange: fn(),
+    visibleItemsCount: 7,
   },
   render: (args) => <StatefulIngredientSelect {...args} />,
 } satisfies Meta<typeof IngredientSelect>;

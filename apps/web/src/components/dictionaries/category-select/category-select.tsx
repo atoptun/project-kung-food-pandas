@@ -11,7 +11,7 @@ export interface CategorySelectProps {
   placeholder?: string;
   disabled?: boolean;
   name?: string;
-  'aria-label'?: string;
+  ariaLabel?: string;
   includeAllOption?: boolean;
   allOptionLabel?: string;
   visibleItemsCount?: number;
@@ -24,7 +24,7 @@ export function CategorySelect({
   placeholder = 'Select category',
   disabled,
   name,
-  'aria-label': ariaLabel = 'Select category',
+  ariaLabel = 'Select category',
   includeAllOption = false,
   allOptionLabel = 'All categories',
   visibleItemsCount = 5,

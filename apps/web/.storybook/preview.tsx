@@ -7,10 +7,17 @@ import type { IndexEntry } from 'storybook/internal/types';
 
 import { allMockHandlers, worker } from '../src/mocks/browser';
 
-// Initialize MSW for Storybook preview
-if (typeof window !== 'undefined') {
-  worker.use(...allMockHandlers);
-  void worker.start();
+let mswStarted: Promise<ServiceWorkerRegistration | undefined> | null = null;
+
+async function initMsw() {
+  if (typeof window === 'undefined') return;
+
+  if (!mswStarted) {
+    worker.use(...allMockHandlers);
+    mswStarted = worker.start();
+  }
+
+  await mswStarted;
 }
 
 const queryClient = new QueryClient({
@@ -77,6 +84,12 @@ const preview: Preview & {
       },
     },
   },
+  loaders: [
+    async () => {
+      await initMsw();
+    },
+  ],
+
   decorators: [
     (Story) => (
       <QueryClientProvider client={queryClient}>

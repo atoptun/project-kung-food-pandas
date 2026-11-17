@@ -1,6 +1,6 @@
 import * as stylex from '@stylexjs/stylex';
 
-import { breakpoints, colors } from '@/styles/tokens.stylex';
+import { breakpoints, colors, fontWeights } from '@/styles/tokens.stylex';
 
 export const styles = stylex.create({
   wrapper: {
@@ -68,9 +68,19 @@ export const styles = stylex.create({
     gap: 6,
     boxShadow: `0 4px 20px ${colors.gray}`,
     overflowY: 'auto',
+    fontSize: {
+      default: 14,
+      [breakpoints.tablet]: 16,
+    },
+    maxHeight: {
+      default:
+        'calc(var(--visible-items, 5) * 1.43em + (var(--visible-items, 5) - 1) * 6px + 32px)',
+      [breakpoints.tablet]:
+        'calc(var(--visible-items, 5) * 1.5em + (var(--visible-items, 5) - 1) * 6px + 32px)',
+    },
   },
-  toggleMaxHeight: (height: string | number | undefined) => ({
-    maxHeight: height,
+  setVisibleItemsCount: (count: number) => ({
+    '--visible-items': count,
   }),
   option: {
     listStyleType: 'none',
@@ -80,6 +90,13 @@ export const styles = stylex.create({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
+    fontWeight: fontWeights.medium,
+    letterSpacing: '-0.02em',
+    fontSize: 'inherit',
+    lineHeight: {
+      default: 1.43,
+      [breakpoints.tablet]: 1.5,
+    },
     backgroundColor: {
       ':hover': colors.gray,
     },
