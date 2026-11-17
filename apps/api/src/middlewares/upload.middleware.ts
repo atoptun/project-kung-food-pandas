@@ -1,4 +1,4 @@
-import { mkdir } from 'node:fs/promises';
+import { mkdir, unlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 
@@ -6,6 +6,7 @@ import type { NextFunction, Request, Response } from 'express';
 import type { FileFilterCallback } from 'multer';
 import multer from 'multer';
 
+import logger from '@/config/logger';
 import { BadRequestError } from '@/errors/http.error';
 
 const destination = resolve(tmpdir(), 'kung-food-pandas-uploads');
@@ -46,3 +47,16 @@ export const upload = multer({
 
 export const uploadSingle = (field: string) => (req: Request, res: Response, next: NextFunction) =>
   upload.single(field)(req as Request, res, next);
+
+// Register before validation so rejected multipart requests also release their disk file.
+export const cleanupUpload = (req: Request, res: Response, next: NextFunction) => {
+  const filePath = req.file?.path;
+  if (filePath) {
+    res.once('close', () => {
+      void unlink(filePath).catch((error: unknown) => {
+        logger.warn({ err: error, filePath }, 'Failed to remove temporary upload file');
+      });
+    });
+  }
+  next();
+};

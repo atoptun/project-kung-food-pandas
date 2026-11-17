@@ -162,6 +162,7 @@ registry.registerPath({
   },
   responses: {
     200: jsonResponse('List of user recipes retrieved successfully', UserRecipesListResponseSchema),
+    400: errorResponse('Invalid parameters or query'),
     401: errorResponse('Not authorized'),
     404: errorResponse('User not found'),
   },

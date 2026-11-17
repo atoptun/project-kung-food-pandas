@@ -257,6 +257,7 @@ components:
       properties:
         id:
           type: string
+          minLength: 1
           maxLength: 36
           example: 64c8d958249fae54bae90bb9
       required:
@@ -311,41 +312,51 @@ components:
           example: Spaghetti Bolognese
         description:
           type: string
+          minLength: 1
+          maxLength: 200
           example: Classic Italian rich pasta dish
         instructions:
           type: string
           minLength: 10
+          maxLength: 1000
           example: 1. Boil water. 2. Cook pasta...
         categoryId:
           type: string
+          minLength: 1
           maxLength: 32
           example: 6462a6cd4c3d0ddd28897f8f
         areaId:
           type: string
+          minLength: 1
           maxLength: 32
           example: 6462a6f04c3d0ddd28897f9b
         time:
           type: integer
           minimum: 0
           exclusiveMinimum: true
+          maximum: 2147483647
           example: 45
         ingredients:
           anyOf:
             - type: array
               items:
                 $ref: "#/components/schemas/RecipeIngredientInput"
+              minItems: 1
             - type: string
       required:
         - title
+        - description
         - instructions
         - categoryId
         - areaId
+        - time
         - ingredients
     RecipeIngredientInput:
       type: object
       properties:
         id:
           type: string
+          minLength: 1
           maxLength: 32
           example: 64c8d958249fae54bae90bb1
         measure:
@@ -365,6 +376,8 @@ components:
               type: string
               format: binary
               description: Recipe image file (jpg, png, webp; max 5MB)
+          required:
+            - thumb
     RecipeCard:
       allOf:
         - $ref: "#/components/schemas/RecipeShortCard"
@@ -456,8 +469,8 @@ components:
           example: 640c2dd963a319ea671e382c
         name:
           type: string
+          nullable: true
           maxLength: 255
-          example: Pears
         description:
           type: string
           nullable: true
@@ -656,6 +669,8 @@ components:
               type: string
               format: binary
               description: Recipe image file (jpg, png, webp; max 5MB)
+          required:
+            - thumb
     AvatarUpload:
       type: object
       properties:
@@ -980,18 +995,17 @@ paths:
     post:
       tags: *a2
       summary: Create a new recipe
-      description: Creates a custom recipe for the authenticated user. Supports both
-        JSON body and multipart/form-data upload.
+      description: "Creates a recipe with an image and at least one distinct
+        ingredient. All form fields are required. Description: up to 200
+        characters; instructions: 10–1000 characters."
       security:
         - bearerAuth: []
       requestBody:
+        required: true
         content:
           multipart/form-data:
             schema:
               $ref: "#/components/schemas/CreateRecipeMultipart"
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateRecipeRequest"
       responses:
         "201":
           description: Recipe created successfully
@@ -1051,6 +1065,15 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/RecipeCard"
+        "400":
+          description: Invalid query parameters
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid query parameters
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
   /recipes/own:
     get:
       tags: *a2
@@ -1083,6 +1106,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RecipesListResponse"
+        "400":
+          description: Invalid query parameters
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid query parameters
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
         "401":
           description: Not authorized
           content:
@@ -1143,6 +1175,7 @@ paths:
       parameters:
         - schema:
             type: string
+            minLength: 1
             maxLength: 36
             example: 64c8d958249fae54bae90bb9
           required: true
@@ -1155,6 +1188,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RecipeDetails"
+        "400":
+          description: Invalid parameters
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid parameters
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
         "404":
           description: Recipe not found
           content:
@@ -1174,6 +1216,7 @@ paths:
       parameters:
         - schema:
             type: string
+            minLength: 1
             maxLength: 36
             example: 64c8d958249fae54bae90bb9
           required: true
@@ -1186,6 +1229,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RecipeActionResponse"
+        "400":
+          description: Invalid parameters
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid parameters
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
         "401":
           description: Not authorized
           content:
@@ -1223,6 +1275,7 @@ paths:
       parameters:
         - schema:
             type: string
+            minLength: 1
             maxLength: 36
             example: 64c8d958249fae54bae90bb9
           required: true
@@ -1271,6 +1324,7 @@ paths:
       parameters:
         - schema:
             type: string
+            minLength: 1
             maxLength: 36
             example: 64c8d958249fae54bae90bb9
           required: true
@@ -1637,6 +1691,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserRecipesListResponse"
+        "400":
+          description: Invalid parameters or query
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid parameters or query
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
         "401":
           description: Not authorized
           content:
