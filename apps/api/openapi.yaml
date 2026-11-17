@@ -542,6 +542,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/FollowRecipe"
+          description: All user recipes, newest known creation date first, including
+            original dates from legacy imports; unknown dates last. Equal or
+            unknown dates use ascending recipe ID for stable ordering. The full
+            array is retained for recipe counts.
       required:
         - id
         - name

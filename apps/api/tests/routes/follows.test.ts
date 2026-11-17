@@ -6,7 +6,11 @@ import prisma from '@/lib/prisma';
 
 import { createAuthUser } from '../helpers/auth';
 
-async function createRecipe(ownerId: string, title: string) {
+async function createRecipe(
+  ownerId: string,
+  title: string,
+  fields: { id?: string; createdAt?: Date | null } = {},
+) {
   const category = await prisma.category.upsert({
     where: { name: 'Follow test category' },
     update: {},
@@ -19,11 +23,57 @@ async function createRecipe(ownerId: string, title: string) {
   });
 
   return prisma.recipe.create({
-    data: { title, ownerId, categoryId: category.id, areaId: area.id, thumb: 'recipe.jpg' },
+    data: {
+      title,
+      ownerId,
+      categoryId: category.id,
+      areaId: area.id,
+      thumb: 'recipe.jpg',
+      ...fields,
+    },
   });
 }
 
 describe('User follow endpoints', () => {
+  it('orders complete recipe arrays by known creation date, then stable IDs, with legacy dates last', async () => {
+    const viewer = await createAuthUser();
+    const author = await createAuthUser();
+    const equalDate = new Date('2026-11-16T12:00:00Z');
+    for (const [id, createdAt] of [
+      ['x-legacy', null],
+      ['y-equal', equalDate],
+      ['a-older', new Date('2020-01-01T00:00:00Z')],
+      ['0-legacy', null],
+      ['z-newest', new Date('2026-11-17T12:00:00Z')],
+      ['b-equal', equalDate],
+    ] as const) {
+      await createRecipe(author.user.id, id, { id, createdAt });
+    }
+    await prisma.userFollow.createMany({
+      data: [
+        { followerId: viewer.user.id, followingId: author.user.id },
+        { followerId: author.user.id, followingId: viewer.user.id },
+      ],
+    });
+
+    for (const url of ['/users/me/following', `/users/${viewer.user.id}/followers`]) {
+      const response = await request(app).get(url).set('Authorization', viewer.authHeader);
+      expect(response.status).toBe(200);
+      expect(response.body.users).toHaveLength(1);
+      const recipes = response.body.users[0].recipes;
+      expect(recipes).toHaveLength(6);
+      expect(recipes.map((recipe: { id: string }) => recipe.id)).toEqual([
+        'z-newest',
+        'b-equal',
+        'y-equal',
+        'a-older',
+        '0-legacy',
+        'x-legacy',
+      ]);
+      expect(recipes[0]).not.toHaveProperty('createdAt');
+    }
+  });
+
   it('requires authentication for follower lists', async () => {
     const response = await request(app).get('/users/me/following');
 

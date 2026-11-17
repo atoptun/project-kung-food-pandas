@@ -134,16 +134,17 @@ model Testimonial {
 }
 
 model Recipe {
-  id           String  @id @default(cuid())
-  title        String  @db.VarChar(255)
-  categoryId   String  @map("category_id")
-  areaId       String  @map("area_id")
+  id           String    @id @default(cuid())
+  title        String    @db.VarChar(255)
+  categoryId   String    @map("category_id")
+  areaId       String    @map("area_id")
   instructions String?
   description  String?
   thumb        String?
   preview      String?
   time         Int?
-  ownerId      String  @map("owner_id")
+  ownerId      String    @map("owner_id")
+  createdAt    DateTime? @default(now()) @map("created_at")
 
   owner           User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   category        Category           @relation(fields: [categoryId], references: [id], onDelete: Restrict)
