@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 
-import { cleanup } from '@testing-library/react';
+import { cleanup, configure } from '@testing-library/react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
@@ -18,6 +18,10 @@ import { resetAuthSession } from './test-utils';
 axios.defaults.adapter = 'fetch';
 // Imports above are hoisted, so `apiClient` may already exist with the default adapter.
 apiClient.defaults.adapter = 'fetch';
+
+// CI runs every package's tests in parallel; lazy pages and MSW responses can take longer than
+// the default 1s there, which made `findBy*`/`waitFor` flaky. Real hangs still fail after 5s.
+configure({ asyncUtilTimeout: 5000 });
 
 // jsdom has no matchMedia; react-hot-toast reads prefers-reduced-motion through it.
 if (!window.matchMedia) {
