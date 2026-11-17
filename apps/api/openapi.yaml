@@ -378,6 +378,11 @@ components:
               type: integer
               minimum: 0
               example: 12
+            isFavorite:
+              type: boolean
+              example: true
+              description: Whether the recipe is in the current user favorites. `true`/`false`
+                for an authenticated request; omitted (or `false`) for a guest.
             owner:
               allOf:
                 - $ref: "#/components/schemas/PublicUser"
