@@ -5,7 +5,7 @@ import { PaginationMetaSchema, PaginationQuerySchema } from './pagination.schema
 
 export const RecipeIdParamSchema = z
   .object({
-    id: z.string().max(36).openapi({ example: '64c8d958249fae54bae90bb9' }),
+    id: z.string().min(1).max(36).openapi({ example: '64c8d958249fae54bae90bb9' }),
   })
   .openapi('RecipeIdParam');
 
@@ -32,21 +32,44 @@ export const PopularRecipesQuerySchema = z
 
 export const RecipeIngredientInputSchema = z
   .object({
-    id: z.string().max(32).openapi({ example: '64c8d958249fae54bae90bb1' }),
-    measure: z.string().min(1).max(100).openapi({ example: '200g' }),
+    id: z.string().trim().min(1).max(32).openapi({ example: '64c8d958249fae54bae90bb1' }),
+    measure: z.string().trim().min(1).max(100).openapi({ example: '200g' }),
   })
   .openapi('RecipeIngredientInput');
 
+const recipeIngredients = z
+  .array(RecipeIngredientInputSchema)
+  .min(1)
+  .superRefine((items, ctx) => {
+    const ids = new Set<string>();
+    items.forEach((item, index) => {
+      if (ids.has(item.id)) {
+        ctx.addIssue({ code: 'custom', path: [index, 'id'], message: 'Duplicate ingredient' });
+      }
+      ids.add(item.id);
+    });
+  });
+
 export const CreateRecipeSchema = z
   .object({
-    title: z.string().min(2).max(255).openapi({ example: 'Spaghetti Bolognese' }),
-    description: z.string().optional().openapi({ example: 'Classic Italian rich pasta dish' }),
-    instructions: z.string().min(10).openapi({ example: '1. Boil water. 2. Cook pasta...' }),
-    categoryId: z.string().max(32).openapi({ example: '6462a6cd4c3d0ddd28897f8f' }),
-    areaId: z.string().max(32).openapi({ example: '6462a6f04c3d0ddd28897f9b' }),
-    time: z.coerce.number().int().positive().optional().openapi({ example: 45 }),
+    title: z.string().trim().min(2).max(255).openapi({ example: 'Spaghetti Bolognese' }),
+    description: z
+      .string()
+      .trim()
+      .min(1)
+      .max(200)
+      .openapi({ example: 'Classic Italian rich pasta dish' }),
+    instructions: z
+      .string()
+      .trim()
+      .min(10)
+      .max(1000)
+      .openapi({ example: '1. Boil water. 2. Cook pasta...' }),
+    categoryId: z.string().trim().min(1).max(32).openapi({ example: '6462a6cd4c3d0ddd28897f8f' }),
+    areaId: z.string().trim().min(1).max(32).openapi({ example: '6462a6f04c3d0ddd28897f9b' }),
+    time: z.coerce.number().int().positive().max(2147483647).openapi({ example: 45 }),
     ingredients: z.union([
-      z.array(RecipeIngredientInputSchema),
+      recipeIngredients,
       z
         .string()
         .transform((str, ctx) => {
@@ -60,20 +83,24 @@ export const CreateRecipeSchema = z
             return z.NEVER;
           }
         })
-        .pipe(z.array(RecipeIngredientInputSchema)),
+        .pipe(recipeIngredients),
     ]),
   })
   .openapi('CreateRecipeRequest');
 
 export const CreateRecipeMultipartSchema = CreateRecipeSchema.extend({
-  thumb: z.any().optional().openapi({
-    type: 'string',
-    format: 'binary',
-    description: 'Recipe image file (jpg, png, webp; max 5MB)',
-  }),
+  thumb: z
+    .any()
+    .refine((value) => value != null, 'Recipe image is required')
+    .openapi({
+      type: 'string',
+      format: 'binary',
+      description: 'Recipe image file (jpg, png, webp; max 5MB)',
+    }),
 }).openapi('CreateRecipeMultipart');
 
 export const RecipeIngredientDetailSchema = IngredientResponseSchema.extend({
+  name: z.string().max(255).nullable(),
   measure: z.string().nullable().optional().openapi({ example: '500g' }),
 }).openapi('RecipeIngredientDetail');
 

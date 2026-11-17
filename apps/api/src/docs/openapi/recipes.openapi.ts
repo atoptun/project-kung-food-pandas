@@ -12,7 +12,7 @@ import {
   z,
 } from '@repo/shared';
 
-import { errorResponse, jsonOrMultipartBody, jsonResponse } from './helper';
+import { errorResponse, jsonResponse } from './helper';
 import { registry } from './registry';
 
 registry.register('RecipeIdParam', RecipeIdParamSchema);
@@ -53,6 +53,7 @@ registry.registerPath({
   },
   responses: {
     200: jsonResponse('List of popular recipes', z.array(RecipeCardSchema)),
+    400: errorResponse('Invalid query parameters'),
   },
 });
 
@@ -68,6 +69,7 @@ registry.registerPath({
   },
   responses: {
     200: jsonResponse('List of user own recipes', RecipesListResponseSchema),
+    400: errorResponse('Invalid query parameters'),
     401: errorResponse('Not authorized'),
   },
 });
@@ -77,13 +79,15 @@ registry.registerPath({
   path: '/recipes/favorites',
   tags: TAG,
   summary: 'Get current user favorite recipes',
-  description: 'Returns all recipes added to favorites by the authenticated user with pagination.',
+  description:
+    'Returns recipes added to favorites by the authenticated user, ordered by recipe ID ascending, with pagination. Empty and out-of-range pages return an empty items array.',
   security: [{ bearerAuth: [] }],
   request: {
     query: PaginationQuerySchema,
   },
   responses: {
     200: jsonResponse('List of favorite recipes', RecipesListResponseSchema),
+    400: errorResponse('Invalid query parameters'),
     401: errorResponse('Not authorized'),
   },
 });
@@ -100,6 +104,7 @@ registry.registerPath({
   },
   responses: {
     200: jsonResponse('Recipe details retrieved successfully', RecipeDetailsSchema),
+    400: errorResponse('Invalid parameters'),
     404: errorResponse('Recipe not found'),
   },
 });
@@ -110,10 +115,13 @@ registry.registerPath({
   tags: TAG,
   summary: 'Create a new recipe',
   description:
-    'Creates a custom recipe for the authenticated user. Supports both JSON body and multipart/form-data upload.',
+    'Creates a recipe with an image and at least one distinct ingredient. All form fields are required. Description: up to 200 characters; instructions: 10–1000 characters.',
   security: [{ bearerAuth: [] }],
   request: {
-    body: jsonOrMultipartBody(CreateRecipeSchema, CreateRecipeMultipartSchema),
+    body: {
+      required: true,
+      content: { 'multipart/form-data': { schema: CreateRecipeMultipartSchema } },
+    },
   },
   responses: {
     201: jsonResponse('Recipe created successfully', RecipeDetailsSchema),
@@ -136,6 +144,7 @@ registry.registerPath({
   },
   responses: {
     200: jsonResponse('Recipe deleted successfully', RecipeActionResponseSchema),
+    400: errorResponse('Invalid parameters'),
     401: errorResponse('Not authorized'),
     403: errorResponse('Access denied. You can only delete your own recipes'),
     404: errorResponse('Recipe not found'),
@@ -154,6 +163,7 @@ registry.registerPath({
   },
   responses: {
     200: jsonResponse('Recipe added to favorites successfully', RecipeActionResponseSchema),
+    400: errorResponse('Invalid parameters'),
     401: errorResponse('Not authorized'),
     404: errorResponse('Recipe not found'),
     409: errorResponse('Recipe is already in favorites'),
@@ -172,6 +182,7 @@ registry.registerPath({
   },
   responses: {
     200: jsonResponse('Recipe removed from favorites successfully', RecipeActionResponseSchema),
+    400: errorResponse('Invalid parameters'),
     401: errorResponse('Not authorized'),
     404: errorResponse('Recipe not found or not in favorites'),
   },
