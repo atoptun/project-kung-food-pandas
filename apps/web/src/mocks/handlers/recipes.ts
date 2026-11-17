@@ -41,6 +41,27 @@ export function resetMockFavorites(ids: string[] = []) {
 export const mockRecipesList = mockRecipes;
 
 export const recipesHandlers = [
+  http.get(api('/recipes'), ({ request }) => {
+    const params = new URL(request.url).searchParams;
+    const page = Number(params.get('page') ?? 1);
+    const limit = Number(params.get('limit') ?? 10);
+    const category = params.get('category');
+    const ingredient = params.get('ingredient');
+    const area = params.get('area');
+    const matches = mockRecipes.filter(
+      (recipe) =>
+        (!category || recipe.category?.id === category) &&
+        (!area || recipe.area?.id === area) &&
+        (!ingredient || recipe.ingredients.some((item) => item.id === ingredient)),
+    );
+    return HttpResponse.json<RecipesListResponse>({
+      items: matches.slice((page - 1) * limit, page * limit).map(toCard),
+      total: matches.length,
+      page,
+      limit,
+      totalPages: Math.ceil(matches.length / limit),
+    });
+  }),
   // Static segments must be registered before `/recipes/:id`.
   http.get(api('/recipes/popular'), ({ request }) => {
     const limit = Number(new URL(request.url).searchParams.get('limit') ?? 4);

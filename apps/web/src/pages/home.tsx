@@ -1,25 +1,13 @@
-import { useTestimonialsQuery } from '@/api/testimonials/testimonials.queries';
-import Container from '@/components/shared/container/container';
+import Hero from '@/components/home/hero';
+import RecipeCatalog from '@/components/home/recipe-catalog';
+import Testimonials from '@/components/home/testimonials';
 
 function HomePage() {
-  const { data, isLoading, isError } = useTestimonialsQuery();
-
   return (
     <>
-      <Container>
-        <h1>Home</h1>
-
-        {isLoading && <p>Завантаження...</p>}
-        {isError && <p>Не вдалося завантажити відгуки.</p>}
-
-        {!!data?.items.length && (
-          <ul>
-            {data.items.map(({ id, testimonial }) => (
-              <li key={id}>{testimonial}</li>
-            ))}
-          </ul>
-        )}
-      </Container>
+      <Hero />
+      <RecipeCatalog />
+      <Testimonials />
     </>
   );
 }

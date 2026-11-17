@@ -38,7 +38,7 @@ describe('App', () => {
 
     renderWithProviders({ queryClient });
 
-    expect(await screen.findByText('Не вдалося завантажити відгуки.')).toBeInTheDocument();
+    expect(await screen.findByText('Could not load testimonials.')).toBeInTheDocument();
   });
 
   it('renders the recipe page at /recipe/:id', async () => {

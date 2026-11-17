@@ -5,6 +5,8 @@ import Avatar from '@/components/shared/avatar/avatar';
 import Button from '@/components/shared/button/button';
 import Icon from '@/components/shared/icon/icon';
 import ResponsiveImage from '@/components/shared/responsive-image/responsive-image';
+import { useAuth } from '@/hooks/use-auth';
+import { useAuthModalStore } from '@/stores/auth-modal.store';
 import { typography, weights } from '@/styles/typography.stylex';
 
 import { styles } from './recipe-card.stylex';
@@ -38,6 +40,8 @@ export function RecipeCard({
   onToggleFavorite,
   xstyle,
 }: RecipeCardProps) {
+  const { isAuthenticated, isPending } = useAuth();
+  const openSignIn = useAuthModalStore((state) => state.openSignIn);
   const recipeHref = `/recipe/${id}`;
   const authorHref = `/user/${author.id}`;
 
@@ -74,7 +78,14 @@ export function RecipeCard({
         </p>
 
         <footer {...stylex.props(styles.footer)}>
-          <Link to={authorHref} {...stylex.props(styles.author)}>
+          <Link
+            to={authorHref}
+            onClick={(event) => {
+              if (isPending || !isAuthenticated) event.preventDefault();
+              if (!isPending && !isAuthenticated) openSignIn();
+            }}
+            {...stylex.props(styles.author)}
+          >
             <Avatar src={author.avatar} alt={author.name} size="sm" />
             <span {...stylex.props(typography.main, weights.bold, styles.authorName)}>
               {author.name}
