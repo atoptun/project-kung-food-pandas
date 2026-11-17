@@ -6,6 +6,15 @@ export const queryKeys = {
   //   details: () => [...queryKeys.recipes.all, 'detail'] as const,
   //   detail: (id: string) => [...queryKeys.recipes.details(), id] as const,
   // },
+  categories: {
+    all: ['categories'] as const,
+  },
+  areas: {
+    all: ['areas'] as const,
+  },
+  ingredients: {
+    all: ['ingredients'] as const,
+  },
   testimonials: {
     all: ['testimonials'] as const,
   },
