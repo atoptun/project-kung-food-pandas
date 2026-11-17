@@ -9,9 +9,9 @@ export const queryKeys = {
   },
   favorites: {
     all: ['favorites'] as const,
-    /** Ids of the current user's favorite recipes (scoped by user so accounts never share a cache). */
-    ids: (userId: string) => [...queryKeys.favorites.all, 'ids', userId] as const,
-    lists: () => [...queryKeys.favorites.all, 'list'] as const,
+    /** Pages of the current user's favorites (profile "My favorites" tab). */
+    list: (params: Record<string, unknown>) =>
+      [...queryKeys.favorites.all, 'list', params] as const,
   },
   users: {
     all: ['users'] as const,

@@ -71,9 +71,9 @@ function RecipeContent({ id }: { id: string | undefined }) {
       <Breadcrumbs items={[HOME_CRUMB, { label: recipe.title }]} />
       <RecipeDetails
         recipe={recipe}
-        isFavorite={isFavorite(recipe.id)}
+        isFavorite={isFavorite(recipe)}
         isFavoritePending={isFavoritePending(recipe.id)}
-        onToggleFavorite={toggleFavorite}
+        onToggleFavorite={() => toggleFavorite(recipe)}
       />
     </>
   );
@@ -88,7 +88,7 @@ function RecipePage() {
         {/* `key` resets the view state when navigating between recipes (e.g. from Popular recipes). */}
         <RecipeContent key={id} id={id} />
       </div>
-      <PopularRecipes />
+      <PopularRecipes excludeId={id} />
     </Container>
   );
 }

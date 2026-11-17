@@ -49,6 +49,10 @@ describe('Recipe page', () => {
     const popular = await screen.findByRole('region', { name: 'Popular recipes' });
     const cards = await within(popular).findAllByRole('article');
     expect(cards).toHaveLength(4);
+    // The opened recipe is not repeated among the popular cards.
+    expect(
+      within(popular).queryByRole('link', { name: `View recipe: ${recipe.title}` }),
+    ).not.toBeInTheDocument();
   });
 
   it('handles an unknown recipe id', async () => {
@@ -81,6 +85,28 @@ describe('Recipe page', () => {
     expect(useAuthModalStore.getState().view).toBe('sign-in');
   });
 
+  it('shows the favorite state returned by the API for a signed-in user', async () => {
+    resetMockFavorites([recipe.id]);
+    renderWithProviders({ initialEntries: [recipePath], user: mockAuthAccount });
+
+    await findRecipeTitle();
+    expect(await screen.findByRole('button', { name: 'Remove from favorites' })).toBeEnabled();
+  });
+
+  it('never shows a filled heart to a guest', async () => {
+    resetMockFavorites([recipe.id, ...mockRecipesList.map(({ id }) => id)]);
+    renderWithProviders({ initialEntries: [recipePath], user: null });
+
+    await findRecipeTitle();
+    expect(await screen.findByRole('button', { name: 'Add to favorites' })).toBeInTheDocument();
+
+    const popular = await screen.findByRole('region', { name: 'Popular recipes' });
+    await within(popular).findAllByRole('article');
+    within(popular)
+      .getAllByRole('button', { name: /favorites$/ })
+      .forEach((button) => expect(button).toHaveAttribute('aria-pressed', 'false'));
+  });
+
   it('adds and removes the recipe from favorites for a signed-in user', async () => {
     renderWithProviders({ initialEntries: [recipePath], user: mockAuthAccount });
 
@@ -92,12 +118,6 @@ describe('Recipe page', () => {
 
     const removeButton = await screen.findByRole('button', { name: 'Remove from favorites' });
     await waitFor(() => expect(removeButton).toBeEnabled());
-
-    // The popular card of the same recipe shares the favorite state.
-    const popular = screen.getByRole('region', { name: 'Popular recipes' });
-    expect(
-      within(popular).getByRole('button', { name: `Remove ${recipe.title} from favorites` }),
-    ).toHaveAttribute('aria-pressed', 'true');
 
     fireEvent.click(removeButton);
 

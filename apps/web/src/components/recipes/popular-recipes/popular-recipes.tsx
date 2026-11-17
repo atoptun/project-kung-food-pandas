@@ -3,20 +3,29 @@ import { useId } from 'react';
 
 import { useFavorites } from '@/api/favorites/favorites.queries';
 import { toRecipeCardProps } from '@/api/recipes/recipes.mappers';
-import { usePopularRecipesQuery } from '@/api/recipes/recipes.queries';
+import { POPULAR_RECIPES_LIMIT, usePopularRecipesQuery } from '@/api/recipes/recipes.queries';
 import RecipeCard from '@/components/recipes/recipe-card/recipe-card';
 import Button from '@/components/shared/button/button';
 import { typography } from '@/styles/typography.stylex';
 
 import { styles } from './popular-recipes.stylex';
 
-export function PopularRecipes() {
+export interface PopularRecipesProps {
+  /** Recipe opened on the current page; it is not repeated among the popular cards. */
+  excludeId?: string;
+}
+
+export function PopularRecipes({ excludeId }: PopularRecipesProps) {
   const titleId = useId();
-  const { data: recipes, isPending, isError, refetch, isFetching } = usePopularRecipesQuery();
+  // One extra item keeps the block full when the current recipe is popular itself.
+  const { data, isPending, isError, refetch, isFetching } = usePopularRecipesQuery(
+    POPULAR_RECIPES_LIMIT + 1,
+  );
+  const recipes = data?.filter((recipe) => recipe.id !== excludeId).slice(0, POPULAR_RECIPES_LIMIT);
   const { isFavorite, isFavoritePending, toggleFavorite } = useFavorites();
 
   // Nothing to recommend yet — the block is optional, so it is hidden instead of showing a gap.
-  if (!isPending && !isError && recipes.length === 0) {
+  if (!isPending && !isError && recipes?.length === 0) {
     return null;
   }
 
@@ -47,9 +56,9 @@ export function PopularRecipes() {
             <li key={recipe.id} {...stylex.props(styles.item)}>
               <RecipeCard
                 {...toRecipeCardProps(recipe)}
-                isFavorite={isFavorite(recipe.id)}
+                isFavorite={isFavorite(recipe)}
                 isFavoriteLoading={isFavoritePending(recipe.id)}
-                onToggleFavorite={toggleFavorite}
+                onToggleFavorite={() => toggleFavorite(recipe)}
               />
             </li>
           ))}

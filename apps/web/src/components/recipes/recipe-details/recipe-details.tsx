@@ -15,7 +15,7 @@ export interface RecipeDetailsProps {
   recipe: RecipeDetailsData;
   isFavorite: boolean;
   isFavoritePending: boolean;
-  onToggleFavorite: (id: string) => void;
+  onToggleFavorite: () => void;
 }
 
 /** Splits the instructions into paragraphs (the API keeps line breaks, sometimes as `\r\n`). */
@@ -36,8 +36,7 @@ export function RecipeDetails({
   const ingredientsId = useId();
   const preparationId = useId();
 
-  const { id, title, thumb, description, time, category, owner, ingredients, instructions } =
-    recipe;
+  const { title, thumb, description, time, category, owner, ingredients, instructions } = recipe;
   const paragraphs = toParagraphs(instructions);
 
   return (
@@ -108,7 +107,10 @@ export function RecipeDetails({
 
           {paragraphs.length > 0 ? (
             paragraphs.map((paragraph, index) => (
-              <p key={index} {...stylex.props(typography.main, styles.text)}>
+              <p
+                key={`${index}-${paragraph.slice(0, 24)}`}
+                {...stylex.props(typography.main, styles.text)}
+              >
                 {paragraph}
               </p>
             ))
@@ -121,7 +123,7 @@ export function RecipeDetails({
           variant="outline"
           aria-busy={isFavoritePending}
           disabled={isFavoritePending}
-          onClick={() => onToggleFavorite(id)}
+          onClick={onToggleFavorite}
           xstyle={[typography.button, styles.favoriteButton]}
         >
           {isFavorite ? 'Remove from favorites' : 'Add to favorites'}

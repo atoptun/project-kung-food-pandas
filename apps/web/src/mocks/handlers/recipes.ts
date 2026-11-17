@@ -18,14 +18,28 @@ const favoriteIds = new Set<string>();
 // such as `/src/api/recipes/recipes.queries.ts` and break the dev server.
 const api = (path: string) => `${clientEnv.VITE_API_URL}${path}`;
 
-function toCard({
-  instructions: _i,
-  ingredients: _ing,
-  area: _a,
-  category: _c,
-  ...card
-}: RecipeDetails) {
-  return card satisfies RecipeCard;
+/**
+ * Adds the viewer-specific fields the API computes per request.
+ * The mock keeps a single favorites list; the web app ignores `isFavorite` for guests.
+ */
+function withViewerState(recipe: RecipeDetails): RecipeDetails {
+  const isFavorite = favoriteIds.has(recipe.id);
+  return {
+    ...recipe,
+    isFavorite,
+    favoritesCount: (recipe.favoritesCount ?? 0) + (isFavorite ? 1 : 0),
+  };
+}
+
+function toCard(recipe: RecipeDetails): RecipeCard {
+  const {
+    instructions: _i,
+    ingredients: _ing,
+    area: _a,
+    category: _c,
+    ...card
+  } = withViewerState(recipe);
+  return card;
 }
 
 function notFound(message = 'Recipe not found') {
@@ -92,7 +106,6 @@ export const recipesHandlers = [
     const recipe = mockRecipes.find(({ id }) => id === params.id);
     if (!recipe) return notFound();
 
-    const favoritesCount = (recipe.favoritesCount ?? 0) + (favoriteIds.has(recipe.id) ? 1 : 0);
-    return HttpResponse.json<RecipeDetails>({ ...recipe, favoritesCount });
+    return HttpResponse.json<RecipeDetails>(withViewerState(recipe));
   }),
 ];

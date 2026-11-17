@@ -1,20 +1,22 @@
 import {
-  type QueryClient,
+  type QueryKey,
   useMutation,
   useMutationState,
-  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 import { useAuth } from '@/hooks/use-auth';
 import { useAuthModalStore } from '@/stores/auth-modal.store';
 
 import { queryKeys } from '../keys';
-import type { RecipeDetails } from '../recipes/recipes.types';
+import type { RecipeCard } from '../recipes/recipes.types';
 import { favoritesApi } from './favorites.api';
 
 const FAVORITE_MUTATION_KEY = [...queryKeys.favorites.all, 'toggle'] as const;
+
+/** What a card or page knows about a recipe to toggle it. */
+export type FavoriteTarget = Pick<RecipeCard, 'id' | 'isFavorite'>;
 
 type FavoriteToggleVariables = {
   id: string;
@@ -23,40 +25,52 @@ type FavoriteToggleVariables = {
 };
 
 type FavoriteToggleContext = {
-  previousIds?: string[];
+  snapshot: Array<[QueryKey, unknown]>;
 };
 
-export const useFavoriteIdsQuery = (userId: string | undefined) => {
-  return useQuery({
-    queryKey: queryKeys.favorites.ids(userId ?? ''),
-    queryFn: () => favoritesApi.getAllIds(),
-    enabled: Boolean(userId),
-  });
-};
+type RecipeLike = Pick<RecipeCard, 'id' | 'isFavorite' | 'favoritesCount'>;
 
-function shiftFavoritesCount(queryClient: QueryClient, id: string, delta: number) {
-  queryClient.setQueryData<RecipeDetails>(queryKeys.recipes.detail(id), (recipe) =>
-    recipe
-      ? { ...recipe, favoritesCount: Math.max(0, (recipe.favoritesCount ?? 0) + delta) }
-      : recipe,
-  );
+function isRecipeLike(value: unknown): value is RecipeLike {
+  return typeof value === 'object' && value !== null && 'id' in value && 'title' in value;
+}
+
+function patchRecipe<T>(value: T, id: string, add: boolean): T {
+  if (!isRecipeLike(value) || value.id !== id) return value;
+
+  const delta = add ? 1 : -1;
+  return {
+    ...value,
+    isFavorite: add,
+    favoritesCount:
+      value.favoritesCount === undefined ? undefined : Math.max(0, value.favoritesCount + delta),
+  };
 }
 
 /**
- * Shared favorites state and actions for the recipe page, catalog and profile.
- * Every page must use this hook instead of keeping its own copy of the favorites state:
- * it updates optimistically, rolls back on error and refreshes recipes, favorites and profile data.
+ * Applies the new favorite state to every cached shape that contains the recipe:
+ * details (`RecipeDetails`), popular (`RecipeCard[]`) and paginated lists (`{ items }`).
+ */
+function patchCachedRecipe(data: unknown, id: string, add: boolean): unknown {
+  if (Array.isArray(data)) {
+    return data.map((item) => patchRecipe(item, id, add));
+  }
+
+  if (typeof data === 'object' && data !== null && 'items' in data && Array.isArray(data.items)) {
+    return { ...data, items: data.items.map((item) => patchRecipe(item, id, add)) };
+  }
+
+  return patchRecipe(data, id, add);
+}
+
+/**
+ * Shared favorites actions for the recipe page, catalog and profile.
+ * The state itself comes from the API (`recipe.isFavorite`); this hook updates every cached copy
+ * optimistically, rolls back on error and refreshes recipes, favorites and profile counters.
  */
 export function useFavorites() {
   const queryClient = useQueryClient();
-  const { user, isAuthenticated, isPending: isAuthPending } = useAuth();
+  const { isAuthenticated, isPending: isAuthPending } = useAuth();
   const openSignIn = useAuthModalStore((state) => state.openSignIn);
-
-  const userId = user?.id;
-  const idsKey = queryKeys.favorites.ids(userId ?? '');
-  const idsQuery = useFavoriteIdsQuery(userId);
-
-  const favoriteIds = useMemo(() => new Set(idsQuery.data ?? []), [idsQuery.data]);
 
   const pendingIds = useMutationState({
     filters: { mutationKey: FAVORITE_MUTATION_KEY, status: 'pending' },
@@ -67,38 +81,39 @@ export function useFavorites() {
     mutationKey: FAVORITE_MUTATION_KEY,
     mutationFn: ({ id, add }) => (add ? favoritesApi.add(id) : favoritesApi.remove(id)),
     onMutate: async ({ id, add }) => {
-      await queryClient.cancelQueries({ queryKey: idsKey });
-      const previousIds = queryClient.getQueryData<string[]>(idsKey);
+      await queryClient.cancelQueries({ queryKey: queryKeys.recipes.all });
 
-      queryClient.setQueryData<string[]>(idsKey, (ids = []) =>
-        add ? [...new Set([...ids, id])] : ids.filter((favoriteId) => favoriteId !== id),
+      const snapshot = queryClient.getQueriesData({ queryKey: queryKeys.recipes.all });
+      queryClient.setQueriesData({ queryKey: queryKeys.recipes.all }, (data: unknown) =>
+        patchCachedRecipe(data, id, add),
       );
-      shiftFavoritesCount(queryClient, id, add ? 1 : -1);
 
-      return { previousIds };
+      return { snapshot };
     },
-    onError: (_error, { id, add }, context) => {
-      queryClient.setQueryData(idsKey, context?.previousIds);
-      shiftFavoritesCount(queryClient, id, add ? -1 : 1);
+    onError: (_error, _variables, context) => {
+      context?.snapshot.forEach(([key, data]) => queryClient.setQueryData(key, data));
     },
     onSettled: () =>
       Promise.all([
-        queryClient.invalidateQueries({ queryKey: queryKeys.favorites.all }),
         queryClient.invalidateQueries({ queryKey: queryKeys.recipes.all }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.favorites.all }),
         queryClient.invalidateQueries({ queryKey: queryKeys.users.all }),
       ]),
   });
 
-  const isFavorite = useCallback((id: string) => favoriteIds.has(id), [favoriteIds]);
+  /** A guest never sees a filled heart, even if a stale cache says otherwise. */
+  const isFavorite = useCallback(
+    (recipe: FavoriteTarget) => isAuthenticated && recipe.isFavorite === true,
+    [isAuthenticated],
+  );
 
   const isFavoritePending = useCallback(
-    (id: string) =>
-      isAuthPending || (isAuthenticated && idsQuery.isPending) || pendingIds.includes(id),
-    [isAuthPending, isAuthenticated, idsQuery.isPending, pendingIds],
+    (id: string) => isAuthPending || pendingIds.includes(id),
+    [isAuthPending, pendingIds],
   );
 
   const toggleFavorite = useCallback(
-    (id: string) => {
+    (recipe: FavoriteTarget) => {
       if (isAuthPending) return;
 
       if (!isAuthenticated) {
@@ -106,11 +121,11 @@ export function useFavorites() {
         return;
       }
 
-      if (pendingIds.includes(id)) return;
+      if (pendingIds.includes(recipe.id)) return;
 
-      mutate({ id, add: !favoriteIds.has(id) });
+      mutate({ id: recipe.id, add: recipe.isFavorite !== true });
     },
-    [isAuthPending, isAuthenticated, openSignIn, pendingIds, mutate, favoriteIds],
+    [isAuthPending, isAuthenticated, openSignIn, pendingIds, mutate],
   );
 
   return { isFavorite, isFavoritePending, toggleFavorite };

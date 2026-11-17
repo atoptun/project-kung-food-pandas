@@ -2,6 +2,7 @@ import { Suspense, useEffect } from 'react';
 import { Outlet, useMatches } from 'react-router';
 
 import AuthModal from '@/components/auth/auth-modal';
+import RecipesSessionSync from '@/components/recipes/recipes-session-sync';
 import Toaster from '@/components/shared/toaster/toaster';
 import type { RouteHandle } from '@/routes';
 
@@ -26,6 +27,7 @@ function Layout() {
       </main>
       <Footer />
       <AuthModal />
+      <RecipesSessionSync />
       <Toaster />
     </>
   );

@@ -5,6 +5,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
 
+import { apiClient } from '@/api/client';
 import { resetMockAuth } from '@/mocks/handlers/auth';
 import { resetMockFavorites } from '@/mocks/handlers/recipes';
 import { useAuthModalStore } from '@/stores/auth-modal.store';
@@ -15,6 +16,8 @@ import { resetAuthSession } from './test-utils';
 
 // Configure Axios to use the standard 'fetch' adapter in test/jsdom environment for MSW compatibility
 axios.defaults.adapter = 'fetch';
+// Imports above are hoisted, so `apiClient` may already exist with the default adapter.
+apiClient.defaults.adapter = 'fetch';
 
 // jsdom has no matchMedia; react-hot-toast reads prefers-reduced-motion through it.
 if (!window.matchMedia) {
