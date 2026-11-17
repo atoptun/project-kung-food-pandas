@@ -238,6 +238,7 @@ async function createTestimonials() {
 
 type RawMongoRecipe = {
   _id: { $oid: string };
+  createdAt?: { $date: { $numberLong: string } } | null;
   title: string;
   category: string;
   owner: { $oid: string };
@@ -253,8 +254,23 @@ type RawMongoRecipe = {
 };
 
 function mapRawRecipe(raw: RawMongoRecipe): Prisma.RecipeCreateInput {
+  let createdAt: Date | null = null;
+  if (raw.createdAt != null) {
+    const milliseconds = raw.createdAt.$date?.$numberLong;
+    const value = Number(milliseconds);
+    if (
+      typeof milliseconds !== 'string' ||
+      !/^-?\d+$/.test(milliseconds) ||
+      !Number.isSafeInteger(value) ||
+      !Number.isFinite(new Date(value).getTime())
+    ) {
+      throw new Error(`Invalid creation date for source recipe ${raw._id.$oid}`);
+    }
+    createdAt = new Date(value);
+  }
   return {
     id: raw._id.$oid,
+    createdAt,
     title: raw.title,
     category: { connect: { name: raw.category } },
     owner: { connect: { id: raw.owner.$oid } },
@@ -293,7 +309,7 @@ async function createRecipes({ users, areas, categories }: CreateRecipesParams) 
     return null;
   }
 
-  recipes.forEach(async (recipe) => {
+  for (const recipe of recipes) {
     const user = users?.find((user) => user.id === recipe?.owner?.connect?.id);
     const area = areas?.find((area) => area.name === recipe?.area?.connect?.name);
     const category = categories?.find(
@@ -306,6 +322,7 @@ async function createRecipes({ users, areas, categories }: CreateRecipesParams) 
 
       const rawRecipe: Prisma.RecipeCreateInput = {
         id: recipe.id,
+        createdAt: recipe.createdAt,
         title: recipe.title,
         instructions: recipe.instructions,
         description: recipe.description,
@@ -325,11 +342,17 @@ async function createRecipes({ users, areas, categories }: CreateRecipesParams) 
 
       try {
         await prisma.recipe.upsert({ where: { id: rawRecipe.id }, update: {}, create: rawRecipe });
+        if (rawRecipe.createdAt != null) {
+          await prisma.recipe.updateMany({
+            where: { id: rawRecipe.id, createdAt: null },
+            data: { createdAt: rawRecipe.createdAt },
+          });
+        }
       } catch (error) {
         console.error('Error upserting recipe:', error);
       }
     }
-  });
+  }
 
   return await prisma.recipe.findMany({
     select: {

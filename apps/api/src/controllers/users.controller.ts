@@ -68,7 +68,7 @@ export class UsersController {
               avatar: true,
               recipes: {
                 select: { id: true, title: true, thumb: true, preview: true, time: true },
-                orderBy: { id: 'asc' },
+                orderBy: [{ createdAt: { sort: 'desc', nulls: 'last' } }, { id: 'asc' }],
               },
             },
           },
@@ -108,7 +108,7 @@ export class UsersController {
               avatar: true,
               recipes: {
                 select: { id: true, title: true, thumb: true, preview: true, time: true },
-                orderBy: { id: 'asc' },
+                orderBy: [{ createdAt: { sort: 'desc', nulls: 'last' } }, { id: 'asc' }],
               },
             },
           },
