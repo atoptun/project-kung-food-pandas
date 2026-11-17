@@ -1,6 +1,7 @@
 import { setupWorker } from 'msw/browser';
 
 import { handlers } from './handlers';
+import { recipesHandlers } from './handlers/recipes';
 import { testimonialsHandlers } from './handlers/testimonials';
 
 declare global {
@@ -24,8 +25,10 @@ export async function enableMocking() {
   window.__msw = {
     worker,
     testimonialsHandlers,
+    recipesHandlers,
     // DevTools console commands
     mockTestimonials: () => worker.use(...testimonialsHandlers),
+    mockRecipes: () => worker.use(...recipesHandlers),
     unmockAll: () => worker.resetHandlers(),
   };
 }

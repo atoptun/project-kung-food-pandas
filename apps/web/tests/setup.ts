@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
 
 import { resetMockAuth } from '@/mocks/handlers/auth';
+import { resetMockFavorites } from '@/mocks/handlers/recipes';
 import { useAuthModalStore } from '@/stores/auth-modal.store';
 import { useUIStore } from '@/stores/ui.store';
 
@@ -34,6 +35,7 @@ beforeAll(() => server.listen());
 
 beforeEach(() => {
   resetMockAuth();
+  resetMockFavorites();
   resetAuthSession();
 });
 
