@@ -1,6 +1,8 @@
 import * as stylex from '@stylexjs/stylex';
 import { useNavigate } from 'react-router';
 
+import wellingtonUrl from '@/assets/hero/beef-wellington.png';
+import dessertUrl from '@/assets/hero/dessert.png';
 import Button from '@/components/shared/button/button';
 import { useAuth } from '@/hooks/use-auth';
 import { useAuthModalStore } from '@/stores/auth-modal.store';
@@ -24,13 +26,31 @@ export default function Hero() {
       </p>
       <Button
         variant="inverse"
+        xstyle={styles.heroAction}
         disabled={isPending}
         onClick={() => (isAuthenticated ? void navigate('/recipe/add') : openSignIn())}
       >
         Add recipe
       </Button>
-      {/* Original Hero photos still require an asset export; keep their measured space. */}
-      <div aria-hidden="true" {...stylex.props(styles.heroImages)} />
+      <div aria-hidden="true" {...stylex.props(styles.heroImages)}>
+        <img
+          src={dessertUrl}
+          alt=""
+          width={296}
+          height={277}
+          decoding="async"
+          {...stylex.props(styles.heroDessert)}
+        />
+        <img
+          src={wellingtonUrl}
+          alt=""
+          width={705}
+          height={660}
+          decoding="async"
+          fetchPriority="high"
+          {...stylex.props(styles.heroWellington)}
+        />
+      </div>
     </section>
   );
 }
