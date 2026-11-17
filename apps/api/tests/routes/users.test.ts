@@ -49,7 +49,7 @@ describe('Users Endpoints', () => {
       });
     });
 
-    it('returns counters that match own recipes and favorites in the database', async () => {
+    it('returns counters that match recipes, favorites and follow actions', async () => {
       const me = await createAuthUser();
       const other = await createAuthUser();
 
@@ -60,13 +60,40 @@ describe('Users Endpoints', () => {
       await addFavorite(me.user.id, otherRecipe.id);
       await addFavorite(other.user.id, myRecipe.id);
 
+      await request(app)
+        .post(`/users/me/following/${other.user.id}`)
+        .set('Authorization', me.authHeader)
+        .expect(201);
+      await request(app)
+        .post(`/users/me/following/${me.user.id}`)
+        .set('Authorization', other.authHeader)
+        .expect(201);
+
       const response = await request(app).get('/users/me').set('Authorization', me.authHeader);
 
       expect(response.status).toBe(200);
       expect(response.body).toMatchObject({
         recipesCount: 2,
         favoritesCount: 1,
+        followersCount: 1,
+        followingCount: 1,
       });
+
+      const publicProfile = await request(app)
+        .get(`/users/${other.user.id}`)
+        .set('Authorization', me.authHeader);
+      expect(publicProfile.body.followersCount).toBe(1);
+
+      await request(app)
+        .delete(`/users/me/following/${other.user.id}`)
+        .set('Authorization', me.authHeader)
+        .expect(204);
+      const afterUnfollow = await request(app).get('/users/me').set('Authorization', me.authHeader);
+      expect(afterUnfollow.body).toMatchObject({ followersCount: 1, followingCount: 0 });
+      const otherAfterUnfollow = await request(app)
+        .get(`/users/${other.user.id}`)
+        .set('Authorization', me.authHeader);
+      expect(otherAfterUnfollow.body.followersCount).toBe(0);
     });
 
     it('returns 401 when user is not authenticated', async () => {
