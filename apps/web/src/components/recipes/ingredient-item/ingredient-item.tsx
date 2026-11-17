@@ -2,7 +2,7 @@ import * as stylex from '@stylexjs/stylex';
 
 import Icon from '@/components/shared/icon/icon';
 import ResponsiveImage from '@/components/shared/responsive-image/responsive-image';
-import { typography, weights } from '@/styles/typography.stylex';
+import { typography } from '@/styles/typography.stylex';
 
 import { styles } from './ingredient-item.stylex';
 
@@ -41,7 +41,7 @@ export function IngredientItem({
       />
 
       <div {...stylex.props(styles.info)}>
-        <p {...stylex.props(typography.main, weights.bold, styles.name)} title={name}>
+        <p {...stylex.props(typography.main, styles.name)} title={name}>
           {name}
         </p>
         <p {...stylex.props(typography.main, styles.measure)} title={measure}>

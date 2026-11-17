@@ -1,0 +1,77 @@
+[
+  {
+    "id": "6462a6cd4c3d0ddd28897f8a",
+    "name": "Seafood",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604019/kfp/categories/Seafood.jpg"
+  },
+  {
+    "id": "6462a6cd4c3d0ddd28897f8b",
+    "name": "Lamb",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Lamb.jpg"
+  },
+  {
+    "id": "6462a6cd4c3d0ddd28897f8c",
+    "name": "Starter",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604021/kfp/categories/Starter.jpg"
+  },
+  {
+    "id": "6462a6cd4c3d0ddd28897f8d",
+    "name": "Chicken",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Chicken.jpg"
+  },
+  {
+    "id": "6462a6cd4c3d0ddd28897f8e",
+    "name": "Beef",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Beef.jpg"
+  },
+  {
+    "id": "6462a6cd4c3d0ddd28897f8f",
+    "name": "Dessert",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Desserts.jpg"
+  },
+  {
+    "id": "6462a6cd4c3d0ddd28897f90",
+    "name": "Vegan",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604021/kfp/categories/Vegan.jpg"
+  },
+  {
+    "id": "6462a6cd4c3d0ddd28897f91",
+    "name": "Pork",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604018/kfp/categories/Pork.jpg"
+  },
+  {
+    "id": "6462a6cd4c3d0ddd28897f92",
+    "name": "Vegetarian",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604022/kfp/categories/Vegetarian.jpg"
+  },
+  {
+    "id": "6462a6cd4c3d0ddd28897f93",
+    "name": "Miscellaneous",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604017/kfp/categories/Miscellaneous.jpg"
+  },
+  {
+    "id": "6462a6cd4c3d0ddd28897f94",
+    "name": "Pasta",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604018/kfp/categories/Pasta.jpg"
+  },
+  {
+    "id": "6462a6cd4c3d0ddd28897f95",
+    "name": "Breakfast",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Breakfast.jpg"
+  },
+  {
+    "id": "6462a6cd4c3d0ddd28897f96",
+    "name": "Side",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604019/kfp/categories/Side.jpg"
+  },
+  {
+    "id": "6462a6cd4c3d0ddd28897f97",
+    "name": "Goat",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604017/kfp/categories/Goat.jpg"
+  },
+  {
+    "id": "6462a6cd4c3d0ddd28897f98",
+    "name": "Soup",
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604020/kfp/categories/Soup.jpg"
+  }
+]

@@ -1,4 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg">
+  <!-- No viewBox: keep the radius and dash lengths in CSS pixels at every size. -->
+  <symbol id="photo-frame" overflow="visible">
+    <rect width="100%" height="100%" rx="30" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="5 5" />
+  </symbol>
   <symbol viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"
     stroke-linecap="round" stroke-linejoin="round" id="arrow-up-right">
     <path d="M5.25 12.75L12.75 5.25" />

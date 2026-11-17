@@ -16,6 +16,15 @@ export const queryKeys = {
   users: {
     all: ['users'] as const,
   },
+  categories: {
+    all: ['categories'] as const,
+  },
+  areas: {
+    all: ['areas'] as const,
+  },
+  ingredients: {
+    all: ['ingredients'] as const,
+  },
   testimonials: {
     all: ['testimonials'] as const,
   },
