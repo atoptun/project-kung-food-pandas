@@ -88,7 +88,7 @@ export function RecipeDetails({
                 <li key={ingredient.id} {...stylex.props(styles.ingredient)}>
                   <IngredientItem
                     id={ingredient.id}
-                    name={ingredient.name}
+                    name={ingredient.name ?? 'Unknown ingredient'}
                     measure={ingredient.measure ?? ''}
                     image={ingredient.img}
                     xstyle={styles.ingredientItem}
