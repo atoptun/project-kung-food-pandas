@@ -44,38 +44,6 @@ describe('Favorite recipes endpoints (real PostgreSQL and authentication)', () =
     });
   });
 
-  it('rejects invalid pagination and IDs through the shared validation middleware', async () => {
-    const me = await createAuthUser();
-    for (const query of [
-      { page: 0 },
-      { page: 1.5 },
-      { page: 'invalid' },
-      { limit: 0 },
-      { limit: 101 },
-    ]) {
-      const response = await request(app)
-        .get('/recipes/favorites')
-        .set('Authorization', me.authHeader)
-        .query(query);
-      expect(response.status).toBe(400);
-      expect(ApiErrorResponseSchema.parse(response.body)).toMatchObject({
-        message: 'Invalid query parameters',
-        issues: expect.any(Array),
-      });
-    }
-    for (const method of ['post', 'delete'] as const) {
-      const response = await request(app)
-        [method](`/recipes/favorites/${'a'.repeat(37)}`)
-        .set('Authorization', me.authHeader);
-      expect(response.status).toBe(400);
-      expect(ApiErrorResponseSchema.parse(response.body)).toMatchObject({
-        message: 'Invalid parameters',
-        issues: expect.any(Array),
-      });
-    }
-    expect(await prisma.favoriteRecipe.count()).toBe(0);
-  });
-
   it('paginates only session user favorites with stable ordering and safe recipe cards', async () => {
     const me = await createAuthUser();
     const other = await createAuthUser();
@@ -120,14 +88,18 @@ describe('Favorite recipes endpoints (real PostgreSQL and authentication)', () =
         .get(`/recipes/favorites?${query}`)
         .set('Authorization', me.authHeader);
       expect(response.status).toBe(400);
-      expect(ApiErrorResponseSchema.parse(response.body).issues?.length).toBeGreaterThan(0);
+      const error = ApiErrorResponseSchema.parse(response.body);
+      expect(error.message).toBe('Invalid query parameters');
+      expect(error.issues?.length).toBeGreaterThan(0);
     }
     for (const method of ['post', 'delete'] as const) {
       const response = await request(app)
         [method](`/recipes/favorites/${'a'.repeat(37)}`)
         .set('Authorization', me.authHeader);
       expect(response.status).toBe(400);
-      expect(ApiErrorResponseSchema.parse(response.body).issues).toContainEqual({
+      const error = ApiErrorResponseSchema.parse(response.body);
+      expect(error.message).toBe('Invalid parameters');
+      expect(error.issues).toContainEqual({
         path: 'id',
         message: expect.any(String),
       });
