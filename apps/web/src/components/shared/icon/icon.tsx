@@ -27,6 +27,8 @@ type IconProps = {
     | 'heart'
     | 'instagram'
     | 'minus'
+    | 'no-image'
+    | 'photo-frame'
     | 'plus'
     | 'trash'
     | 'upload-photo'

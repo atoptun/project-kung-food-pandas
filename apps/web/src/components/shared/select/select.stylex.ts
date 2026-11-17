@@ -5,6 +5,8 @@ import { breakpoints, colors } from '@/styles/tokens.stylex';
 export const styles = stylex.create({
   wrapper: {
     position: 'relative',
+    minWidth: 0,
+    width: '100%',
   },
   select: {
     height: {
@@ -12,12 +14,15 @@ export const styles = stylex.create({
       [breakpoints.tablet]: 56,
     },
     width: '100%',
-    minWidth: 176,
+    minWidth: 0,
     paddingBlock: 0,
     display: 'inline-flex',
     alignItems: 'center',
     gap: 16,
-    outlineStyle: 'none',
+    outlineColor: colors.black,
+    outlineOffset: 3,
+    outlineWidth: { default: 0, ':focus-visible': 2 },
+    outlineStyle: { default: 'none', ':focus-visible': 'solid' },
     boxSizing: 'border-box',
     color: colors.darkGray,
     borderRadius: '30px',
@@ -37,6 +42,13 @@ export const styles = stylex.create({
   },
   icon: {
     marginInlineStart: 'auto',
+    flexShrink: 0,
+  },
+  label: {
+    minWidth: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
   placeholder: {
     color: colors.gray,
@@ -45,16 +57,13 @@ export const styles = stylex.create({
     position: 'absolute',
     boxSizing: 'border-box',
     margin: 0,
-    insetInlineEnd: {
-      default: '14px',
-      [breakpoints.tablet]: '18px',
-    },
     top: 'calc(100% + 8px)',
     left: 0,
     width: {
       default: 'min(342px, calc(100vw - 32px))',
       [breakpoints.tablet]: 315,
     },
+    maxWidth: '100%',
     backgroundColor: colors.white,
     borderRadius: 15,
     paddingInline: 18,
@@ -63,17 +72,32 @@ export const styles = stylex.create({
     flexDirection: 'column',
     gap: 6,
     boxShadow: `0 4px 20px ${colors.gray}`,
+    overflowY: 'auto',
+    overscrollBehavior: 'contain',
+    zIndex: 10,
   },
+  popup: (maxHeight: number, above: boolean) => ({
+    maxHeight,
+    top: above ? 'auto' : 'calc(100% + 8px)',
+    bottom: above ? 'calc(100% + 8px)' : 'auto',
+  }),
   option: {
+    flexShrink: 0,
     listStyleType: 'none',
     margin: 0,
     padding: 0,
     backgroundColor: {
-      ':hover': colors.gray,
+      ':hover': colors.lightGray,
+      ':focus': colors.lightGray,
     },
     color: {
-      ':hover': colors.white,
+      default: colors.black,
     },
     cursor: 'pointer',
+    overflowWrap: 'anywhere',
+    outlineColor: colors.black,
+    outlineOffset: 1,
+    outlineWidth: { default: 0, ':focus-visible': 1 },
+    outlineStyle: { default: 'none', ':focus-visible': 'solid' },
   },
 });
