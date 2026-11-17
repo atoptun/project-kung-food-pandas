@@ -5,6 +5,8 @@ import {
   useEffect,
   useId,
   useImperativeHandle,
+  useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -28,6 +30,7 @@ type SelectProps = {
   disabled?: boolean;
   name?: string;
   'aria-label': string;
+  visibleItemsCount?: number;
 };
 
 function Select({
@@ -39,14 +42,38 @@ function Select({
   disabled,
   name,
   'aria-label': ariaLabel,
+  visibleItemsCount = 5,
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [itemHeight, setItemHeight] = useState<number | undefined>(undefined);
   const listId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
   useImperativeHandle(ref, () => buttonRef.current!, []);
+
+  useLayoutEffect(() => {
+    if (!isOpen || !listRef.current || itemHeight !== undefined) return;
+
+    const firstOption = listRef.current.querySelector<HTMLLIElement>('li');
+    if (!firstOption) return;
+
+    const measuredHeight = firstOption.getBoundingClientRect().height;
+    if (measuredHeight > 0) {
+      setItemHeight(measuredHeight);
+    }
+  }, [isOpen, itemHeight]);
+
+  const maxListHeight = useMemo(() => {
+    if (!visibleItemsCount) return undefined;
+    // Default estimated item height is 24px if not yet measured
+    const height = itemHeight ?? 24;
+    const gap = 6;
+    const paddingBlock = 32; // 16px top + 16px bottom
+
+    return visibleItemsCount * height + (visibleItemsCount - 1) * gap + paddingBlock;
+  }, [visibleItemsCount, itemHeight]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -139,7 +166,7 @@ function Select({
           }
         }}
       >
-        <span {...stylex.props(!selectedLabel && styles.placeholder)}>
+        <span {...stylex.props(styles.valueText, !selectedLabel && styles.placeholder)}>
           {selectedLabel || placeholder}
         </span>
 
@@ -150,7 +177,7 @@ function Select({
 
       {isOpen && (
         <ul
-          {...stylex.props(styles.toggle)}
+          {...stylex.props(styles.toggle, styles.toggleMaxHeight(maxListHeight))}
           ref={listRef}
           id={listId}
           role="listbox"

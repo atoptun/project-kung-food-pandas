@@ -1,8 +1,25 @@
 import '../src/index.css';
 
 import type { Preview } from '@storybook/react-vite';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router';
 import type { IndexEntry } from 'storybook/internal/types';
+
+import { allMockHandlers, worker } from '../src/mocks/browser';
+
+// Initialize MSW for Storybook preview
+if (typeof window !== 'undefined') {
+  worker.use(...allMockHandlers);
+  void worker.start();
+}
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 const preview: Preview & {
   parameters: {
@@ -62,9 +79,11 @@ const preview: Preview & {
   },
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      </QueryClientProvider>
     ),
   ],
 };

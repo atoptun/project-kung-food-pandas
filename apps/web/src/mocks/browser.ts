@@ -1,6 +1,7 @@
 import { setupWorker } from 'msw/browser';
 
 import { handlers } from './handlers';
+import { dictionariesHandlers } from './handlers/dictionaries';
 import { testimonialsHandlers } from './handlers/testimonials';
 
 declare global {
@@ -11,6 +12,8 @@ declare global {
     };
   }
 }
+
+export const allMockHandlers = [...testimonialsHandlers, ...dictionariesHandlers];
 
 export const worker = setupWorker(...handlers);
 
