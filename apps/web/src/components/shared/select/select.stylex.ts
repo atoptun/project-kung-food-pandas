@@ -1,10 +1,11 @@
 import * as stylex from '@stylexjs/stylex';
 
-import { breakpoints, colors } from '@/styles/tokens.stylex';
+import { breakpoints, colors, fontWeights } from '@/styles/tokens.stylex';
 
 export const styles = stylex.create({
   wrapper: {
     position: 'relative',
+    width: '100%',
   },
   select: {
     height: {
@@ -12,7 +13,7 @@ export const styles = stylex.create({
       [breakpoints.tablet]: 56,
     },
     width: '100%',
-    minWidth: 176,
+    minWidth: 0,
     paddingBlock: 0,
     display: 'inline-flex',
     alignItems: 'center',
@@ -37,6 +38,15 @@ export const styles = stylex.create({
   },
   icon: {
     marginInlineStart: 'auto',
+    flexShrink: 0,
+  },
+  valueText: {
+    flexGrow: 1,
+    minWidth: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    textAlign: 'start',
   },
   placeholder: {
     color: colors.gray,
@@ -45,16 +55,10 @@ export const styles = stylex.create({
     position: 'absolute',
     boxSizing: 'border-box',
     margin: 0,
-    insetInlineEnd: {
-      default: '14px',
-      [breakpoints.tablet]: '18px',
-    },
     top: 'calc(100% + 8px)',
     left: 0,
-    width: {
-      default: 'min(342px, calc(100vw - 32px))',
-      [breakpoints.tablet]: 315,
-    },
+    right: 0,
+    width: '100%',
     backgroundColor: colors.white,
     borderRadius: 15,
     paddingInline: 18,
@@ -63,11 +67,36 @@ export const styles = stylex.create({
     flexDirection: 'column',
     gap: 6,
     boxShadow: `0 4px 20px ${colors.gray}`,
+    overflowY: 'auto',
+    fontSize: {
+      default: 14,
+      [breakpoints.tablet]: 16,
+    },
+    maxHeight: {
+      default:
+        'calc(var(--visible-items, 5) * 1.43em + (var(--visible-items, 5) - 1) * 6px + 32px)',
+      [breakpoints.tablet]:
+        'calc(var(--visible-items, 5) * 1.5em + (var(--visible-items, 5) - 1) * 6px + 32px)',
+    },
   },
+  setVisibleItemsCount: (count: number) => ({
+    '--visible-items': count,
+  }),
   option: {
     listStyleType: 'none',
     margin: 0,
     padding: 0,
+    flexShrink: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    fontWeight: fontWeights.medium,
+    letterSpacing: '-0.02em',
+    fontSize: 'inherit',
+    lineHeight: {
+      default: 1.43,
+      [breakpoints.tablet]: 1.5,
+    },
     backgroundColor: {
       ':hover': colors.gray,
     },
