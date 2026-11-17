@@ -88,7 +88,10 @@ export const FollowUserSchema = z
     id: z.string().openapi({ example: 'cm123user456' }),
     name: z.string().openapi({ example: 'Panda' }),
     avatar: z.string().nullable(),
-    recipes: z.array(FollowRecipeSchema),
+    recipes: z.array(FollowRecipeSchema).openapi({
+      description:
+        'All user recipes, newest known creation date first, including original dates from legacy imports; unknown dates last. Equal or unknown dates use ascending recipe ID for stable ordering. The full array is retained for recipe counts.',
+    }),
   })
   .openapi('FollowUser');
 
