@@ -5,7 +5,7 @@ import { breakpoints, colors } from '@/styles/tokens.stylex';
 export const styles = stylex.create({
   page: { paddingTop: { default: 64, [breakpoints.tablet]: 68, [breakpoints.desktop]: 84 } },
   heading: { marginTop: { default: 32, [breakpoints.tablet]: 40 } },
-  subtitle: { marginTop: 16, maxWidth: { default: 343, [breakpoints.tablet]: 540 } },
+  subtitle: { marginTop: 16, maxWidth: { default: 343, [breakpoints.tablet]: 500 } },
   layout: {
     marginTop: { default: 32, [breakpoints.tablet]: 40 },
     display: 'grid',
@@ -116,6 +116,7 @@ export const styles = stylex.create({
     minWidth: 0,
     alignItems: 'flex-start',
   },
+  recipeRow: { gap: { default: 10, [breakpoints.tablet]: 16 } },
   recipeImage: {
     width: { default: 75, [breakpoints.tablet]: 100 },
     height: { default: 75, [breakpoints.tablet]: 100 },
@@ -143,7 +144,7 @@ export const styles = stylex.create({
     overflow: 'hidden',
     overflowWrap: 'anywhere',
   },
-  actions: { display: 'flex', gap: { default: 4, [breakpoints.tablet]: 8 }, flexShrink: 0 },
+  actions: { display: 'flex', gap: 4, flexShrink: 0 },
   circle: {
     width: { default: 36, [breakpoints.tablet]: 42 },
     height: { default: 36, [breakpoints.tablet]: 42 },

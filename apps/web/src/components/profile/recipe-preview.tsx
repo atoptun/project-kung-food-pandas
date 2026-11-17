@@ -22,7 +22,7 @@ export default function RecipePreview({
 }) {
   const href = `/recipe/${recipe.id}`;
   return (
-    <article {...stylex.props(styles.row)} aria-busy={isPending}>
+    <article {...stylex.props(styles.row, styles.recipeRow)} aria-busy={isPending}>
       <Link to={href} aria-label={`View recipe: ${recipe.title}`}>
         <ResponsiveImage
           src={recipe.thumb}
