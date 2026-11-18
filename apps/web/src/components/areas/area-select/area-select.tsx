@@ -1,6 +1,7 @@
 import * as stylex from '@stylexjs/stylex';
-import { useId } from 'react';
+import { useId, useMemo } from 'react';
 
+import type { Area } from '@/api/dictionaries';
 import { useAreasQuery } from '@/api/dictionaries';
 import Button from '@/components/shared/button/button';
 import Select, { type SelectProps } from '@/components/shared/select/select';
@@ -8,23 +9,50 @@ import { typography } from '@/styles/typography.stylex';
 
 import { styles } from './area-select.stylex';
 
-type AreaSelectProps = Omit<SelectProps, 'options' | 'aria-label'> & {
+export type AreaSelectProps = Omit<SelectProps, 'options' | 'aria-label' | 'onValueChange'> & {
   'aria-label'?: string;
+  includeAllOption?: boolean;
+  allOptionLabel?: string;
+  allOptionValue?: string;
+  onValueChange?: (value: string, area?: Area) => void;
 };
 
-function AreaSelect({
+export function AreaSelect({
   disabled,
   placeholder = 'Select an area',
   'aria-label': ariaLabel = 'Area',
   'aria-describedby': describedBy,
+  includeAllOption = false,
+  allOptionLabel = 'All areas',
+  allOptionValue = '',
+  onValueChange,
   ...props
 }: AreaSelectProps) {
   const { data, isPending, isError, refetch } = useAreasQuery();
   const statusId = useId();
-  const options = (data ?? []).map((item) => ({
-    value: item.id,
-    label: item.name,
-  }));
+
+  const areasMap = useMemo(() => {
+    return new Map((data ?? []).map((item) => [item.id, item]));
+  }, [data]);
+
+  const options = useMemo(() => {
+    const items = (data ?? []).map((item) => ({
+      value: item.id,
+      label: item.name,
+    }));
+
+    if (includeAllOption) {
+      return [{ value: allOptionValue, label: allOptionLabel }, ...items];
+    }
+
+    return items;
+  }, [data, includeAllOption, allOptionValue, allOptionLabel]);
+
+  const handleValueChange = (selectedValue: string) => {
+    const selectedArea = areasMap.get(selectedValue);
+    onValueChange?.(selectedValue, selectedArea);
+  };
+
   const failed = data === undefined && isError;
   const loading = data === undefined && isPending;
   const empty = data !== undefined && options.length === 0;
@@ -34,6 +62,7 @@ function AreaSelect({
     <div {...stylex.props(styles.field)}>
       <Select
         {...props}
+        onValueChange={handleValueChange}
         aria-label={ariaLabel}
         aria-describedby={[describedBy, status && statusId].filter(Boolean).join(' ') || undefined}
         aria-busy={loading || undefined}

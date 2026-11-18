@@ -1,6 +1,7 @@
 import * as stylex from '@stylexjs/stylex';
-import { useId } from 'react';
+import { useId, useMemo } from 'react';
 
+import type { Ingredient } from '@/api/dictionaries';
 import { useIngredientsQuery } from '@/api/dictionaries';
 import Button from '@/components/shared/button/button';
 import Select, { type SelectProps } from '@/components/shared/select/select';
@@ -8,27 +9,57 @@ import { typography } from '@/styles/typography.stylex';
 
 import { styles } from './ingredient-select.stylex';
 
-type IngredientSelectProps = Omit<SelectProps, 'options' | 'aria-label'> & {
+export type IngredientSelectProps = Omit<
+  SelectProps,
+  'options' | 'aria-label' | 'onValueChange'
+> & {
   'aria-label'?: string;
   excludedIds?: readonly string[];
+  includeAllOption?: boolean;
+  allOptionLabel?: string;
+  allOptionValue?: string;
+  onValueChange?: (value: string, ingredient?: Ingredient) => void;
 };
 
-function IngredientSelect({
+export function IngredientSelect({
   disabled,
   placeholder = 'Select an ingredient',
   'aria-label': ariaLabel = 'Ingredient',
   'aria-describedby': describedBy,
   excludedIds = [],
+  includeAllOption = false,
+  allOptionLabel = 'All ingredients',
+  allOptionValue = '',
+  onValueChange,
   ...props
 }: IngredientSelectProps) {
   const { data, isPending, isError, refetch } = useIngredientsQuery();
   const statusId = useId();
-  const options = (data ?? [])
-    .filter((item) => !excludedIds.includes(item.id))
-    .map((item) => ({
-      value: item.id,
-      label: item.name,
-    }));
+
+  const ingredientsMap = useMemo(() => {
+    return new Map((data ?? []).map((item) => [item.id, item]));
+  }, [data]);
+
+  const options = useMemo(() => {
+    const items = (data ?? [])
+      .filter((item) => !excludedIds.includes(item.id))
+      .map((item) => ({
+        value: item.id,
+        label: item.name,
+      }));
+
+    if (includeAllOption) {
+      return [{ value: allOptionValue, label: allOptionLabel }, ...items];
+    }
+
+    return items;
+  }, [data, excludedIds, includeAllOption, allOptionValue, allOptionLabel]);
+
+  const handleValueChange = (selectedValue: string) => {
+    const selectedIngredient = ingredientsMap.get(selectedValue);
+    onValueChange?.(selectedValue, selectedIngredient);
+  };
+
   const failed = data === undefined && isError;
   const loading = data === undefined && isPending;
   const empty = data !== undefined && options.length === 0;
@@ -42,6 +73,7 @@ function IngredientSelect({
     <div {...stylex.props(styles.field)}>
       <Select
         {...props}
+        onValueChange={handleValueChange}
         aria-label={ariaLabel}
         aria-describedby={[describedBy, status && statusId].filter(Boolean).join(' ') || undefined}
         aria-busy={loading || undefined}
