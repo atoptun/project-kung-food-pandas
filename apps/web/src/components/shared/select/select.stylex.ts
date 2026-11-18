@@ -44,7 +44,9 @@ export const styles = stylex.create({
     marginInlineStart: 'auto',
     flexShrink: 0,
   },
-  label: {
+  valueText: {
+    flexGrow: 1,
+    textAlign: 'start',
     minWidth: 0,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -59,10 +61,8 @@ export const styles = stylex.create({
     margin: 0,
     top: 'calc(100% + 8px)',
     left: 0,
-    width: {
-      default: 'min(342px, calc(100vw - 32px))',
-      [breakpoints.tablet]: 315,
-    },
+    right: 0,
+    width: '100%',
     maxWidth: '100%',
     backgroundColor: colors.white,
     borderRadius: 15,
@@ -73,6 +73,7 @@ export const styles = stylex.create({
     gap: 6,
     boxShadow: `0 4px 20px ${colors.gray}`,
     overflowY: 'auto',
+    fontSize: { default: 14, [breakpoints.tablet]: 16 },
     overscrollBehavior: 'contain',
     zIndex: 10,
   },

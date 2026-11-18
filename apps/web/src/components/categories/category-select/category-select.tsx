@@ -1,7 +1,7 @@
 import * as stylex from '@stylexjs/stylex';
 import { useId } from 'react';
 
-import { useCategoriesQuery } from '@/api/categories/categories.queries';
+import { useCategoriesQuery } from '@/api/dictionaries';
 import Button from '@/components/shared/button/button';
 import Select, { type SelectProps } from '@/components/shared/select/select';
 import { typography } from '@/styles/typography.stylex';

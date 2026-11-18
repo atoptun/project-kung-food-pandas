@@ -100,6 +100,11 @@ export const RecipeShortCardSchema = RecipeTinyCardSchema.extend({
 export const RecipeCardSchema = RecipeShortCardSchema.extend({
   time: z.number().nullable().optional().openapi({ example: 45 }),
   favoritesCount: z.number().int().nonnegative().optional().openapi({ example: 12 }),
+  isFavorite: z.boolean().optional().openapi({
+    example: true,
+    description:
+      'Whether the recipe is in the current user favorites. `true`/`false` for an authenticated request; omitted (or `false`) for a guest.',
+  }),
   owner: PublicUserSchema.optional().openapi({ description: 'Recipe owner information' }),
 }).openapi('RecipeCard');
 

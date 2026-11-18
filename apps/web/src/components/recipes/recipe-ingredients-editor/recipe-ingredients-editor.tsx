@@ -3,7 +3,7 @@ import * as stylex from '@stylexjs/stylex';
 import { useId, useState } from 'react';
 import { ValidationError } from 'yup';
 
-import { useIngredientsQuery } from '@/api/ingredients/ingredients.queries';
+import { useIngredientsQuery } from '@/api/dictionaries';
 import IngredientSelect from '@/components/ingredients/ingredient-select/ingredient-select';
 import { recipeIngredientSchema } from '@/components/recipes/add-recipe-form/add-recipe.validation';
 import IngredientItem from '@/components/recipes/ingredient-item/ingredient-item';

@@ -15,9 +15,9 @@ import AddRecipeForm from './add-recipe-form';
 function StoryForm({ initialValues }: { initialValues?: RecipeFormValues }) {
   const [client] = useState(() => {
     const cache = new QueryClient();
-    cache.setQueryData(queryKeys.categories.all, categories);
-    cache.setQueryData(queryKeys.areas.all, areas);
-    cache.setQueryData(queryKeys.ingredients.all, ingredients);
+    cache.setQueryData(queryKeys.dictionaries.categories(), categories);
+    cache.setQueryData(queryKeys.dictionaries.areas(), areas);
+    cache.setQueryData(queryKeys.dictionaries.ingredients(), ingredients);
     return cache;
   });
   return (

@@ -33,6 +33,7 @@ export type SelectProps = Pick<
   disabled?: boolean;
   name?: string;
   'aria-label': string;
+  visibleItemsCount?: number;
   onBlur?: ComponentPropsWithRef<'div'>['onBlur'];
   xstyle?: stylex.StyleXStyles;
 };
@@ -48,6 +49,7 @@ function Select({
   onBlur,
   xstyle,
   'aria-label': ariaLabel,
+  visibleItemsCount = 5,
   ...accessibilityProps
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -77,10 +79,23 @@ function Select({
       if (!rect) return;
       const below = window.innerHeight - rect.bottom;
       const above = rect.top;
-      const opensAbove = below < 328 && above > below;
+      const list = listRef.current;
+      const option = list?.querySelector<HTMLElement>('[role="option"]');
+      if (!list || !option) return;
+      const css = getComputedStyle(list);
+      const count = Math.min(
+        options.length,
+        Math.max(1, Math.floor(Number.isFinite(visibleItemsCount) ? visibleItemsCount : 5)),
+      );
+      const desiredHeight =
+        option.getBoundingClientRect().height * count +
+        parseFloat(css.rowGap) * Math.max(0, count - 1) +
+        parseFloat(css.paddingTop) +
+        parseFloat(css.paddingBottom);
+      const opensAbove = below < desiredHeight + 16 && above > below;
       setPopup({
         above: opensAbove,
-        maxHeight: Math.max(0, Math.min(320, (opensAbove ? above : below) - 16)),
+        maxHeight: Math.max(0, Math.min(desiredHeight, (opensAbove ? above : below) - 16)),
       });
     }
     placePopup();
@@ -91,7 +106,7 @@ function Select({
       window.removeEventListener('resize', placePopup);
       window.removeEventListener('scroll', placePopup, true);
     };
-  }, [open]);
+  }, [open, visibleItemsCount, options.length]);
 
   useEffect(() => {
     if (!open) return;
@@ -178,7 +193,7 @@ function Select({
           }
         }}
       >
-        <span {...stylex.props(styles.label, !selectedLabel && styles.placeholder)}>
+        <span {...stylex.props(styles.valueText, !selectedLabel && styles.placeholder)}>
           {selectedLabel || placeholder}
         </span>
 
