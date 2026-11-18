@@ -123,7 +123,7 @@ export function RecipeDetails({
           variant="outline"
           aria-busy={isFavoritePending}
           disabled={isFavoritePending}
-          onClick={onToggleFavorite}
+          onClick={() => onToggleFavorite()}
           xstyle={[typography.button, styles.favoriteButton]}
         >
           {isFavorite ? 'Remove from favorites' : 'Add to favorites'}

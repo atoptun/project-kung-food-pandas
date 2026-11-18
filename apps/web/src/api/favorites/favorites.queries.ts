@@ -31,7 +31,9 @@ type FavoriteToggleContext = {
 type RecipeLike = Pick<RecipeCard, 'id' | 'isFavorite' | 'favoritesCount'>;
 
 function isRecipeLike(value: unknown): value is RecipeLike {
-  return typeof value === 'object' && value !== null && 'id' in value && 'title' in value;
+  return (
+    typeof value === 'object' && value !== null && 'id' in value && typeof value.id === 'string'
+  );
 }
 
 function patchRecipe<T>(value: T, id: string, add: boolean): T {
