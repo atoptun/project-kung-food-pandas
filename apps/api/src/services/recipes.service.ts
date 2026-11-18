@@ -19,6 +19,7 @@ import {
   type ErrorIssue,
   ForbiddenError,
   NotFoundError,
+  UnprocessableEntityError,
 } from '@/errors/http.error';
 import type { Prisma, PrismaClient } from '@/generated/prisma/client';
 
@@ -311,7 +312,13 @@ export class RecipesService {
   };
 
   private assertReferences = async (input: CreateRecipeInput) => {
-    const ingredientIds = Array.from(new Set(input.ingredients.map((i) => i.id)));
+    const ingredientIds = input.ingredients.map((item) => item.id);
+
+    if (new Set(ingredientIds).size !== ingredientIds.length) {
+      throw new UnprocessableEntityError('Validation failed', [
+        { path: 'ingredients', message: 'Ingredient ids must be unique' },
+      ]);
+    }
 
     const [category, area, ingredients] = await Promise.all([
       this.db.category.findUnique({ where: { id: input.categoryId }, select: { id: true } }),
