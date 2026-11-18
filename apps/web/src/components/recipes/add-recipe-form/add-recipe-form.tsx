@@ -1,7 +1,9 @@
 import * as stylex from '@stylexjs/stylex';
 import { useFormik } from 'formik';
-import { type ChangeEvent, useId, useState } from 'react';
+import { type ChangeEvent, useId, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 
+import { useCreateRecipeMutation } from '@/api/recipes/recipes.queries';
 import AreaSelect from '@/components/areas/area-select/area-select';
 import CategorySelect from '@/components/categories/category-select/category-select';
 import CookingTimeControl from '@/components/recipes/cooking-time-control/cooking-time-control';
@@ -26,6 +28,9 @@ function AddRecipeForm({
   initialValues?: RecipeFormValues;
 }) {
   const id = useId();
+  const navigate = useNavigate();
+  const createRecipe = useCreateRecipeMutation();
+  const submissionPending = useRef(false);
   const [editorVersion, setEditorVersion] = useState(0);
   const formik = useFormik<RecipeFormValues>({
     initialValues,
@@ -34,25 +39,23 @@ function AddRecipeForm({
     validateOnBlur: false,
     onReset: () => setEditorVersion((version) => version + 1),
     onSubmit: async (rawValues) => {
-      const { photo, ...recipe } = recipeValidationSchema.cast(rawValues, { stripUnknown: true });
-      // TODO: Add the create recipe API
-      console.log(
-        JSON.stringify(
-          {
-            ...recipe,
-            photo: {
-              name: photo.name,
-              type: photo.type,
-              size: photo.size,
-              lastModified: photo.lastModified,
-            },
-          },
-          null,
-          2,
-        ),
-      );
+      if (submissionPending.current) return;
+      submissionPending.current = true;
+      try {
+        const values = recipeValidationSchema.cast(rawValues, {
+          stripUnknown: true,
+        });
+        const created = await createRecipe.mutateAsync(values);
+        void navigate(`/recipe/${encodeURIComponent(created.id)}`);
+      } catch {
+        // MutationCache reports the request error; retain the user's values for retry.
+      } finally {
+        submissionPending.current = false;
+      }
     },
   });
+
+  const pending = formik.isSubmitting || createRecipe.isPending;
 
   const fieldId = (name: keyof RecipeFormValues) => `${id}-${name}`;
   const errorId = (name: keyof RecipeFormValues) => `${fieldId(name)}-error`;
@@ -94,10 +97,12 @@ function AddRecipeForm({
   return (
     <form
       aria-label="Add recipe"
+      aria-busy={pending}
       noValidate
       onSubmit={formik.handleSubmit}
       onReset={(event) => {
         event.preventDefault();
+        if (submissionPending.current || pending) return;
         formik.resetForm({ values: initialRecipeValues });
       }}
       {...stylex.props(styles.form)}
@@ -225,11 +230,17 @@ function AddRecipeForm({
           </div>
         </div>
         <div {...stylex.props(styles.actions)}>
-          <Button type="reset" shape="circle" variant="outline" aria-label="Reset recipe">
+          <Button
+            disabled={pending}
+            type="reset"
+            shape="circle"
+            variant="outline"
+            aria-label="Reset recipe"
+          >
             <Icon name="trash" size={20} />
           </Button>
-          <Button type="submit" disabled={formik.isSubmitting}>
-            Publish
+          <Button type="submit" disabled={pending}>
+            {pending ? 'Publishing…' : 'Publish'}
           </Button>
         </div>
       </div>

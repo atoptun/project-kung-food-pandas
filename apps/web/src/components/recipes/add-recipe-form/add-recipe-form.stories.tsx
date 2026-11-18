@@ -1,10 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { queryKeys } from '@/api/keys';
+import { createQueryClient } from '@/api/query-client';
 import photoUrl from '@/assets/categories/seafood@2x.jpg';
 import Container from '@/components/shared/container/container';
+import Toaster from '@/components/shared/toaster/toaster';
 import areas from '@/mocks/data/areas.json';
 import categories from '@/mocks/data/categories.json';
 import ingredients from '@/mocks/data/ingredients.json';
@@ -14,7 +16,7 @@ import AddRecipeForm from './add-recipe-form';
 
 function StoryForm({ initialValues }: { initialValues?: RecipeFormValues }) {
   const [client] = useState(() => {
-    const cache = new QueryClient();
+    const cache = createQueryClient();
     cache.setQueryData(queryKeys.dictionaries.categories(), categories);
     cache.setQueryData(queryKeys.dictionaries.areas(), areas);
     cache.setQueryData(queryKeys.dictionaries.ingredients(), ingredients);
@@ -25,6 +27,7 @@ function StoryForm({ initialValues }: { initialValues?: RecipeFormValues }) {
       <Container>
         <AddRecipeForm initialValues={initialValues} />
       </Container>
+      <Toaster />
     </QueryClientProvider>
   );
 }
