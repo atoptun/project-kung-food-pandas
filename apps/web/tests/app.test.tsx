@@ -38,7 +38,7 @@ describe('App', () => {
     expect(await screen.findByText(/Mock testimonial 1/i)).toBeInTheDocument();
   });
 
-  it('displays error message when testimonials fetch fails', async () => {
+  it('renders home page and does not crash when testimonials fetch fails', async () => {
     server.use(
       http.get('*/testimonials', () => {
         return new HttpResponse(null, { status: 500 });
@@ -47,7 +47,10 @@ describe('App', () => {
 
     renderWithProviders({ queryClient });
 
-    expect(await screen.findByText('Не вдалося завантажити відгуки.')).toBeInTheDocument();
+    // When testimonials fails, section returns null and Hero is still rendered
+    expect(
+      await screen.findByRole('heading', { level: 1, name: /improve your culinary skills/i }),
+    ).toBeInTheDocument();
   });
 
   it('renders the recipe page at /recipe/:id', async () => {

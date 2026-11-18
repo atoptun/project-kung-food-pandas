@@ -81,6 +81,41 @@ export const recipesHandlers = [
     });
   }),
 
+  http.get(api('/recipes'), ({ request }) => {
+    const searchParams = new URL(request.url).searchParams;
+    const page = Number(searchParams.get('page') ?? 1);
+    const limit = Number(searchParams.get('limit') ?? 12);
+    const categoryId = searchParams.get('category');
+    const areaId = searchParams.get('area');
+    const ingredientId = searchParams.get('ingredient');
+
+    let filtered = mockRecipes;
+
+    if (categoryId) {
+      filtered = filtered.filter((r) => r.category?.id === categoryId);
+    }
+
+    if (areaId) {
+      filtered = filtered.filter((r) => r.area?.id === areaId);
+    }
+
+    if (ingredientId) {
+      filtered = filtered.filter((r) => r.ingredients?.some((ing) => ing.id === ingredientId));
+    }
+
+    const cards = filtered.map(toCard);
+    const start = (page - 1) * limit;
+    const items = cards.slice(start, start + limit);
+
+    return HttpResponse.json<RecipesListResponse>({
+      items,
+      total: filtered.length,
+      page,
+      limit,
+      totalPages: Math.ceil(filtered.length / limit),
+    });
+  }),
+
   http.post(api('/recipes/favorites/:id'), ({ params }) => {
     const id = String(params.id);
     if (!mockRecipes.some((recipe) => recipe.id === id)) return notFound();

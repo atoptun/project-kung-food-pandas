@@ -6,7 +6,7 @@ import { styles } from './category-list.stylex';
 
 type CategoryListProps = {
   categories: Category[];
-  onSelectCategory: (id: string | null) => void;
+  onSelectCategory: (id: string | null, name?: string) => void;
   xstyle?: stylex.StyleXStyles;
 };
 
@@ -22,13 +22,14 @@ export function CategoryList({ categories, onSelectCategory, xstyle }: CategoryL
     <div {...stylex.props(styles.grid, xstyle)}>
       {allItems.map((item, index) => {
         const isHiddenOnMobile = index >= 7 && index < allItems.length - 1;
+        const itemName = item.name ?? 'All categories';
         return (
           <CategoryCard
             key={item.id ?? 'all-categories'}
             id={item.id}
-            name={item.name ?? 'All categories'}
+            name={itemName}
             image={item.image}
-            onSelect={onSelectCategory}
+            onSelect={(id) => onSelectCategory(id, itemName)}
             xstyle={[getItemStyle(index), isHiddenOnMobile && styles.hiddenOnMobile]}
           />
         );

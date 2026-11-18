@@ -8,7 +8,6 @@ const styles = stylex.create({
   subtitle: {
     color: colors.gray,
     margin: 0,
-    marginTop: { default: 16, [breakpoints.tablet]: 20 },
     maxWidth: { default: '100%', [breakpoints.tablet]: 530 },
     opacity: 0.8,
   },

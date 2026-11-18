@@ -2,9 +2,9 @@ import * as stylex from '@stylexjs/stylex';
 import { useEffect } from 'react';
 
 import { useCategoriesQuery } from '@/api/dictionaries/dictionaries.queries';
-import Container from '@/components/shared/container/container';
 import Loader from '@/components/shared/loader/loader';
 import MainTitle from '@/components/shared/main-title/main-title';
+import Section from '@/components/shared/section/section';
 import Subtitle from '@/components/shared/subtitle/subtitle';
 import { notify } from '@/lib/notify';
 
@@ -12,7 +12,7 @@ import { styles } from './categories.stylex';
 import CategoryList from './category-list/category-list';
 
 type CategoriesProps = {
-  onSelectCategory: (id: string | null) => void;
+  onSelectCategory: (id: string | null, name?: string) => void;
   xstyle?: stylex.StyleXStyles;
 };
 
@@ -26,23 +26,21 @@ export function Categories({ onSelectCategory, xstyle }: CategoriesProps) {
   }, [isError]);
 
   return (
-    <section aria-label="Categories" {...stylex.props(styles.section, xstyle)}>
-      <Container>
-        <div {...stylex.props(styles.header)}>
-          <MainTitle>Categories</MainTitle>
-          <Subtitle>
-            Discover a variety of delicious recipes tailored to your taste. Explore our categories
-            to find the perfect dish for any occasion.
-          </Subtitle>
-        </div>
+    <Section withContainer aria-label="Categories" xstyle={xstyle}>
+      <div {...stylex.props(styles.header)}>
+        <MainTitle>Categories</MainTitle>
+        <Subtitle>
+          Discover a variety of delicious recipes tailored to your taste. Explore our categories to
+          find the perfect dish for any occasion.
+        </Subtitle>
+      </div>
 
-        {isLoading ? (
-          <Loader size="lg" centered label="Loading categories..." />
-        ) : (
-          <CategoryList categories={categories} onSelectCategory={onSelectCategory} />
-        )}
-      </Container>
-    </section>
+      {isLoading ? (
+        <Loader size="lg" centered label="Loading categories..." />
+      ) : (
+        <CategoryList categories={categories} onSelectCategory={onSelectCategory} />
+      )}
+    </Section>
   );
 }
 

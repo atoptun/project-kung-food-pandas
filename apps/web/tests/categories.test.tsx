@@ -52,7 +52,7 @@ describe('Categories', () => {
     });
     fireEvent.click(allCategoriesButton);
 
-    expect(onSelectCategoryMock).toHaveBeenCalledWith(null);
+    expect(onSelectCategoryMock).toHaveBeenCalledWith(null, 'All categories');
   });
 
   it('calls onSelectCategory with category id when specific category card is clicked', async () => {
@@ -66,7 +66,7 @@ describe('Categories', () => {
     });
     fireEvent.click(beefButton);
 
-    expect(onSelectCategoryMock).toHaveBeenCalledWith(expect.any(String));
+    expect(onSelectCategoryMock).toHaveBeenCalledWith(expect.any(String), 'Beef');
   });
 
   it('shows error notification when categories request fails', async () => {

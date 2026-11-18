@@ -1,7 +1,17 @@
 import { apiClient } from '../client';
-import type { RecipeCard, RecipeDetails } from './recipes.types';
+import type {
+  RecipeCard,
+  RecipeDetails,
+  RecipeFilterQuery,
+  RecipesListResponse,
+} from './recipes.types';
 
 export const recipesApi = {
+  getAll: async (params?: RecipeFilterQuery): Promise<RecipesListResponse> => {
+    const response = await apiClient.get<RecipesListResponse>('/recipes', { params });
+    return response.data;
+  },
+
   getById: async (id: string): Promise<RecipeDetails> => {
     const response = await apiClient.get<RecipeDetails>(`/recipes/${encodeURIComponent(id)}`);
     return response.data;

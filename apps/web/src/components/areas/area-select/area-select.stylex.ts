@@ -1,6 +1,6 @@
 import * as stylex from '@stylexjs/stylex';
 
-import { breakpoints, colors } from '@/styles/tokens.stylex';
+import { colors } from '@/styles/tokens.stylex';
 
 export const styles = stylex.create({
   field: {
@@ -9,7 +9,7 @@ export const styles = stylex.create({
     alignItems: 'flex-start',
     gap: 8,
     minWidth: 0,
-    width: { default: '100%', [breakpoints.tablet]: 330 },
+    width: '100%',
     maxWidth: '100%',
   },
   status: {
