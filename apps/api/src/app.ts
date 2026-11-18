@@ -14,6 +14,7 @@ import { notFound } from '@/middlewares/not-found.middleware';
 // import { authRouter } from '@/routes/auth.routes';
 import { favoritesRouter } from '@/routes/favorites.routes';
 import { healthRouter } from '@/routes/health.routes';
+import { recipesRouter } from '@/routes/recipes.routes';
 import { usersRouter } from '@/routes/users.routes';
 
 import { testimonialsRouter } from './routes/testimonials.route';
@@ -48,13 +49,13 @@ export async function createApp(): Promise<Express> {
 
   app.use(healthRouter);
   app.use('/users', usersRouter);
-  // NOT USED. USE 'BetterAuth' INSTEAD. KEEPING FOR REFERENCE.
-  // app.use('/auth', authRouter);
-
-  app.use('/testimonials', testimonialsRouter);
-
   // Must stay before the `/recipes` router: otherwise `GET /recipes/:id` would catch `/favorites`.
   app.use('/recipes/favorites', favoritesRouter);
+  app.use('/recipes', recipesRouter);
+  app.use('/testimonials', testimonialsRouter);
+
+  // NOT USED. USE 'BetterAuth' INSTEAD. KEEPING FOR REFERENCE.
+  // app.use('/auth', authRouter);
 
   app.use(notFound);
   app.use(errorHandler);

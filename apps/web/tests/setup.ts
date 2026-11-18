@@ -12,7 +12,7 @@ import { useAuthModalStore } from '@/stores/auth-modal.store';
 import { useUIStore } from '@/stores/ui.store';
 
 import { server } from './mocks/server';
-import { resetAuthSession } from './test-utils';
+import { releaseAuthSession, resetAuthSession } from './test-utils';
 
 // Configure Axios to use the standard 'fetch' adapter in test/jsdom environment for MSW compatibility
 axios.defaults.adapter = 'fetch';
@@ -54,6 +54,7 @@ afterEach(() => {
   useUIStore.getState().closeMobileMenu();
   localStorage.clear();
   document.body.style.overflow = '';
+  releaseAuthSession();
 });
 
 afterAll(() => server.close());
