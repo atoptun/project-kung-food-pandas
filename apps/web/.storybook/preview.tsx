@@ -2,9 +2,12 @@ import '../src/index.css';
 
 import type { Preview } from '@storybook/react-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type { RequestHandler } from 'msw';
+import toast from 'react-hot-toast';
 import { MemoryRouter } from 'react-router';
 import type { IndexEntry } from 'storybook/internal/types';
 
+import Toaster from '../src/components/shared/toaster/toaster';
 import { allMockHandlers, worker } from '../src/mocks/browser';
 
 let mswStarted: Promise<ServiceWorkerRegistration | undefined> | null = null;
@@ -85,8 +88,13 @@ const preview: Preview & {
     },
   },
   loaders: [
-    async () => {
+    async ({ parameters }) => {
       await initMsw();
+      worker.resetHandlers(...allMockHandlers);
+      const storyHandlers: RequestHandler[] = parameters.msw?.handlers ?? [];
+      worker.use(...storyHandlers);
+      queryClient.clear();
+      toast.remove();
     },
   ],
 
@@ -96,6 +104,7 @@ const preview: Preview & {
         <MemoryRouter>
           <Story />
         </MemoryRouter>
+        <Toaster />
       </QueryClientProvider>
     ),
   ],
