@@ -22,6 +22,10 @@ export function getAuthUserId(req: Request): string {
 }
 
 export async function authenticate(req: Request, _res: Response, next: NextFunction) {
+  if (req.user && req.session) {
+    return next();
+  }
+
   const session = await auth.api.getSession({
     headers: fromNodeHeaders(req.headers),
   });
@@ -36,13 +40,17 @@ export async function authenticate(req: Request, _res: Response, next: NextFunct
 }
 
 export async function optionalAuthenticate(req: Request, _res: Response, next: NextFunction) {
-  const session = await auth.api.getSession({
-    headers: fromNodeHeaders(req.headers),
-  });
+  try {
+    const session = await auth.api.getSession({
+      headers: fromNodeHeaders(req.headers),
+    });
 
-  if (session) {
-    req.user = session.user;
-    req.session = session.session;
+    if (session) {
+      req.user = session.user;
+      req.session = session.session;
+    }
+  } catch {
+    // Ignore errors and proceed without authentication
   }
 
   next();

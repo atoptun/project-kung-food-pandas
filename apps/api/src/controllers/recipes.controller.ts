@@ -13,15 +13,8 @@ import type {
 } from '@repo/shared';
 import type { Request, Response } from 'express';
 
-import { UnauthorizedError } from '@/errors/http.error';
+import { getAuthUserId } from '@/middlewares/auth.middleware';
 import type { RecipesService } from '@/services/recipes.service';
-
-function getAuthUserId(req: Request): string {
-  if (!req.user) {
-    throw new UnauthorizedError('Not authorized');
-  }
-  return req.user.id;
-}
 
 export class RecipesController {
   constructor(private service: RecipesService) {}

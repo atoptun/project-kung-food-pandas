@@ -20,25 +20,12 @@ const controller = new RecipesController(service);
 
 export const recipesRouter: Router = Router();
 
-recipesRouter.get(
-  '/',
-  optionalAuthenticate,
-  validateQuery(RecipeFilterQuerySchema),
-  controller.list,
-);
-recipesRouter.get(
-  '/popular',
-  optionalAuthenticate,
-  validateQuery(PopularRecipesQuerySchema),
-  controller.listPopular,
-);
+recipesRouter.use(optionalAuthenticate);
+
+recipesRouter.get('/', validateQuery(RecipeFilterQuerySchema), controller.list);
+recipesRouter.get('/popular', validateQuery(PopularRecipesQuerySchema), controller.listPopular);
 recipesRouter.get('/own', authenticate, validateQuery(PaginationQuerySchema), controller.listOwn);
-recipesRouter.get(
-  '/:id',
-  optionalAuthenticate,
-  validateParams(RecipeIdParamSchema),
-  controller.getById,
-);
+recipesRouter.get('/:id', validateParams(RecipeIdParamSchema), controller.getById);
 recipesRouter.post(
   '/',
   authenticate,

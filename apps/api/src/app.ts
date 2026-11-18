@@ -49,14 +49,13 @@ export async function createApp(): Promise<Express> {
 
   app.use(healthRouter);
   app.use('/users', usersRouter);
-  app.use('/recipes', recipesRouter);
-  // NOT USED. USE 'BetterAuth' INSTEAD. KEEPING FOR REFERENCE.
-  // app.use('/auth', authRouter);
-
-  app.use('/testimonials', testimonialsRouter);
-
   // Must stay before the `/recipes` router: otherwise `GET /recipes/:id` would catch `/favorites`.
   app.use('/recipes/favorites', favoritesRouter);
+  app.use('/recipes', recipesRouter);
+  app.use('/testimonials', testimonialsRouter);
+
+  // NOT USED. USE 'BetterAuth' INSTEAD. KEEPING FOR REFERENCE.
+  // app.use('/auth', authRouter);
 
   app.use(notFound);
   app.use(errorHandler);
