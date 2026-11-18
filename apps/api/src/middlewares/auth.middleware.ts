@@ -13,6 +13,14 @@ declare module 'express' {
   }
 }
 
+/** Id of the session user on routes behind `authenticate`. */
+export function getAuthUserId(req: Request): string {
+  if (!req.user) {
+    throw new UnauthorizedError('Not authorized');
+  }
+  return req.user.id;
+}
+
 export async function authenticate(req: Request, _res: Response, next: NextFunction) {
   const session = await auth.api.getSession({
     headers: fromNodeHeaders(req.headers),
