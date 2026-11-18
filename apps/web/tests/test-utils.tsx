@@ -43,7 +43,7 @@ export function releaseAuthSession() {
   const clean = Object.getOwnPropertySymbols(session).find(
     (symbol) => symbol.description === 'clean',
   );
-  const release = clean ? (session as Record<symbol, unknown>)[clean] : undefined;
+  const release = clean ? (session as unknown as Record<symbol, () => void>)[clean] : undefined;
   if (typeof release !== 'function') {
     throw new Error('Better Auth session store has no test cleanup');
   }
