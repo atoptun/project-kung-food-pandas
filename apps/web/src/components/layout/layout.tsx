@@ -2,8 +2,8 @@ import { Suspense, useEffect } from 'react';
 import { Outlet, useMatches } from 'react-router';
 
 import AuthModal from '@/components/auth/auth-modal';
-import Loader from '@/components/shared/loader/loader';
 import RecipesSessionSync from '@/components/recipes/recipes-session-sync';
+import Loader from '@/components/shared/loader/loader';
 import Toaster from '@/components/shared/toaster/toaster';
 import type { RouteHandle } from '@/routes';
 
