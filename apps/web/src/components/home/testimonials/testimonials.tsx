@@ -21,16 +21,28 @@ export function Testimonials({ intervalMs = 5000, xstyle }: TestimonialsProps) {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isVisible, setIsVisible] = useState(() =>
+    typeof document !== 'undefined' ? document.visibilityState === 'visible' : true,
+  );
 
   useEffect(() => {
-    if (isPaused || items.length <= 1) return;
+    const handleVisibilityChange = () => {
+      setIsVisible(document.visibilityState === 'visible');
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
+  useEffect(() => {
+    if (isPaused || !isVisible || items.length <= 1) return;
 
     const timer = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % items.length);
     }, intervalMs);
 
     return () => clearInterval(timer);
-  }, [isPaused, items.length, intervalMs]);
+  }, [isPaused, isVisible, items.length, intervalMs]);
 
   if (isLoading) {
     return (

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Categories from '@/components/categories/categories';
 import Hero from '@/components/home/hero/hero';
@@ -6,10 +6,18 @@ import Testimonials from '@/components/home/testimonials/testimonials';
 import RecipesCatalog, {
   type Category,
 } from '@/components/recipes/recipes-catalog/recipes-catalog';
+import { useRecipeFiltersStore } from '@/stores/recipe-filters.store';
 
 export function HomeView() {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const contentSectionRef = useRef<HTMLDivElement>(null);
+
+  // Clear global filters store when leaving the page
+  useEffect(() => {
+    return () => {
+      useRecipeFiltersStore.getState().resetFilters();
+    };
+  }, []);
 
   const scrollToContent = () => {
     if (typeof contentSectionRef.current?.scrollIntoView === 'function') {

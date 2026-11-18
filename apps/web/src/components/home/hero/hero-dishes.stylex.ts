@@ -22,10 +22,11 @@ export const composition = stylex.create({
     left: 0,
     width: { default: 311, [breakpoints.tablet]: 502 },
     height: { default: 208, [breakpoints.tablet]: 330 },
+    maxWidth: '100%',
     transformOrigin: 'top left',
     transform: {
-      default: 'scale(min(1, calc(100cqw / 311px)))',
-      [breakpoints.tablet]: 'scale(min(1, calc(100cqw / 502px)))',
+      default: 'scale(min(1, calc(100cqw / 311px), calc((100vw - 32px) / 311px)))',
+      [breakpoints.tablet]: 'scale(min(1, calc(100cqw / 502px), 1))',
     },
   },
   dishSmall: {

@@ -21,7 +21,7 @@ export function Categories({ onSelectCategory, xstyle }: CategoriesProps) {
 
   useEffect(() => {
     if (isError) {
-      notify.error('Someting went wrong... Please try again later.');
+      notify.error('Something went wrong... Please try again later.');
     }
   }, [isError]);
 

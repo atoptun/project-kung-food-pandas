@@ -84,7 +84,7 @@ describe('Categories', () => {
     });
 
     await vi.waitFor(() => {
-      expect(notifySpy).toHaveBeenCalledWith(expect.stringContaining('Someting went wrong'));
+      expect(notifySpy).toHaveBeenCalledWith(expect.stringContaining('Something went wrong'));
     });
   });
 });
