@@ -15,8 +15,8 @@ declare module '@tanstack/react-query' {
 export const CACHE_TIMES = {
   DEFAULT_STALE: 1000 * 60 * 5, // 5 minute
   DEFAULT_GC: 1000 * 60 * 30, // 30 minute
-  STATIC_DATA_STALE: 1000 * 60 * 15, // 15 minute (dictionaries)
-  STATIC_DATA_GC: 1000 * 60 * 60, // 1 hour (dictionaries)
+  STATIC_DATA_STALE: Infinity, // Immutable dictionaries for this session
+  STATIC_DATA_GC: Infinity, // Keep shared dictionary data for this session
 } as const;
 
 export function createQueryClient() {

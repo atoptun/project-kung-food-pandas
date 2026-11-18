@@ -1,10 +1,11 @@
 import * as stylex from '@stylexjs/stylex';
 
-import { breakpoints, colors, fontWeights } from '@/styles/tokens.stylex';
+import { breakpoints, colors } from '@/styles/tokens.stylex';
 
 export const styles = stylex.create({
   wrapper: {
     position: 'relative',
+    minWidth: 0,
     width: '100%',
   },
   select: {
@@ -18,7 +19,10 @@ export const styles = stylex.create({
     display: 'inline-flex',
     alignItems: 'center',
     gap: 16,
-    outlineStyle: 'none',
+    outlineColor: colors.black,
+    outlineOffset: 3,
+    outlineWidth: { default: 0, ':focus-visible': 2 },
+    outlineStyle: { default: 'none', ':focus-visible': 'solid' },
     boxSizing: 'border-box',
     color: colors.darkGray,
     borderRadius: '30px',
@@ -42,11 +46,11 @@ export const styles = stylex.create({
   },
   valueText: {
     flexGrow: 1,
+    textAlign: 'start',
     minWidth: 0,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
-    textAlign: 'start',
   },
   placeholder: {
     color: colors.gray,
@@ -59,6 +63,7 @@ export const styles = stylex.create({
     left: 0,
     right: 0,
     width: '100%',
+    maxWidth: '100%',
     backgroundColor: colors.white,
     borderRadius: 15,
     paddingInline: 18,
@@ -68,41 +73,32 @@ export const styles = stylex.create({
     gap: 6,
     boxShadow: `0 4px 20px ${colors.gray}`,
     overflowY: 'auto',
-    fontSize: {
-      default: 14,
-      [breakpoints.tablet]: 16,
-    },
-    maxHeight: {
-      default:
-        'calc(var(--visible-items, 5) * 1.43em + (var(--visible-items, 5) - 1) * 6px + 32px)',
-      [breakpoints.tablet]:
-        'calc(var(--visible-items, 5) * 1.5em + (var(--visible-items, 5) - 1) * 6px + 32px)',
-    },
+    fontSize: { default: 14, [breakpoints.tablet]: 16 },
+    overscrollBehavior: 'contain',
+    zIndex: 10,
   },
-  setVisibleItemsCount: (count: number) => ({
-    '--visible-items': count,
+  popup: (maxHeight: number, above: boolean) => ({
+    maxHeight,
+    top: above ? 'auto' : 'calc(100% + 8px)',
+    bottom: above ? 'calc(100% + 8px)' : 'auto',
   }),
   option: {
+    flexShrink: 0,
     listStyleType: 'none',
     margin: 0,
     padding: 0,
-    flexShrink: 0,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    fontWeight: fontWeights.medium,
-    letterSpacing: '-0.02em',
-    fontSize: 'inherit',
-    lineHeight: {
-      default: 1.43,
-      [breakpoints.tablet]: 1.5,
-    },
     backgroundColor: {
-      ':hover': colors.gray,
+      ':hover': colors.lightGray,
+      ':focus': colors.lightGray,
     },
     color: {
-      ':hover': colors.white,
+      default: colors.black,
     },
     cursor: 'pointer',
+    overflowWrap: 'anywhere',
+    outlineColor: colors.black,
+    outlineOffset: 1,
+    outlineWidth: { default: 0, ':focus-visible': 1 },
+    outlineStyle: { default: 'none', ':focus-visible': 'solid' },
   },
 });

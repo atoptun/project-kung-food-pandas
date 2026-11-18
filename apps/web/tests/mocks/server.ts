@@ -8,6 +8,6 @@ import { testimonialsHandlers } from '@/mocks/handlers/testimonials';
 export const server = setupServer(
   ...authHandlers,
   ...dictionariesHandlers,
-  ...recipesHandlersб
+  ...recipesHandlers,
   ...testimonialsHandlers,
 );

@@ -10,7 +10,6 @@ export const styles = stylex.create({
     fontWeight: 'bold',
     fontSize: 12,
     lineHeight: '18px',
-    // Breadcrumbs are uppercase in every Figma frame (HOME / PROFILE, HOME / SALMON AVOCADO SALAD).
     textTransform: 'uppercase',
   },
   separator: {

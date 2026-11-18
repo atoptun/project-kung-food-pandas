@@ -266,7 +266,7 @@
   {
     "id": "640c2dd963a319ea671e380c",
     "name": "Hazlenuts",
-    "description": null,
+    "description": "",
     "img": "https://ftp.goit.study/img/so-yummy/ingredients/640c2dd963a319ea671e380c.png"
   },
   {
@@ -1076,7 +1076,7 @@
   {
     "id": "640c2dd963a319ea671e36c8",
     "name": "Egg White",
-    "description": null,
+    "description": "",
     "img": "https://ftp.goit.study/img/so-yummy/ingredients/640c2dd963a319ea671e36c8.png"
   },
   {
@@ -2606,7 +2606,7 @@
   {
     "id": "640c2dd963a319ea671e36c7",
     "name": "Egg Rolls",
-    "description": null,
+    "description": "",
     "img": "https://ftp.goit.study/img/so-yummy/ingredients/640c2dd963a319ea671e36c7.png"
   },
   {
@@ -2834,7 +2834,7 @@
   {
     "id": "640c2dd963a319ea671e36c9",
     "name": "Egg Yolks",
-    "description": null,
+    "description": "",
     "img": "https://ftp.goit.study/img/so-yummy/ingredients/640c2dd963a319ea671e36c9.png"
   },
   {

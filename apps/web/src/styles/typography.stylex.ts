@@ -28,6 +28,7 @@ export const typography = stylex.create({
     fontFamily: fonts.family,
     fontWeight: fontWeights.extraBold,
     letterSpacing: '-0.02em',
+    textTransform: 'uppercase',
     fontSize: {
       default: 28,
       [breakpoints.tablet]: 40,
@@ -41,6 +42,7 @@ export const typography = stylex.create({
     fontFamily: fonts.family,
     fontWeight: fontWeights.extraBold,
     letterSpacing: '-0.02em',
+    textTransform: 'uppercase',
     fontSize: {
       default: 18,
       [breakpoints.tablet]: 24,
