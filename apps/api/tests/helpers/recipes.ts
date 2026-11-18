@@ -1,29 +1,65 @@
 import prisma from '@/lib/prisma';
 
-async function ensureDictionaries() {
-  const category = await prisma.category.upsert({
-    where: { name: 'Test Category' },
+export async function createCategory(name = 'Test Category') {
+  return prisma.category.upsert({
+    where: { name },
     update: {},
-    create: { name: 'Test Category' },
+    create: { name },
   });
-  const area = await prisma.area.upsert({
-    where: { name: 'Test Area' },
-    update: {},
-    create: { name: 'Test Area' },
-  });
-
-  return { category, area };
 }
 
-export async function createRecipe(ownerId: string, overrides: Partial<{ title: string }> = {}) {
-  const { category, area } = await ensureDictionaries();
+export async function createArea(name = 'Test Area') {
+  return prisma.area.upsert({
+    where: { name },
+    update: {},
+    create: { name },
+  });
+}
+
+export async function createIngredient(name: string) {
+  return prisma.ingredient.create({
+    data: {
+      name,
+      description: `${name} description`,
+    },
+  });
+}
+
+type RecipeOverrides = {
+  title?: string;
+  description?: string | null;
+  instructions?: string | null;
+  time?: number | null;
+  thumb?: string | null;
+  categoryId?: string;
+  areaId?: string;
+  ingredients?: { ingredientId: string; measure: string }[];
+};
+
+export async function createRecipe(ownerId: string, overrides: RecipeOverrides = {}) {
+  const categoryId = overrides.categoryId ?? (await createCategory()).id;
+  const areaId = overrides.areaId ?? (await createArea()).id;
 
   return prisma.recipe.create({
     data: {
       title: overrides.title ?? 'Test Recipe',
+      description: overrides.description,
+      instructions: overrides.instructions,
+      time: overrides.time,
+      thumb: overrides.thumb,
       ownerId,
-      categoryId: category.id,
-      areaId: area.id,
+      categoryId,
+      areaId,
+      ...(overrides.ingredients?.length
+        ? {
+            ingredients: {
+              create: overrides.ingredients.map((item) => ({
+                ingredientId: item.ingredientId,
+                measure: item.measure,
+              })),
+            },
+          }
+        : {}),
     },
   });
 }

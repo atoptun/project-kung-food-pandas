@@ -13,6 +13,7 @@ import { errorHandler } from '@/middlewares/error-handler.middleware';
 import { notFound } from '@/middlewares/not-found.middleware';
 // import { authRouter } from '@/routes/auth.routes';
 import { healthRouter } from '@/routes/health.routes';
+import { recipesRouter } from '@/routes/recipes.routes';
 import { usersRouter } from '@/routes/users.routes';
 
 import { testimonialsRouter } from './routes/testimonials.route';
@@ -47,6 +48,7 @@ export async function createApp(): Promise<Express> {
 
   app.use(healthRouter);
   app.use('/users', usersRouter);
+  app.use('/recipes', recipesRouter);
   // NOT USED. USE 'BetterAuth' INSTEAD. KEEPING FOR REFERENCE.
   // app.use('/auth', authRouter);
 
