@@ -42,7 +42,7 @@ describe('Private routes', () => {
       initialEntries: ['/recipe/add'],
     });
 
-    expect(await screen.findByRole('heading', { name: 'Recipe Add' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Add recipe' })).toBeInTheDocument();
     await waitFor(() => expect(document.title).toBe('Recipe Add | Foodies'));
     expect(router.state.location.pathname).toBe('/recipe/add');
   });

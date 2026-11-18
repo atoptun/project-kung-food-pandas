@@ -14,7 +14,11 @@ declare global {
   }
 }
 
-export const allMockHandlers = [...testimonialsHandlers, ...dictionariesHandlers];
+export const allMockHandlers = [
+  ...testimonialsHandlers,
+  ...dictionariesHandlers,
+  ...recipesHandlers,
+];
 
 export const worker = setupWorker(...handlers);
 
