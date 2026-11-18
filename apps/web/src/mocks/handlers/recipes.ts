@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw';
 
 import type {
   RecipeActionResponse,
@@ -55,6 +55,11 @@ export function resetMockFavorites(ids: string[] = []) {
 export const mockRecipesList = mockRecipes;
 
 export const recipesHandlers = [
+  http.post(api('/recipes'), async () => {
+    await delay(500);
+    return HttpResponse.json(mockRecipes[0], { status: 201 });
+  }),
+
   // Static segments must be registered before `/recipes/:id`.
   http.get(api('/recipes/popular'), ({ request }) => {
     const limit = Number(new URL(request.url).searchParams.get('limit') ?? 4);

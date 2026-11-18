@@ -5,15 +5,9 @@ import type {
 } from '@repo/shared';
 import type { Request, Response } from 'express';
 
-import { UnauthorizedError, UnprocessableEntityError } from '@/errors/http.error';
+import { UnprocessableEntityError } from '@/errors/http.error';
+import { getAuthUserId } from '@/middlewares/auth.middleware';
 import type { UsersService } from '@/services/users.service';
-
-function getAuthUserId(req: Request): string {
-  if (!req.user) {
-    throw new UnauthorizedError('Not authorized');
-  }
-  return req.user.id;
-}
 
 export class UsersController {
   constructor(private service: UsersService) {}

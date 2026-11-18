@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 
 import { queryKeys } from '../keys';
@@ -36,3 +36,14 @@ export const usePopularRecipesQuery = (limit = POPULAR_RECIPES_LIMIT) => {
     queryFn: () => recipesApi.getPopular(limit),
   });
 };
+
+export function useCreateRecipeMutation() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: recipesApi.create,
+    onSuccess: (recipe) => {
+      client.setQueryData(queryKeys.recipes.detail(recipe.id), recipe);
+      void client.invalidateQueries({ queryKey: queryKeys.recipes.lists() });
+    },
+  });
+}

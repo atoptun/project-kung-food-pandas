@@ -6,7 +6,7 @@ import Container from '@/components/shared/container/container';
 import { breakpoints, colors } from '@/styles/tokens.stylex';
 import { typography } from '@/styles/typography.stylex';
 
-const breadcrumbItems = [{ label: 'home', to: '/' }, { label: 'Add recipe' }];
+const breadcrumbItems = [{ label: 'Home', to: '/' }, { label: 'Add recipe' }];
 
 const styles = stylex.create({
   page: {

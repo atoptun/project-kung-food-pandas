@@ -1101,8 +1101,9 @@ paths:
     get:
       tags: *a2
       summary: Get current user favorite recipes
-      description: Returns all recipes added to favorites by the authenticated user
-        with pagination.
+      description: "Returns recipes added to favorites by the authenticated user with
+        pagination, most recently added first. Every item has `isFavorite:
+        true`."
       security:
         - bearerAuth: []
       parameters:
@@ -1130,6 +1131,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RecipesListResponse"
+        "400":
+          description: Invalid query parameters
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid query parameters
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
         "401":
           description: Not authorized
           content:
@@ -1240,6 +1250,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RecipeActionResponse"
+        "400":
+          description: Invalid parameters
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid parameters
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
         "401":
           description: Not authorized
           content:
@@ -1270,7 +1289,8 @@ paths:
     delete:
       tags: *a2
       summary: Remove recipe from favorites
-      description: Removes the specified recipe from current user favorites list.
+      description: Removes the specified recipe from current user favorites list. The
+        recipe itself is not deleted.
       security:
         - bearerAuth: []
       parameters:
@@ -1288,6 +1308,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RecipeActionResponse"
+        "400":
+          description: Invalid parameters
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid parameters
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
         "401":
           description: Not authorized
           content:
