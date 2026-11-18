@@ -28,7 +28,7 @@ export const recipesApi = {
     });
     return response.data;
   },
-  
+
   getById: async (id: string): Promise<RecipeDetails> => {
     const response = await apiClient.get<RecipeDetails>(`/recipes/${encodeURIComponent(id)}`);
     return response.data;
