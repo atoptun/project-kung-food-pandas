@@ -3,5 +3,6 @@ export type {
   RecipeActionResponse,
   RecipeCard,
   RecipeDetails,
+  RecipeFilterQuery,
   RecipesListResponse,
 } from '@repo/shared';

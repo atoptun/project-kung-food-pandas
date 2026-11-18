@@ -93,7 +93,7 @@ function Footer() {
       <hr {...stylex.props(styles.divider)} />
 
       <p {...stylex.props(typography.main, styles.copyright)}>
-        ©2024, Foodies. All rights reserved
+        ©{new Date().getFullYear()}, Foodies. All rights reserved
       </p>
     </footer>
   );

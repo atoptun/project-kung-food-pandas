@@ -1,14 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg">
   <!-- No viewBox: keep the radius and dash lengths in CSS pixels at every size. -->
   <symbol id="photo-frame" overflow="visible">
-    <rect width="100%" height="100%" rx="30" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="5 5" />
+    <rect width="100%" height="100%" rx="30" fill="none" stroke="currentColor" stroke-width="1"
+      stroke-dasharray="5 5" />
   </symbol>
   <symbol viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"
     stroke-linecap="round" stroke-linejoin="round" id="arrow-up-right">
     <path d="M5.25 12.75L12.75 5.25" />
     <path d="M5.25 5.25H12.75V12.75" />
   </symbol>
-  <symbol viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" id="burger">
+  <symbol viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" id="burger">
     <path d="M3.5 8.167H24.5" />
     <path d="M3.5 14H24.5" />
     <path d="M3.5 19.833H24.5" />
@@ -94,5 +96,10 @@
       d="M32 37.5C33.25 37.5 34.3127 37.0627 35.188 36.188C36.0627 35.3127 36.5 34.25 36.5 33C36.5 31.75 36.0627 30.6873 35.188 29.812C34.3127 28.9373 33.25 28.5 32 28.5C30.75 28.5 29.6873 28.9373 28.812 29.812C27.9373 30.6873 27.5 31.75 27.5 33C27.5 34.25 27.9373 35.3127 28.812 36.188C29.6873 37.0627 30.75 37.5 32 37.5ZM24 41C23.45 41 22.9793 40.8043 22.588 40.413C22.196 40.021 22 39.55 22 39V27C22 26.45 22.196 25.9793 22.588 25.588C22.9793 25.196 23.45 25 24 25H27.15L29 23H35L36.85 25H40C40.55 25 41.021 25.196 41.413 25.588C41.8043 25.9793 42 26.45 42 27V39C42 39.55 41.8043 40.021 41.413 40.413C41.021 40.8043 40.55 41 40 41H24Z"
       fill="currentColor"
     />
+  </symbol>
+  <symbol id="quote" viewBox="0 0 59 48" fill="none">
+    <path
+      d="M0 48V31.9412C0 25.9412 1.05672 20.4118 3.17015 15.3529C5.28358 10.2941 8.86468 5.17647 13.9134 0L23.0716 7.2353C20.1363 10.1765 17.9055 12.9412 16.3791 15.5294C14.8527 18.1177 13.8547 20.7647 13.3851 23.4706H24.6567V48H0ZM34.3433 48V31.9412C34.3433 25.9412 35.4 20.4118 37.5134 15.3529C39.6269 10.2941 43.208 5.17647 48.2567 0L57.4149 7.2353C54.4796 10.1765 52.2488 12.9412 50.7224 15.5294C49.196 18.1177 48.198 20.7647 47.7284 23.4706H59V48H34.3433Z"
+      fill="currentColor" />
   </symbol>
 </svg>

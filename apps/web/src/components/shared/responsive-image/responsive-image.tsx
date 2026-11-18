@@ -8,6 +8,7 @@ import { styles } from './responsive-image.stylex';
 
 export interface ResponsiveImagePresetConfig {
   mobile?: ImagePreset;
+  tablet?: ImagePreset;
   desktop: ImagePreset;
 }
 
@@ -33,12 +34,15 @@ export function ResponsiveImage({
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
   const mobPreset = preset.mobile ?? preset.desktop;
+  const tabPreset = preset.tablet ?? preset.desktop;
   const deskPreset = preset.desktop;
 
   const isCloudinary = isCloudinaryUrl(src);
 
   const mob1x = buildCloudinaryUrl(src, { preset: mobPreset, dpr: 1 });
   const mob2x = buildCloudinaryUrl(src, { preset: mobPreset, dpr: 2 });
+  const tab1x = buildCloudinaryUrl(src, { preset: tabPreset, dpr: 1 });
+  const tab2x = buildCloudinaryUrl(src, { preset: tabPreset, dpr: 2 });
   const desk1x = buildCloudinaryUrl(src, { preset: deskPreset, dpr: 1 });
   const desk2x = buildCloudinaryUrl(src, { preset: deskPreset, dpr: 2 });
 
@@ -54,7 +58,8 @@ export function ResponsiveImage({
         />
       ) : isCloudinary ? (
         <picture {...stylex.props(styles.picture)}>
-          <source media="(min-width: 768px)" srcSet={`${desk1x} 1x, ${desk2x} 2x`} />
+          <source media="(min-width: 1440px)" srcSet={`${desk1x} 1x, ${desk2x} 2x`} />
+          <source media="(min-width: 768px)" srcSet={`${tab1x} 1x, ${tab2x} 2x`} />
           <source srcSet={`${mob1x} 1x, ${mob2x} 2x`} />
           <img
             {...stylex.props(styles.img, imgXstyle)}
