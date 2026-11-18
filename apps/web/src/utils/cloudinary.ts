@@ -13,6 +13,8 @@ export type ImagePreset =
   | 'recipeCard' // 342x369, c_fill
   | 'recipeMini' // 60x60, c_fill
   | 'recipeDetail' // 551x400, c_fill
+  | 'recipeDetailMobile' // 343x318, c_fill
+  | 'recipeDetailTablet' // 704x400, c_fill
 
   // Categories
   | 'categoryMobile' // 343x250, c_fill
@@ -38,6 +40,8 @@ export const PRESET_CONFIGS: Record<ImagePreset, PresetConfig> = {
   recipeCardMobile: { w: 343, h: 250, c: 'fill', g: 'auto' },
   recipeCard: { w: 342, h: 369, c: 'fill', g: 'auto' },
   recipeMini: { w: 60, h: 60, c: 'fill', g: 'auto' },
+  recipeDetailMobile: { w: 343, h: 318, c: 'fill', g: 'auto' },
+  recipeDetailTablet: { w: 704, h: 400, c: 'fill', g: 'auto' },
   recipeDetail: { w: 551, h: 400, c: 'fill', g: 'auto' },
 
   categoryMobile: { w: 343, h: 250, c: 'fill', g: 'auto' },
