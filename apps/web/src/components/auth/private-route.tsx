@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Navigate } from 'react-router';
 
+import Loader from '@/components/shared/loader/loader';
 import { useAuth } from '@/hooks/use-auth';
 import type { AuthModalRedirectState } from '@/stores/auth-modal.store';
 
@@ -14,7 +15,7 @@ function PrivateRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated, isPending } = useAuth();
 
   if (isPending) {
-    return <p role="status">Завантаження...</p>;
+    return <Loader size="lg" fullscreen label="Loading..." />;
   }
 
   if (!isAuthenticated) {

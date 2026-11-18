@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw';
 
 import type {
   RecipeActionResponse,
@@ -55,6 +55,11 @@ export function resetMockFavorites(ids: string[] = []) {
 export const mockRecipesList = mockRecipes;
 
 export const recipesHandlers = [
+  http.post(api('/recipes'), async () => {
+    await delay(500);
+    return HttpResponse.json(mockRecipes[0], { status: 201 });
+  }),
+
   // Static segments must be registered before `/recipes/:id`.
   http.get(api('/recipes/popular'), ({ request }) => {
     const limit = Number(new URL(request.url).searchParams.get('limit') ?? 4);
@@ -78,6 +83,41 @@ export const recipesHandlers = [
       page,
       limit,
       totalPages: Math.ceil(favorites.length / limit),
+    });
+  }),
+
+  http.get(api('/recipes'), ({ request }) => {
+    const searchParams = new URL(request.url).searchParams;
+    const page = Number(searchParams.get('page') ?? 1);
+    const limit = Number(searchParams.get('limit') ?? 12);
+    const categoryId = searchParams.get('category');
+    const areaId = searchParams.get('area');
+    const ingredientId = searchParams.get('ingredient');
+
+    let filtered = mockRecipes;
+
+    if (categoryId) {
+      filtered = filtered.filter((r) => r.category?.id === categoryId);
+    }
+
+    if (areaId) {
+      filtered = filtered.filter((r) => r.area?.id === areaId);
+    }
+
+    if (ingredientId) {
+      filtered = filtered.filter((r) => r.ingredients?.some((ing) => ing.id === ingredientId));
+    }
+
+    const cards = filtered.map(toCard);
+    const start = (page - 1) * limit;
+    const items = cards.slice(start, start + limit);
+
+    return HttpResponse.json<RecipesListResponse>({
+      items,
+      total: filtered.length,
+      page,
+      limit,
+      totalPages: Math.ceil(filtered.length / limit),
     });
   }),
 

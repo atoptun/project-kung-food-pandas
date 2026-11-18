@@ -1,15 +1,24 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 
 import { queryKeys } from '../keys';
 import { recipesApi } from './recipes.api';
+import type { RecipeFilterQuery } from './recipes.types';
 
 export const POPULAR_RECIPES_LIMIT = 4;
+export const RECIPES_CATALOG_PAGE_SIZE = 12;
 
 /** True when the API says the recipe does not exist (404) or the id is malformed (400). */
 export function isRecipeNotFoundError(error: unknown) {
   return isAxiosError(error) && (error.response?.status === 404 || error.response?.status === 400);
 }
+
+export const useRecipesQuery = (params?: RecipeFilterQuery) => {
+  return useQuery({
+    queryKey: queryKeys.recipes.list((params ?? {}) as Record<string, unknown>),
+    queryFn: () => recipesApi.getAll(params),
+  });
+};
 
 export const useRecipeQuery = (id: string | undefined) => {
   return useQuery({
@@ -27,3 +36,14 @@ export const usePopularRecipesQuery = (limit = POPULAR_RECIPES_LIMIT) => {
     queryFn: () => recipesApi.getPopular(limit),
   });
 };
+
+export function useCreateRecipeMutation() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: recipesApi.create,
+    onSuccess: (recipe) => {
+      client.setQueryData(queryKeys.recipes.detail(recipe.id), recipe);
+      void client.invalidateQueries({ queryKey: queryKeys.recipes.lists() });
+    },
+  });
+}

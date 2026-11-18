@@ -12,6 +12,7 @@ import { auth } from '@/lib/auth';
 import { errorHandler } from '@/middlewares/error-handler.middleware';
 import { notFound } from '@/middlewares/not-found.middleware';
 // import { authRouter } from '@/routes/auth.routes';
+import { favoritesRouter } from '@/routes/favorites.routes';
 import { healthRouter } from '@/routes/health.routes';
 import { recipesRouter } from '@/routes/recipes.routes';
 import { usersRouter } from '@/routes/users.routes';
@@ -53,6 +54,9 @@ export async function createApp(): Promise<Express> {
   // app.use('/auth', authRouter);
 
   app.use('/testimonials', testimonialsRouter);
+
+  // Must stay before the `/recipes` router: otherwise `GET /recipes/:id` would catch `/favorites`.
+  app.use('/recipes/favorites', favoritesRouter);
 
   app.use(notFound);
   app.use(errorHandler);
