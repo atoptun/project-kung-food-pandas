@@ -44,6 +44,7 @@ const EnvSchema = z
         message: 'CLOUDINARY_URL must start with cloudinary://',
       })
       .default('cloudinary://demo_key:demo_secret@demo'),
+    CLOUDINARY_FOLDER_BASE: z.string().default('kfp'),
   })
   .transform((data) => ({
     ...data,
