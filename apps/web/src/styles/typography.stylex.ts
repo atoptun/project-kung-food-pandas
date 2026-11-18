@@ -113,4 +113,17 @@ export const typography = stylex.create({
     fontSize: 12,
     lineHeight: '18px',
   },
+  categories: {
+    fontFamily: fonts.family,
+    fontWeight: fontWeights.bold,
+    letterSpacing: '-0.02em',
+    fontSize: {
+      default: 16,
+      [breakpoints.tablet]: 20,
+    },
+    lineHeight: {
+      default: '24px',
+      [breakpoints.tablet]: '24px',
+    },
+  },
 });

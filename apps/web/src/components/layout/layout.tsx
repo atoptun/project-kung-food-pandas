@@ -2,6 +2,7 @@ import { Suspense, useEffect } from 'react';
 import { Outlet, useMatches } from 'react-router';
 
 import AuthModal from '@/components/auth/auth-modal';
+import Loader from '@/components/shared/loader/loader';
 import Toaster from '@/components/shared/toaster/toaster';
 import type { RouteHandle } from '@/routes';
 
@@ -20,7 +21,7 @@ function Layout() {
     <>
       <Header theme={handle?.headerTheme} />
       <main>
-        <Suspense fallback={<p>Завантаження...</p>}>
+        <Suspense fallback={<Loader size="lg" fullscreen label="Loading page..." />}>
           <Outlet />
         </Suspense>
       </main>
