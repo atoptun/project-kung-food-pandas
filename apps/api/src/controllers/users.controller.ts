@@ -15,8 +15,10 @@ import {
   NotFoundError,
   UnprocessableEntityError,
 } from '@/errors/http.error';
+import cloudinary from '@/lib/cloudinary';
 import prisma from '@/lib/prisma';
-import type { UsersService } from '@/services/users.service';
+import { getAuthUserId } from '@/middlewares/auth.middleware';
+import { UsersService } from '@/services/users.service';
 
 const followUserSelect = {
   id: true,
@@ -29,12 +31,6 @@ const followUserSelect = {
     take: 4,
   },
 } as const;
-
-
-
-
-import { getAuthUserId } from '@/middlewares/auth.middleware';
-
 
 export class UsersController {
   constructor(private service: UsersService) {}
@@ -192,4 +188,4 @@ export class UsersController {
   };
 }
 
-export const usersController = new UsersController();
+export const usersController = new UsersController(new UsersService(prisma, cloudinary));
