@@ -3,6 +3,7 @@ import { delay, http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 
 import { mockAuthAccount } from '@/mocks/handlers/auth';
+import { mockRecipesList } from '@/mocks/handlers/recipes';
 
 import { server } from '../mocks/server';
 import { renderWithProviders } from '../test-utils';
@@ -41,15 +42,18 @@ describe('Private routes', () => {
       initialEntries: ['/recipe/add'],
     });
 
-    expect(await screen.findByRole('heading', { name: 'Recipe Add' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Add recipe' })).toBeInTheDocument();
     await waitFor(() => expect(document.title).toBe('Recipe Add | Foodies'));
     expect(router.state.location.pathname).toBe('/recipe/add');
   });
 
   it('keeps public pages available for a guest', async () => {
-    const { router } = renderWithProviders({ initialEntries: ['/recipe/1'] });
+    const recipe = mockRecipesList[0]!;
+    const { router } = renderWithProviders({ initialEntries: [`/recipe/${recipe.id}`] });
 
-    expect(await screen.findByRole('heading', { name: 'Recipe' })).toBeInTheDocument();
-    expect(router.state.location.pathname).toBe('/recipe/1');
+    expect(
+      await screen.findByRole('heading', { level: 1, name: recipe.title }),
+    ).toBeInTheDocument();
+    expect(router.state.location.pathname).toBe(`/recipe/${recipe.id}`);
   });
 });

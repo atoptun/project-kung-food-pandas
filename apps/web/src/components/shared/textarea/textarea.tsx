@@ -16,11 +16,13 @@ type TextareaProps = Omit<
   value?: string;
   defaultValue?: string;
   xstyle?: stylex.StyleXStyles;
+  wrapperXstyle?: stylex.StyleXStyles;
   maxLength?: number;
 };
 
 function Textarea({
   xstyle,
+  wrapperXstyle,
   maxLength = 1000,
   value,
   defaultValue,
@@ -55,7 +57,7 @@ function Textarea({
   }, [isControlled, props.form]);
 
   return (
-    <div {...stylex.props(styles.wrapper)}>
+    <div {...stylex.props(styles.wrapper, wrapperXstyle)}>
       <textarea
         {...props}
         ref={textareaRef}

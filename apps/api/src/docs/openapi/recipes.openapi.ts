@@ -77,13 +77,15 @@ registry.registerPath({
   path: '/recipes/favorites',
   tags: TAG,
   summary: 'Get current user favorite recipes',
-  description: 'Returns all recipes added to favorites by the authenticated user with pagination.',
+  description:
+    'Returns recipes added to favorites by the authenticated user with pagination, most recently added first. Every item has `isFavorite: true`.',
   security: [{ bearerAuth: [] }],
   request: {
     query: PaginationQuerySchema,
   },
   responses: {
     200: jsonResponse('List of favorite recipes', RecipesListResponseSchema),
+    400: errorResponse('Invalid query parameters'),
     401: errorResponse('Not authorized'),
   },
 });
@@ -154,6 +156,7 @@ registry.registerPath({
   },
   responses: {
     200: jsonResponse('Recipe added to favorites successfully', RecipeActionResponseSchema),
+    400: errorResponse('Invalid parameters'),
     401: errorResponse('Not authorized'),
     404: errorResponse('Recipe not found'),
     409: errorResponse('Recipe is already in favorites'),
@@ -165,13 +168,15 @@ registry.registerPath({
   path: '/recipes/favorites/{id}',
   tags: TAG,
   summary: 'Remove recipe from favorites',
-  description: 'Removes the specified recipe from current user favorites list.',
+  description:
+    'Removes the specified recipe from current user favorites list. The recipe itself is not deleted.',
   security: [{ bearerAuth: [] }],
   request: {
     params: RecipeIdParamSchema,
   },
   responses: {
     200: jsonResponse('Recipe removed from favorites successfully', RecipeActionResponseSchema),
+    400: errorResponse('Invalid parameters'),
     401: errorResponse('Not authorized'),
     404: errorResponse('Recipe not found or not in favorites'),
   },

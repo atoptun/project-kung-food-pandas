@@ -11,8 +11,12 @@ import { generateOpenApiDocument } from '@/docs/openapi';
 import { auth } from '@/lib/auth';
 import { errorHandler } from '@/middlewares/error-handler.middleware';
 import { notFound } from '@/middlewares/not-found.middleware';
+// import { authRouter } from '@/routes/auth.routes';
+import { dictionariesRouter } from '@/routes/dictionaries.routes';
+import { favoritesRouter } from '@/routes/favorites.routes';
 import { healthRouter } from '@/routes/health.routes';
-import { testimonialsRouter } from '@/routes/testimonials.route';
+import { recipesRouter } from '@/routes/recipes.routes';
+import { testimonialsRouter } from '@/routes/testimonials.routes';
 import { usersRouter } from '@/routes/users.routes';
 
 export async function createApp(): Promise<Express> {
@@ -46,7 +50,13 @@ export async function createApp(): Promise<Express> {
   app.use(healthRouter);
   app.use(dictionariesRouter);
   app.use('/users', usersRouter);
+  // Must stay before the `/recipes` router: otherwise `GET /recipes/:id` would catch `/favorites`.
+  app.use('/recipes/favorites', favoritesRouter);
+  app.use('/recipes', recipesRouter);
   app.use('/testimonials', testimonialsRouter);
+
+  // NOT USED. USE 'BetterAuth' INSTEAD. KEEPING FOR REFERENCE.
+  // app.use('/auth', authRouter);
 
   app.use(notFound);
   app.use(errorHandler);

@@ -1,16 +1,19 @@
 import { PaginationQuerySchema, UserIdParamSchema } from '@repo/shared';
 import { Router } from 'express';
 
+import { RecipesController } from '@/controllers/recipes.controller';
 import { UsersController } from '@/controllers/users.controller';
 import cloudinary from '@/lib/cloudinary';
 import prisma from '@/lib/prisma';
 import { authenticate } from '@/middlewares/auth.middleware';
 import { uploadSingle } from '@/middlewares/upload.middleware';
 import { validateParams, validateQuery } from '@/middlewares/validate.middleware';
+import { RecipesService } from '@/services/recipes.service';
 import { UsersService } from '@/services/users.service';
 
 const service = new UsersService(prisma, cloudinary);
 const controller = new UsersController(service);
+const recipesController = new RecipesController(new RecipesService(prisma, cloudinary));
 
 export const usersRouter: Router = Router();
 
@@ -32,5 +35,6 @@ usersRouter.get(
   validateParams(UserIdParamSchema),
   validateQuery(PaginationQuerySchema),
   controller.getUserRecipes,
+  recipesController.listByUser,
 );
 usersRouter.get('/:id', validateParams(UserIdParamSchema), controller.getPublicProfile);

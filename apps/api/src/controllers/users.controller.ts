@@ -32,12 +32,11 @@ const followUserSelect = {
   },
 } as const;
 
-function getAuthUserId(req: Request): string {
-  if (!req.user) {
-    throw new UnauthorizedError('Not authorized');
-  }
-  return req.user.id;
-}
+
+
+
+import { getAuthUserId } from '@/middlewares/auth.middleware';
+
 
 export class UsersController {
   constructor(private service: UsersService) {}

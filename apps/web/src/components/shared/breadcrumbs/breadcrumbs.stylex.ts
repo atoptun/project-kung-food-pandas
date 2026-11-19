@@ -10,6 +10,7 @@ export const styles = stylex.create({
     fontWeight: 'bold',
     fontSize: 12,
     lineHeight: '18px',
+    textTransform: 'uppercase',
   },
   separator: {
     marginRight: 8,

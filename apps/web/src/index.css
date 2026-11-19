@@ -1,6 +1,10 @@
 @import 'modern-normalize/modern-normalize.css' layer(reset);
 @import '@fontsource-variable/mulish/wght.css';
 
+html {
+  scrollbar-gutter: stable;
+}
+
 /* Component styles take precedence over these global defaults. */
 @layer reset {
   body {
@@ -12,7 +16,7 @@
     font-weight: 500;
     font-size: 14px;
     line-height: 20px;
-    letter-spacing: -0.02%;
+    letter-spacing: -0.02em;
   }
 
   @media (min-width: 768px) {
