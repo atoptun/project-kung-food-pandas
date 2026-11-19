@@ -1,6 +1,6 @@
 import type { CurrentUserProfileResponse, UserPublicProfileResponse } from '@repo/shared';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw';
 import { fn } from 'storybook/test';
 
 import Container from '@/components/shared/container/container';
@@ -58,6 +58,32 @@ export const OwnProfile: Story = {
         http.patch(`${clientEnv.VITE_API_URL}/users/me/avatar`, () =>
           HttpResponse.json(ownProfile),
         ),
+      ],
+    },
+  },
+};
+
+export const UploadingAvatar: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        http.patch(`${clientEnv.VITE_API_URL}/users/me/avatar`, async () => {
+          await delay(2000);
+          return HttpResponse.json(ownProfile);
+        }),
+      ],
+    },
+  },
+};
+
+export const AvatarUploadError: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        http.patch(`${clientEnv.VITE_API_URL}/users/me/avatar`, async () => {
+          await delay(1000);
+          return HttpResponse.json({ message: 'Upload failed' }, { status: 500 });
+        }),
       ],
     },
   },

@@ -6,6 +6,7 @@ import { useAvatarUpload, type useFollows } from '@/api/users/users.queries';
 import Avatar from '@/components/shared/avatar/avatar';
 import Button from '@/components/shared/button/button';
 import Icon from '@/components/shared/icon/icon';
+import Loader from '@/components/shared/loader/loader';
 import FollowButton from '@/components/users/follow-button/follow-button';
 import { notify } from '@/lib/notify';
 import { useAuthModalStore } from '@/stores/auth-modal.store';
@@ -61,6 +62,11 @@ export default function ProfileInfo({
       <div {...stylex.props(styles.info)}>
         <div {...stylex.props(styles.avatar)}>
           <Avatar src={profile.user.avatar} alt={profile.user.name} size="lg" />
+          {isUploading && (
+            <div {...stylex.props(styles.avatarOverlay)}>
+              <Loader size="sm" label="Uploading avatar…" />
+            </div>
+          )}
           {isOwn && (
             <>
               <input
@@ -105,7 +111,6 @@ export default function ProfileInfo({
           onToggle={() => follows.toggle(profileId, isFollowing)}
         />
       )}
-      {isUploading && <p role="status">Uploading avatar…</p>}
     </aside>
   );
 }
