@@ -21,9 +21,17 @@ registry.register('UserRecipesListResponse', UserRecipesListResponseSchema);
 registry.register('FollowActionResponse', FollowActionResponseSchema);
 registry.register('AvatarUploadRequest', AvatarUploadSchema);
 
+const totalCountHeader = {
+  'X-Total-Count': {
+    description: 'Total number of matching users, before pagination.',
+    schema: { type: 'integer' as const },
+  },
+};
+
 registry.registerPath({
   method: 'get',
   path: '/users/me',
+  operationId: 'getCurrentUserProfile',
   tags: TAG,
   summary: 'Get current user profile with statistics',
   security: [{ bearerAuth: [] }],
@@ -39,15 +47,14 @@ registry.registerPath({
 registry.registerPath({
   method: 'patch',
   path: '/users/me/avatar',
+  operationId: 'updateCurrentUserAvatar',
   tags: TAG,
   summary: 'Update current user avatar',
   security: [{ bearerAuth: [] }],
   request: {
     body: {
       content: {
-        'multipart/form-data': {
-          schema: AvatarUploadSchema,
-        },
+        'multipart/form-data': { schema: AvatarUploadSchema },
       },
     },
   },
@@ -62,32 +69,51 @@ registry.registerPath({
 registry.registerPath({
   method: 'get',
   path: '/users/me/following',
+  operationId: 'listFollowing',
   tags: TAG,
-  summary: 'Get users followed by current user (following)',
+  summary: 'List users followed by the current user',
   security: [{ bearerAuth: [] }],
-  request: {
-    query: PaginationQuerySchema,
-  },
+  request: { query: PaginationQuerySchema },
   responses: {
-    200: jsonResponse(
-      'List of followed users retrieved successfully',
-      UserFollowersListResponseSchema,
-    ),
+    200: {
+      ...jsonResponse('Following list', UserFollowersListResponseSchema),
+      headers: totalCountHeader,
+    },
+    400: errorResponse('Invalid pagination parameters'),
     401: errorResponse('Not authorized'),
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/users/{id}/followers',
+  operationId: 'listFollowers',
+  tags: TAG,
+  summary: 'List followers of a user',
+  description: 'This endpoint requires authentication; follower lists are private.',
+  security: [{ bearerAuth: [] }],
+  request: { params: UserIdParamSchema, query: PaginationQuerySchema },
+  responses: {
+    200: {
+      ...jsonResponse('Followers list', UserFollowersListResponseSchema),
+      headers: totalCountHeader,
+    },
+    400: errorResponse('Invalid parameters or pagination'),
+    401: errorResponse('Not authorized'),
+    404: errorResponse('User not found'),
   },
 });
 
 registry.registerPath({
   method: 'post',
   path: '/users/me/following/{id}',
+  operationId: 'followUser',
   tags: TAG,
-  summary: 'Follow a user by ID',
+  summary: 'Follow a user',
   security: [{ bearerAuth: [] }],
-  request: {
-    params: UserIdParamSchema,
-  },
+  request: { params: UserIdParamSchema },
   responses: {
-    200: jsonResponse('Successfully followed the user', FollowActionResponseSchema),
+    201: jsonResponse('Follow created', FollowActionResponseSchema),
     400: errorResponse('Cannot follow yourself'),
     401: errorResponse('Not authorized'),
     404: errorResponse('User not found'),
@@ -98,28 +124,26 @@ registry.registerPath({
 registry.registerPath({
   method: 'delete',
   path: '/users/me/following/{id}',
+  operationId: 'unfollowUser',
   tags: TAG,
-  summary: 'Unfollow a user by ID',
+  summary: 'Unfollow a user',
   security: [{ bearerAuth: [] }],
-  request: {
-    params: UserIdParamSchema,
-  },
+  request: { params: UserIdParamSchema },
   responses: {
-    200: jsonResponse('Successfully unfollowed the user', FollowActionResponseSchema),
+    204: jsonResponse('Follow removed'),
     401: errorResponse('Not authorized'),
-    404: errorResponse('User not found or not currently followed'),
+    404: errorResponse('User or follow relationship not found'),
   },
 });
 
 registry.registerPath({
   method: 'get',
   path: '/users/{id}',
+  operationId: 'getPublicUserProfile',
   tags: TAG,
-  summary: 'Get public profile of another user by ID',
+  summary: 'Get public profile of another user',
   security: [{ bearerAuth: [] }],
-  request: {
-    params: UserIdParamSchema,
-  },
+  request: { params: UserIdParamSchema },
   responses: {
     200: jsonResponse(
       'User public profile retrieved successfully',
@@ -132,36 +156,14 @@ registry.registerPath({
 
 registry.registerPath({
   method: 'get',
-  path: '/users/{id}/followers',
-  tags: TAG,
-  summary: 'Get followers of a specific user by ID',
-  security: [{ bearerAuth: [] }],
-  request: {
-    params: UserIdParamSchema,
-    query: PaginationQuerySchema,
-  },
-  responses: {
-    200: jsonResponse(
-      'List of user followers retrieved successfully',
-      UserFollowersListResponseSchema,
-    ),
-    401: errorResponse('Not authorized'),
-    404: errorResponse('User not found'),
-  },
-});
-
-registry.registerPath({
-  method: 'get',
   path: '/users/{id}/recipes',
+  operationId: 'listUserRecipes',
   tags: TAG,
-  summary: 'Get recipes created by a specific user by ID',
+  summary: 'Get recipes created by a user',
   security: [{ bearerAuth: [] }],
-  request: {
-    params: UserIdParamSchema,
-    query: PaginationQuerySchema,
-  },
+  request: { params: UserIdParamSchema, query: PaginationQuerySchema },
   responses: {
-    200: jsonResponse('List of user recipes retrieved successfully', UserRecipesListResponseSchema),
+    200: jsonResponse('User recipes retrieved successfully', UserRecipesListResponseSchema),
     401: errorResponse('Not authorized'),
     404: errorResponse('User not found'),
   },

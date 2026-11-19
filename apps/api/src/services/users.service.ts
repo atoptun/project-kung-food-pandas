@@ -18,6 +18,8 @@ const profileSelect = {
     select: {
       recipes: true,
       favoriteRecipes: true,
+      followers: true,
+      following: true,
     },
   },
 } as const;
@@ -40,9 +42,8 @@ export class UsersService {
       },
       recipesCount: user._count.recipes,
       favoritesCount: user._count.favoriteRecipes,
-      // TODO(#17): count from the follows relation once subscriptions are added to the schema
-      followersCount: 0,
-      followingCount: 0,
+      followersCount: user._count.followers,
+      followingCount: user._count.following,
     };
   };
 
@@ -57,8 +58,7 @@ export class UsersService {
         avatar: user.avatar,
       },
       recipesCount: user._count.recipes,
-      // TODO(#17): count from the follows relation once subscriptions are added to the schema
-      followersCount: 0,
+      followersCount: user._count.followers,
     };
   };
 
