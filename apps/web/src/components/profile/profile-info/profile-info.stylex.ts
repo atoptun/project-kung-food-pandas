@@ -1,0 +1,60 @@
+import * as stylex from '@stylexjs/stylex';
+
+import { breakpoints, colors } from '@/styles/tokens.stylex';
+
+export const styles = stylex.create({
+  info: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    paddingBlock: { default: 29, [breakpoints.tablet]: 39 },
+    paddingInline: { default: 20, [breakpoints.tablet]: 40 },
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: colors.gray,
+    borderRadius: { default: 30, [breakpoints.tablet]: 30 },
+  },
+  avatar: {
+    position: 'relative',
+    display: 'flex',
+    marginBottom: { default: 16, [breakpoints.tablet]: 20 },
+  },
+  upload: {
+    position: 'absolute',
+    bottom: -6,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: { default: 28, [breakpoints.tablet]: 38 },
+    height: { default: 28, [breakpoints.tablet]: 38 },
+    padding: 0,
+    borderWidth: 0,
+    borderRadius: '50%',
+    backgroundColor: colors.black,
+    color: colors.white,
+    display: 'grid',
+    placeItems: 'center',
+    cursor: 'pointer',
+    outlineWidth: { default: 0, ':focus-visible': 2 },
+    outlineStyle: 'solid',
+    outlineOffset: 3,
+    opacity: { default: 1, ':disabled': 0.5 },
+  },
+  hiddenInput: { display: 'none' },
+  name: {
+    lineHeight: '24px',
+    textTransform: 'uppercase',
+    maxWidth: '100%',
+    overflowWrap: 'anywhere',
+    textAlign: 'center',
+  },
+  stats: {
+    display: 'grid',
+    gap: 6,
+    marginTop: { default: 16, [breakpoints.tablet]: 20 },
+    maxWidth: '100%',
+  },
+  stat: { display: 'flex', gap: 8, alignItems: 'center' },
+  label: { color: colors.gray, flexShrink: 0, fontSize: { default: 12, [breakpoints.tablet]: 14 } },
+  value: { overflowWrap: 'anywhere', minWidth: 0, fontWeight: 700 },
+  primary: { marginTop: 20, width: '100%' },
+});
