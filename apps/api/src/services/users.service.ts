@@ -13,6 +13,7 @@ import env from '@/config/env';
 import logger from '@/config/logger';
 import { BadRequestError, ConflictError, NotFoundError } from '@/errors/http.error';
 import type { PrismaClient } from '@/generated/prisma/client';
+import { isPrismaError, PrismaErrorCode } from '@/lib/prisma-errors';
 
 const AVATARS_FOLDER = 'avatars';
 
@@ -92,34 +93,22 @@ export class UsersService {
       throw new BadRequestError('Cannot follow yourself');
     }
 
-    const targetUser = await this.db.user.findUnique({
-      where: { id: targetUserId },
-      select: { id: true },
-    });
-
-    if (!targetUser) {
-      throw new NotFoundError('User not found');
-    }
-
-    const existingFollow = await this.db.follow.findUnique({
-      where: {
-        followerId_followingId: {
+    try {
+      await this.db.follow.create({
+        data: {
           followerId: currentUserId,
           followingId: targetUserId,
         },
-      },
-    });
-
-    if (existingFollow) {
-      throw new ConflictError('Already following this user');
+      });
+    } catch (error) {
+      if (isPrismaError(error, PrismaErrorCode.UniqueConstraint)) {
+        throw new ConflictError('Already following this user');
+      }
+      if (isPrismaError(error, PrismaErrorCode.ForeignKeyConstraint)) {
+        throw new NotFoundError('User not found');
+      }
+      throw error;
     }
-
-    await this.db.follow.create({
-      data: {
-        followerId: currentUserId,
-        followingId: targetUserId,
-      },
-    });
 
     return { message: 'Successfully followed the user.' };
   };
@@ -129,30 +118,19 @@ export class UsersService {
     targetUserId: string,
   ): Promise<FollowActionResponse> => {
     if (currentUserId === targetUserId) {
-      throw new NotFoundError('User not found or not currently followed');
+      throw new NotFoundError('Cannot unfollow yourself');
     }
 
-    const existingFollow = await this.db.follow.findUnique({
+    const { count } = await this.db.follow.deleteMany({
       where: {
-        followerId_followingId: {
-          followerId: currentUserId,
-          followingId: targetUserId,
-        },
+        followerId: currentUserId,
+        followingId: targetUserId,
       },
     });
 
-    if (!existingFollow) {
+    if (count === 0) {
       throw new NotFoundError('User not found or not currently followed');
     }
-
-    await this.db.follow.delete({
-      where: {
-        followerId_followingId: {
-          followerId: currentUserId,
-          followingId: targetUserId,
-        },
-      },
-    });
 
     return { message: 'Successfully unfollowed the user.' };
   };
@@ -223,14 +201,7 @@ export class UsersService {
     page: number,
     limit: number,
   ): Promise<UserFollowersListResponse> => {
-    const targetUser = await this.db.user.findUnique({
-      where: { id: targetUserId },
-      select: { id: true },
-    });
-
-    if (!targetUser) {
-      throw new NotFoundError('User not found');
-    }
+    await this.findProfileOrThrow(targetUserId);
 
     const offset = (page - 1) * limit;
 
