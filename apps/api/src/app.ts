@@ -12,6 +12,7 @@ import { auth } from '@/lib/auth';
 import { errorHandler } from '@/middlewares/error-handler.middleware';
 import { notFound } from '@/middlewares/not-found.middleware';
 // import { authRouter } from '@/routes/auth.routes';
+import { dictionariesRouter } from '@/routes/dictionaries.routes';
 import { favoritesRouter } from '@/routes/favorites.routes';
 import { healthRouter } from '@/routes/health.routes';
 import { recipesRouter } from '@/routes/recipes.routes';
@@ -48,6 +49,7 @@ export async function createApp(): Promise<Express> {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
   app.use(healthRouter);
+  app.use(dictionariesRouter);
   app.use('/users', usersRouter);
   // Must stay before the `/recipes` router: otherwise `GET /recipes/:id` would catch `/favorites`.
   app.use('/recipes/favorites', favoritesRouter);
