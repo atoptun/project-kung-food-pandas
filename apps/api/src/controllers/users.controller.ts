@@ -13,10 +13,8 @@ import {
   BadRequestError,
   ConflictError,
   NotFoundError,
-  UnauthorizedError,
   UnprocessableEntityError,
 } from '@/errors/http.error';
-import cloudinary from '@/lib/cloudinary';
 import prisma from '@/lib/prisma';
 import type { UsersService } from '@/services/users.service';
 
