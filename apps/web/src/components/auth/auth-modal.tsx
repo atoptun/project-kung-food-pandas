@@ -16,11 +16,16 @@ function AuthModal() {
   const openSignIn = useAuthModalStore((state) => state.openSignIn);
   const openSignUp = useAuthModalStore((state) => state.openSignUp);
   const open = useAuthModalStore((state) => state.open);
+  const onSuccessCallback = useAuthModalStore((state) => state.onSuccess);
 
   const location = useLocation();
   const navigate = useNavigate();
   const requestedView = (location.state as AuthModalRedirectState | null)?.authModal;
 
+  const handleSuccess = () => {
+    close();
+    onSuccessCallback?.();
+  };
   // A redirect (e.g. PrivateRoute) asked for the dialog: open it on the destination page,
   // then drop the state so Back/refresh does not reopen it.
   useEffect(() => {
@@ -36,10 +41,10 @@ function AuthModal() {
     // `key` remounts the dialog per view so focus moves into the new form.
     <Modal key={view} isOpen={view !== null} onClose={close} aria-labelledby={titleId}>
       {view === 'sign-in' && (
-        <SignInForm titleId={titleId} onSuccess={close} onSwitchToSignUp={openSignUp} />
+        <SignInForm titleId={titleId} onSuccess={handleSuccess} onSwitchToSignUp={openSignUp} />
       )}
       {view === 'sign-up' && (
-        <SignUpForm titleId={titleId} onSuccess={close} onSwitchToSignIn={openSignIn} />
+        <SignUpForm titleId={titleId} onSuccess={handleSuccess} onSwitchToSignIn={openSignIn} />
       )}
       {view === 'logout' && <LogoutConfirm titleId={titleId} onCancel={close} />}
     </Modal>

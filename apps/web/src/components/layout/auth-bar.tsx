@@ -14,14 +14,14 @@ function AuthBar({ theme }: { theme: HeaderTheme }) {
       <button
         type="button"
         {...stylex.props(typography.captionBold, authBar.button, authBar.signIn)}
-        onClick={openSignIn}
+        onClick={() => openSignIn()}
       >
         Sign in
       </button>
       <button
         type="button"
         {...stylex.props(typography.captionBold, authBar.button, authBar.signUp)}
-        onClick={openSignUp}
+        onClick={() => openSignUp()}
       >
         Sign up
       </button>
