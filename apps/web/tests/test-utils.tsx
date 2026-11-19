@@ -32,6 +32,24 @@ export function resetAuthSession() {
   authClient.$store.notify('$sessionSignal');
 }
 
+/**
+ * Better Auth waits 1s after the last listener leaves, then removes its window listeners.
+ * CI tears jsdom down first, so that timer throws `window is not defined` and fails the run.
+ * Flush the unmount while `window` still exists.
+ */
+export function releaseAuthSession() {
+  const session = authClient.$store.atoms.session;
+  if (!session) return;
+  const clean = Object.getOwnPropertySymbols(session).find(
+    (symbol) => symbol.description === 'clean',
+  );
+  const release = clean ? (session as unknown as Record<symbol, () => void>)[clean] : undefined;
+  if (typeof release !== 'function') {
+    throw new Error('Better Auth session store has no test cleanup');
+  }
+  release();
+}
+
 type TestRenderOptions = Omit<RenderOptions, 'wrapper'> & {
   ui?: ReactElement;
   initialEntries?: string[];

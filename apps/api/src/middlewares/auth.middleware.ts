@@ -13,7 +13,19 @@ declare module 'express' {
   }
 }
 
+/** Id of the session user on routes behind `authenticate`. */
+export function getAuthUserId(req: Request): string {
+  if (!req.user) {
+    throw new UnauthorizedError('Not authorized');
+  }
+  return req.user.id;
+}
+
 export async function authenticate(req: Request, _res: Response, next: NextFunction) {
+  if (req.user && req.session) {
+    return next();
+  }
+
   const session = await auth.api.getSession({
     headers: fromNodeHeaders(req.headers),
   });
@@ -24,5 +36,22 @@ export async function authenticate(req: Request, _res: Response, next: NextFunct
 
   req.user = session.user;
   req.session = session.session;
+  next();
+}
+
+export async function optionalAuthenticate(req: Request, _res: Response, next: NextFunction) {
+  try {
+    const session = await auth.api.getSession({
+      headers: fromNodeHeaders(req.headers),
+    });
+
+    if (session) {
+      req.user = session.user;
+      req.session = session.session;
+    }
+  } catch {
+    // Ignore errors and proceed without authentication
+  }
+
   next();
 }

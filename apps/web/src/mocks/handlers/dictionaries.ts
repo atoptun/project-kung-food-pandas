@@ -8,16 +8,16 @@ import ingredientsData from '../data/ingredients.json';
 export const dictionariesHandlers = [
   http.get('*/categories', async () => {
     await delay(150);
-    return HttpResponse.json<Category[]>(categoriesData as Category[]);
+    return HttpResponse.json<Category[]>(categoriesData);
   }),
 
   http.get('*/areas', async () => {
     await delay(150);
-    return HttpResponse.json<Area[]>(areasData as Area[]);
+    return HttpResponse.json<Area[]>(areasData);
   }),
 
   http.get('*/ingredients', async () => {
     await delay(150);
-    return HttpResponse.json<Ingredient[]>(ingredientsData as Ingredient[]);
+    return HttpResponse.json<Ingredient[]>(ingredientsData);
   }),
 ];

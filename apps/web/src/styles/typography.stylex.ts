@@ -28,6 +28,7 @@ export const typography = stylex.create({
     fontFamily: fonts.family,
     fontWeight: fontWeights.extraBold,
     letterSpacing: '-0.02em',
+    textTransform: 'uppercase',
     fontSize: {
       default: 28,
       [breakpoints.tablet]: 40,
@@ -41,6 +42,7 @@ export const typography = stylex.create({
     fontFamily: fonts.family,
     fontWeight: fontWeights.extraBold,
     letterSpacing: '-0.02em',
+    textTransform: 'uppercase',
     fontSize: {
       default: 18,
       [breakpoints.tablet]: 24,
@@ -112,5 +114,18 @@ export const typography = stylex.create({
     fontWeight: fontWeights.bold,
     fontSize: 12,
     lineHeight: '18px',
+  },
+  categories: {
+    fontFamily: fonts.family,
+    fontWeight: fontWeights.bold,
+    letterSpacing: '-0.02em',
+    fontSize: {
+      default: 16,
+      [breakpoints.tablet]: 20,
+    },
+    lineHeight: {
+      default: '24px',
+      [breakpoints.tablet]: '24px',
+    },
   },
 });
