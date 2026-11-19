@@ -104,6 +104,7 @@ describe('Users Endpoints', () => {
         },
         recipesCount: 2,
         followersCount: 0,
+        isFollowing: false,
       });
     });
 

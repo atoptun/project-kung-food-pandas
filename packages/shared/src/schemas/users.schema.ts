@@ -24,6 +24,7 @@ export const UserPublicProfileResponseSchema = z
     user: AuthUserSchema,
     recipesCount: z.number().int().nonnegative().openapi({ example: 12 }),
     followersCount: z.number().int().nonnegative().openapi({ example: 48 }),
+    isFollowing: z.boolean().openapi({ example: false }),
   })
   .openapi('UserPublicProfileResponse');
 
@@ -34,6 +35,7 @@ export const UserFollowerItemSchema = z
     topRecipes: z
       .array(RecipeTinyCardSchema)
       .openapi({ description: 'Up to 4 latest/top recipes' }),
+    isFollowing: z.boolean().openapi({ example: true }),
   })
   .openapi('UserFollowerItem');
 
@@ -64,6 +66,7 @@ export const AvatarUploadSchema = z
 export type UserIdParam = z.infer<typeof UserIdParamSchema>;
 export type CurrentUserProfileResponse = z.infer<typeof CurrentUserProfileResponseSchema>;
 export type UserPublicProfileResponse = z.infer<typeof UserPublicProfileResponseSchema>;
+export type UserFollowerItem = z.infer<typeof UserFollowerItemSchema>;
 export type UserFollowersListResponse = z.infer<typeof UserFollowersListResponseSchema>;
 export type UserRecipesListResponse = z.infer<typeof UserRecipesListResponseSchema>;
 export type FollowActionResponse = z.infer<typeof FollowActionResponseSchema>;
