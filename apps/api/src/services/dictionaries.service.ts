@@ -6,7 +6,7 @@ export class DictionariesService {
   constructor(private db: PrismaClient) {}
 
   getCategories = async (): Promise<Category[]> => {
-    return this.db.category.findMany({
+    const categories = await this.db.category.findMany({
       select: {
         id: true,
         name: true,
@@ -14,20 +14,25 @@ export class DictionariesService {
       },
       orderBy: { name: 'asc' },
     });
+
+    return categories.sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }),
+    );
   };
 
   getAreas = async (): Promise<Area[]> => {
-    return this.db.area.findMany({
+    const areas = await this.db.area.findMany({
       select: {
         id: true,
         name: true,
       },
       orderBy: { name: 'asc' },
     });
+    return areas.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
   };
 
   getIngredients = async (): Promise<Ingredient[]> => {
-    return await this.db.ingredient.findMany({
+    const ingredients = await this.db.ingredient.findMany({
       select: {
         id: true,
         name: true,
@@ -36,5 +41,8 @@ export class DictionariesService {
       },
       orderBy: { name: 'asc' },
     });
+    return ingredients.sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }),
+    );
   };
 }
