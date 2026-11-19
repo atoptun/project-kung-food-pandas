@@ -18,9 +18,7 @@ import {
 } from '@/errors/http.error';
 import cloudinary from '@/lib/cloudinary';
 import prisma from '@/lib/prisma';
-import { UsersService } from '@/services/users.service';
-
-const service = new UsersService(prisma, cloudinary);
+import type { UsersService } from '@/services/users.service';
 
 const followUserSelect = {
   id: true,
@@ -42,8 +40,10 @@ function getAuthUserId(req: Request): string {
 }
 
 export class UsersController {
+  constructor(private service: UsersService) {}
+
   getCurrentProfile = async (req: Request, res: Response<CurrentUserProfileResponse>) => {
-    const profile = await service.getCurrentProfile(getAuthUserId(req));
+    const profile = await this.service.getCurrentProfile(getAuthUserId(req));
     res.status(200).json(profile);
   };
 
@@ -51,7 +51,7 @@ export class UsersController {
     req: Request<UserIdParam>,
     res: Response<UserPublicProfileResponse>,
   ) => {
-    const profile = await service.getPublicProfile(req.params.id);
+    const profile = await this.service.getPublicProfile(req.params.id);
     res.status(200).json(profile);
   };
 
@@ -62,7 +62,7 @@ export class UsersController {
         { path: 'avatar', message: 'Avatar file is required' },
       ]);
     }
-    const profile = await service.updateAvatar(userId, req.file.path);
+    const profile = await this.service.updateAvatar(userId, req.file.path);
     res.status(200).json(profile);
   };
 

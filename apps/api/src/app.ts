@@ -12,9 +12,8 @@ import { auth } from '@/lib/auth';
 import { errorHandler } from '@/middlewares/error-handler.middleware';
 import { notFound } from '@/middlewares/not-found.middleware';
 import { healthRouter } from '@/routes/health.routes';
+import { testimonialsRouter } from '@/routes/testimonials.route';
 import { usersRouter } from '@/routes/users.routes';
-
-import { testimonialsRouter } from './routes/testimonials.route';
 
 export async function createApp(): Promise<Express> {
   const app = express();
@@ -45,6 +44,7 @@ export async function createApp(): Promise<Express> {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
   app.use(healthRouter);
+  app.use(dictionariesRouter);
   app.use('/users', usersRouter);
   app.use('/testimonials', testimonialsRouter);
 
