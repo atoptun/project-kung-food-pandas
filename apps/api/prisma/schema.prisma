@@ -21,6 +21,8 @@ model User {
   recipes         Recipe[]
   testimonials    Testimonial[]
   favoriteRecipes FavoriteRecipe[]
+  following       Follow[]         @relation("UserFollowing")
+  followers       Follow[]         @relation("UserFollowers")
 
   @@unique([email])
   @@map("users")
@@ -127,7 +129,9 @@ model Recipe {
   thumb        String?
   preview      String?
   time         Int?
-  ownerId      String  @map("owner_id")
+  ownerId      String   @map("owner_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
   owner           User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   category        Category           @relation(fields: [categoryId], references: [id], onDelete: Restrict)
@@ -163,4 +167,18 @@ model FavoriteRecipe {
 
   @@id([userId, recipeId])
   @@map("favorite_recipes")
+}
+
+model Follow {
+  followerId  String   @map("follower_id")
+  followingId String   @map("following_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  follower  User @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+  @@map("follows")
 }

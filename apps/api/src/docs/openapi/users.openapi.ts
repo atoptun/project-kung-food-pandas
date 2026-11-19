@@ -87,7 +87,7 @@ registry.registerPath({
     params: UserIdParamSchema,
   },
   responses: {
-    200: jsonResponse('Successfully followed the user', FollowActionResponseSchema),
+    201: jsonResponse('Successfully followed the user', FollowActionResponseSchema),
     400: errorResponse('Cannot follow yourself'),
     401: errorResponse('Not authorized'),
     404: errorResponse('User not found'),
@@ -105,7 +105,7 @@ registry.registerPath({
     params: UserIdParamSchema,
   },
   responses: {
-    200: jsonResponse('Successfully unfollowed the user', FollowActionResponseSchema),
+    204: jsonResponse('Successfully unfollowed the user'),
     401: errorResponse('Not authorized'),
     404: errorResponse('User not found or not currently followed'),
   },

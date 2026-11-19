@@ -560,10 +560,14 @@ components:
           type: integer
           minimum: 0
           example: 48
+        isFollowing:
+          type: boolean
+          example: false
       required:
         - user
         - recipesCount
         - followersCount
+        - isFollowing
     UserFollowersListResponse:
       allOf:
         - $ref: "#/components/schemas/PaginationMeta"
@@ -589,10 +593,14 @@ components:
           items:
             $ref: "#/components/schemas/RecipeTinyCard"
           description: Up to 4 latest/top recipes
+        isFollowing:
+          type: boolean
+          example: true
       required:
         - user
         - recipesCount
         - topRecipes
+        - isFollowing
     UserRecipesListResponse:
       allOf:
         - $ref: "#/components/schemas/PaginationMeta"
@@ -1458,7 +1466,7 @@ paths:
           name: id
           in: path
       responses:
-        "200":
+        "201":
           description: Successfully followed the user
           content:
             application/json:
@@ -1514,12 +1522,8 @@ paths:
           name: id
           in: path
       responses:
-        "200":
+        "204":
           description: Successfully unfollowed the user
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FollowActionResponse"
         "401":
           description: Not authorized
           content:
