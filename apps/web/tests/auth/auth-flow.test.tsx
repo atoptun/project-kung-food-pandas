@@ -256,9 +256,9 @@ describe('Authentication', () => {
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
       });
 
-      expect(
-        await within(getBanner()).findByRole('button', { name: 'Sign in' }),
-      ).toBeInTheDocument();
+      await waitFor(() => {
+        expect(within(getBanner()).getByRole('button', { name: 'Sign in' })).toBeInTheDocument();
+      });
 
       expect(router.state.location.pathname).toBe('/');
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
@@ -283,9 +283,9 @@ describe('Authentication', () => {
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
       });
 
-      expect(
-        await within(getBanner()).findByRole('button', { name: 'Sign in' }),
-      ).toBeInTheDocument();
+      await waitFor(() => {
+        expect(within(getBanner()).getByRole('button', { name: 'Sign in' })).toBeInTheDocument();
+      });
 
       expect(router.state.location.pathname).toBe('/');
       expect(localStorage.getItem('draft')).toBeNull();

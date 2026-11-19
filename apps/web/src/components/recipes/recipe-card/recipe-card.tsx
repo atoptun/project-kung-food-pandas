@@ -1,11 +1,11 @@
 import * as stylex from '@stylexjs/stylex';
 import { Link } from 'react-router';
 
-import Avatar from '@/components/shared/avatar/avatar';
+import AuthorButton from '@/components/recipes/author-button/author-button';
 import Button from '@/components/shared/button/button';
 import Icon from '@/components/shared/icon/icon';
 import ResponsiveImage from '@/components/shared/responsive-image/responsive-image';
-import { typography, weights } from '@/styles/typography.stylex';
+import { typography } from '@/styles/typography.stylex';
 
 import { styles } from './recipe-card.stylex';
 
@@ -39,7 +39,6 @@ export function RecipeCard({
   xstyle,
 }: RecipeCardProps) {
   const recipeHref = `/recipe/${id}`;
-  const authorHref = `/user/${author.id}`;
 
   return (
     <article {...stylex.props(styles.card, xstyle)}>
@@ -74,12 +73,7 @@ export function RecipeCard({
         </p>
 
         <footer {...stylex.props(styles.footer)}>
-          <Link to={authorHref} {...stylex.props(styles.author)}>
-            <Avatar src={author.avatar} alt={author.name} size="sm" />
-            <span {...stylex.props(typography.main, weights.bold, styles.authorName)}>
-              {author.name}
-            </span>
-          </Link>
+          <AuthorButton author={author} />
 
           <div {...stylex.props(styles.actions)}>
             <Button

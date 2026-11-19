@@ -1,4 +1,4 @@
-import { delay, http, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 import type {
   RecipeActionResponse,
@@ -56,7 +56,6 @@ export const mockRecipesList = mockRecipes;
 
 export const recipesHandlers = [
   http.post(api('/recipes'), async () => {
-    await delay(500);
     return HttpResponse.json(mockRecipes[0], { status: 201 });
   }),
 

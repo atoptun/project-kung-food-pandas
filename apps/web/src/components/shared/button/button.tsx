@@ -1,6 +1,7 @@
 import * as stylex from '@stylexjs/stylex';
-import type { ComponentPropsWithRef } from 'react';
-import { Link } from 'react-router';
+
+import type { AuthBaseButtonProps } from '@/components/auth-base-button/auth-base-button';
+import AuthBaseButton from '@/components/auth-base-button/auth-base-button';
 
 import { shapes, styles, variants } from './button.stylex';
 
@@ -9,16 +10,7 @@ type ButtonAppearance = {
   xstyle?: stylex.StyleXStyles;
 } & ({ shape?: 'default'; fullWidth?: boolean } | { shape: 'circle'; fullWidth?: false });
 
-type NativeButtonProps = Omit<ComponentPropsWithRef<'button'>, 'className' | 'style'> & {
-  to?: never;
-};
-
-type LinkButtonProps = Omit<ComponentPropsWithRef<typeof Link>, 'className' | 'style' | 'type'> & {
-  type?: never;
-  disabled?: never;
-};
-
-type ButtonProps = ButtonAppearance & (NativeButtonProps | LinkButtonProps);
+type ButtonProps = ButtonAppearance & AuthBaseButtonProps;
 
 function Button({
   variant = 'solid',
@@ -36,11 +28,7 @@ function Button({
     xstyle,
   );
 
-  if (props.to !== undefined) {
-    return <Link {...props} {...appearance} />;
-  }
-
-  return <button {...props} {...appearance} type={props.type ?? 'button'} />;
+  return <AuthBaseButton {...props} {...appearance} />;
 }
 
 export default Button;

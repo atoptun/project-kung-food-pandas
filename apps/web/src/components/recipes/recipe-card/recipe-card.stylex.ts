@@ -91,23 +91,6 @@ export const styles = stylex.create({
     minWidth: 0,
     marginTop: 'auto',
   },
-  author: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    minWidth: 0,
-    flexShrink: 1,
-    overflow: 'hidden',
-    textDecoration: 'none',
-    color: colors.black,
-  },
-  authorName: {
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    minWidth: 0,
-    color: colors.black,
-  },
   actions: {
     display: 'flex',
     alignItems: 'center',

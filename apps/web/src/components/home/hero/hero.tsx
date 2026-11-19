@@ -20,7 +20,7 @@ export function Hero({ xstyle }: HeroProps) {
           Dive into a world of delicious recipes and discover the art of cooking with our diverse
           collection of culinary delights.
         </p>
-        <Button to="/recipe/add" variant="inverse" xstyle={hero.button}>
+        <Button to="/recipe/add" requireAuth variant="inverse" xstyle={hero.button}>
           Add recipe
         </Button>
 
