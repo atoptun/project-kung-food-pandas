@@ -82,7 +82,7 @@ export const styles = stylex.create({
   },
   error: {
     margin: 0,
-    color: colors.black,
+    color: colors.error,
   },
   visuallyHidden: {
     position: 'absolute',

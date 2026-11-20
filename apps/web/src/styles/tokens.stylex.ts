@@ -7,6 +7,7 @@ export const colors = stylex.defineVars({
   lightGray: '#EEEEEE',
   white: '#FFFFFF',
   border: '#E8E8E8',
+  error: '#AE0000',
   overlayDark: 'rgba(5, 5, 5, 0.2)',
   overlayLight: 'rgba(255, 255, 255, 0.2)',
 });
