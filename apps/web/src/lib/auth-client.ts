@@ -22,5 +22,17 @@ export function clearClientSession() {
   session.set({ ...session.get(), data: null, error: null, isPending: false });
 }
 
+/** Keep all session consumers (including the Header and mobile menu) in sync after upload. */
+export function updateClientAvatar(userId: string, image: string | null) {
+  const session = authClient.$store.atoms.session;
+  const current = session?.get();
+  if (!session || !current?.data || current.data.user.id !== userId) return false;
+  session.set({
+    ...current,
+    data: { ...current.data, user: { ...current.data.user, image } },
+  });
+  return true;
+}
+
 export type AuthSession = typeof authClient.$Infer.Session;
 export type AuthSessionUser = AuthSession['user'];

@@ -2,6 +2,7 @@ import type { CreateRecipeInput } from '@repo/shared';
 
 import { apiClient } from '../client';
 import type {
+  PaginationQuery,
   RecipeCard,
   RecipeDetails,
   RecipeFilterQuery,
@@ -9,6 +10,13 @@ import type {
 } from './recipes.types';
 
 export const recipesApi = {
+  getOwn: async (params: PaginationQuery): Promise<RecipesListResponse> =>
+    (await apiClient.get<RecipesListResponse>('/recipes/own', { params })).data,
+
+  remove: async (id: string): Promise<void> => {
+    await apiClient.delete(`/recipes/${encodeURIComponent(id)}`);
+  },
+
   getAll: async (params?: RecipeFilterQuery): Promise<RecipesListResponse> => {
     const response = await apiClient.get<RecipesListResponse>('/recipes', { params });
     return response.data;

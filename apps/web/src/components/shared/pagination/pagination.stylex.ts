@@ -13,8 +13,8 @@ export const styles = stylex.create({
     listStyle: 'none',
   },
   button: {
-    width: { default: 40, [breakpoints.tablet]: 40 },
-    height: { default: 40, [breakpoints.tablet]: 40 },
+    width: { default: 36, [breakpoints.mobile]: 40 },
+    height: { default: 36, [breakpoints.mobile]: 40 },
     padding: 0,
     borderRadius: '50%',
     fontSize: 14,
