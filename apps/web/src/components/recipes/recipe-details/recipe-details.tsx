@@ -120,7 +120,7 @@ export function RecipeDetails({
         </section>
 
         <Button
-          variant="outline"
+          variant={isFavorite ? 'solid' : 'outline'}
           aria-busy={isFavoritePending}
           disabled={isFavoritePending}
           onClick={() => onToggleFavorite()}

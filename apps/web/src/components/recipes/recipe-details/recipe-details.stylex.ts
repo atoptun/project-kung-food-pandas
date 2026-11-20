@@ -128,13 +128,5 @@ export const styles = stylex.create({
   favoriteButton: {
     height: { default: 48, [breakpoints.tablet]: 56 },
     paddingInline: { default: 20, [breakpoints.tablet]: 32 },
-    borderColor: {
-      default: colors.gray,
-      ':not(:disabled):hover': colors.black,
-    },
-    color: {
-      default: colors.black,
-      ':not(:disabled):hover': colors.white,
-    },
   },
 });
