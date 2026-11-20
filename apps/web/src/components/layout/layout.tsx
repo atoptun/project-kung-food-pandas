@@ -1,5 +1,5 @@
 import { Suspense, useEffect } from 'react';
-import { Outlet, useMatches } from 'react-router';
+import { Outlet, ScrollRestoration, useMatches } from 'react-router';
 
 import AuthModal from '@/components/auth/auth-modal';
 import RecipesSessionSync from '@/components/recipes/recipes-session-sync';
@@ -20,6 +20,7 @@ function Layout() {
 
   return (
     <>
+      <ScrollRestoration />
       <Header theme={handle?.headerTheme} />
       <main>
         <Suspense fallback={<Loader size="lg" fullscreen label="Loading page..." />}>

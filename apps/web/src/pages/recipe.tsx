@@ -1,4 +1,5 @@
 import * as stylex from '@stylexjs/stylex';
+import { useEffect } from 'react';
 import { useParams } from 'react-router';
 
 import { useFavorites } from '@/api/favorites/favorites.queries';
@@ -81,6 +82,10 @@ function RecipeContent({ id }: { id: string | undefined }) {
 
 function RecipePage() {
   const { id } = useParams<{ id: string }>();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
   return (
     <Container xstyle={styles.page}>
