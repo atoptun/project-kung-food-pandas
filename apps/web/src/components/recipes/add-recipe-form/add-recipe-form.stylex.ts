@@ -50,16 +50,6 @@ export const styles = stylex.create({
     outlineStyle: 'none',
     boxShadow: { default: 'none', ':focus': `0 1px 0 ${colors.black}` },
   },
-  textarea: {
-    display: 'block',
-    maxHeight: 'none',
-    outlineStyle: 'none',
-  },
-  textareaWrapper: {
-    borderBottomWidth: { default: 1, ':focus-within': 2 },
-    borderBottomColor: { default: colors.gray, ':focus-within': colors.black },
-    paddingBottom: { default: 16, ':focus-within': 15 },
-  },
   label: {
     display: 'block',
     marginBottom: 8,
@@ -94,5 +84,15 @@ export const styles = stylex.create({
     clip: 'rect(0, 0, 0, 0)',
     whiteSpace: 'nowrap',
     borderWidth: 0,
+  },
+  invalidText: {
+    color: colors.error,
+  },
+  invalidBorder: {
+    borderBottomColor: colors.error,
+  },
+  invalidTitle: {
+    color: colors.error,
+    boxShadow: { default: `0 1px 0 ${colors.error}`, ':focus': `0 1px 0 ${colors.error}` },
   },
 });

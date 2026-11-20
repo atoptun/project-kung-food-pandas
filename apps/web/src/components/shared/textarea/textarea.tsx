@@ -33,6 +33,7 @@ function Textarea({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [characterCount, setCharacterCount] = useState(defaultValue?.length ?? 0);
   const isControlled = value !== undefined;
+  const isInvalid = props['aria-invalid'] === true;
 
   useImperativeHandle(ref, () => textareaRef.current!, []);
 
@@ -57,7 +58,7 @@ function Textarea({
   }, [isControlled, props.form]);
 
   return (
-    <div {...stylex.props(styles.wrapper, wrapperXstyle)}>
+    <div {...stylex.props(styles.wrapper, isInvalid && styles.wrapperInvalid, wrapperXstyle)}>
       <textarea
         {...props}
         ref={textareaRef}
@@ -68,7 +69,12 @@ function Textarea({
           onChange?.(event);
         }}
         maxLength={maxLength}
-        {...stylex.props(stylex.defaultMarker(), styles.textarea, xstyle)}
+        {...stylex.props(
+          stylex.defaultMarker(),
+          styles.textarea,
+          isInvalid && styles.textareaInvalid,
+          xstyle,
+        )}
       />
 
       <div {...stylex.props(styles.toggle)}>

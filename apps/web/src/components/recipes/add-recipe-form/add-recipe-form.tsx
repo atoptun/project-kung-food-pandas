@@ -75,6 +75,7 @@ function AddRecipeForm({
     'aria-invalid': fieldError(name) ? true : undefined,
     'aria-describedby': fieldError(name) ? errorId(name) : undefined,
   });
+
   const renderError = (name: keyof RecipeFormValues) => {
     const error = fieldError(name);
     return error ? (
@@ -139,8 +140,6 @@ function AddRecipeForm({
                 {...formik.getFieldProps('description')}
                 {...accessibility('description')}
                 onChange={handleTextChange}
-                xstyle={styles.textarea}
-                wrapperXstyle={styles.textareaWrapper}
                 placeholder="Enter a description of the dish"
                 rows={1}
                 maxLength={200}
@@ -219,8 +218,6 @@ function AddRecipeForm({
               {...formik.getFieldProps('instructions')}
               {...accessibility('instructions')}
               onChange={handleTextChange}
-              xstyle={styles.textarea}
-              wrapperXstyle={styles.textareaWrapper}
               placeholder="Enter recipe"
               rows={1}
               maxLength={1000}
