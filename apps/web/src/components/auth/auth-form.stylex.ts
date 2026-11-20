@@ -40,15 +40,15 @@ export const styles = stylex.create({
   error: {
     margin: 0,
     paddingInline: { default: 14, [breakpoints.tablet]: 18 },
-    color: colors.black,
+    color: colors.error,
   },
   invalid: {
-    borderColor: colors.black,
+    borderColor: colors.error,
   },
   apiError: {
     margin: 0,
     marginBottom: 16,
-    color: colors.black,
+    color: colors.error,
     textAlign: 'center',
   },
   switchText: {

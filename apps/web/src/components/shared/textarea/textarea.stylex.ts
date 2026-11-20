@@ -5,16 +5,20 @@ import { breakpoints, colors } from '@/styles/tokens.stylex';
 export const styles = stylex.create({
   wrapper: {
     position: 'relative',
-    paddingBlockEnd: 16,
-    borderBottomWidth: 1,
+    paddingBlockEnd: { default: 16, ':focus-within': 15 },
     borderBottomStyle: 'solid',
+    borderBottomWidth: { default: 1, ':focus-within': 2 },
     borderBottomColor: {
       default: colors.gray,
       ':focus-within': colors.black,
       [stylex.when.descendant(':not(:placeholder-shown)')]: colors.black,
     },
   },
+  wrapperInvalid: {
+    borderBottomColor: `${colors.error} !important`,
+  },
   textarea: {
+    display: 'block',
     backgroundColor: 'transparent',
     paddingBlock: 0,
     paddingInlineStart: 2,
@@ -23,7 +27,11 @@ export const styles = stylex.create({
       [breakpoints.tablet]: 98,
     },
     borderWidth: 0,
-    color: colors.darkGray,
+    color: {
+      default: colors.darkGray,
+      ':invalid': colors.error,
+    },
+
     '::placeholder': {
       color: colors.gray,
     },
@@ -34,6 +42,9 @@ export const styles = stylex.create({
     maxHeight: 356,
     overflowY: 'auto',
     resize: 'none',
+  },
+  textareaInvalid: {
+    color: `${colors.error} !important`,
   },
   toggle: {
     position: 'absolute',
