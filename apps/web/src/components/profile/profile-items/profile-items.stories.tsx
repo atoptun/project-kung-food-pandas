@@ -64,7 +64,6 @@ const meta = {
     id: 'victoria',
     viewerId: 'victoria',
     tab: 'recipes',
-    isFollowingProfile: false,
     follows: {
       isPending: () => false,
       toggle: fn(),

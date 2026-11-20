@@ -41,16 +41,21 @@ export default function ProfileInfo({
   const profileId = profile.user.id;
 
   function handleAvatarChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.currentTarget.files?.[0];
-    event.currentTarget.value = '';
-    if (!file || isUploading) return;
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    if (!file || isUploading) {
+      input.value = '';
+      return;
+    }
 
     if (!AVATAR_TYPES.includes(file.type) || file.size > MAX_AVATAR_BYTES) {
       notify.error(AVATAR_FILE_ERROR);
+      input.value = '';
       return;
     }
 
     upload(file);
+    input.value = '';
   }
 
   return (

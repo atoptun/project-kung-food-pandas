@@ -1,5 +1,5 @@
 import * as stylex from '@stylexjs/stylex';
-import { type KeyboardEvent, type ReactNode, useId } from 'react';
+import { type KeyboardEvent, type ReactNode, useId, useRef } from 'react';
 
 import type { ProfileTab, ProfileTabOption } from '../profile.constants';
 import { getNextTabIndex } from '../profile.utils';
@@ -18,6 +18,7 @@ export default function ProfileTabs({
 }) {
   const prefix = useId();
   const panelId = `${prefix}-panel`;
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     const nextIndex = getNextTabIndex(event.key, index, tabs.length);
@@ -27,9 +28,7 @@ export default function ProfileTabs({
 
     event.preventDefault();
     onTabChange(nextTab.id);
-    const buttons =
-      event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]');
-    const nextButton = buttons?.[nextIndex];
+    const nextButton = tabRefs.current[nextIndex];
     nextButton?.focus();
     nextButton?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
@@ -40,6 +39,9 @@ export default function ProfileTabs({
         {tabs.map(({ id, label }, index) => (
           <button
             key={id}
+            ref={(element) => {
+              tabRefs.current[index] = element;
+            }}
             type="button"
             role="tab"
             id={`${prefix}-${id}`}

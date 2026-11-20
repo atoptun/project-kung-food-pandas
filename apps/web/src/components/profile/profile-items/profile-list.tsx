@@ -44,7 +44,6 @@ function ProfileRecipeRow({
 function ProfileUserRow({
   entry,
   viewerId,
-  viewerRowUnfollowTargetId,
   isFirst,
   isLast,
   isPlaceholder,
@@ -52,24 +51,19 @@ function ProfileUserRow({
 }: {
   entry: UserCardEntry;
   viewerId: string;
-  viewerRowUnfollowTargetId?: string;
   isFirst: boolean;
   isLast: boolean;
   isPlaceholder: boolean;
   follows: ReturnType<typeof useFollows>;
 }) {
-  // On another profile, the viewer's own follower card can unfollow the owner.
   const isViewer = entry.user.id === viewerId;
-  const followTargetId = isViewer ? viewerRowUnfollowTargetId : entry.user.id;
-  let followAction;
-  if (followTargetId) {
-    const isFollowing = isViewer || entry.isFollowing;
-    followAction = {
-      isFollowing,
-      isPending: isPlaceholder || follows.isPending(followTargetId),
-      onToggle: () => follows.toggle(followTargetId, isFollowing),
-    };
-  }
+  const followAction = isViewer
+    ? undefined
+    : {
+        isFollowing: entry.isFollowing,
+        isPending: isPlaceholder || follows.isPending(entry.user.id),
+        onToggle: () => follows.toggle(entry.user.id, entry.isFollowing),
+      };
 
   return (
     <li {...stylex.props(styles.userRow, isFirst && styles.firstUser, isLast && styles.lastUser)}>
@@ -81,7 +75,6 @@ function ProfileUserRow({
 export default function ProfileList({
   entries,
   tab,
-  viewerRowUnfollowTargetId,
   viewerId,
   isPlaceholder,
   recipeActions,
@@ -89,7 +82,6 @@ export default function ProfileList({
 }: {
   entries: ProfileEntry[];
   tab: ProfileTab;
-  viewerRowUnfollowTargetId?: string;
   viewerId: string;
   isPlaceholder: boolean;
   recipeActions?: RecipeActions;
@@ -105,7 +97,6 @@ export default function ProfileList({
             key={entry.user.id}
             entry={entry}
             viewerId={viewerId}
-            viewerRowUnfollowTargetId={viewerRowUnfollowTargetId}
             isFirst={index === 0}
             isLast={index === entries.length - 1}
             isPlaceholder={isPlaceholder}

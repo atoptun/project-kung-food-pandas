@@ -1,7 +1,7 @@
 import * as stylex from '@stylexjs/stylex';
 import { isAxiosError } from 'axios';
 import { useState } from 'react';
-import { useParams } from 'react-router';
+import { Navigate, useParams } from 'react-router';
 
 import { useFollows, useProfileQuery } from '@/api/users/users.queries';
 import {
@@ -56,14 +56,7 @@ function Profile({ id, viewerId }: { id: string; viewerId: string }) {
       <ProfileInfo profile={profile.data} isOwn={isOwn} follows={follows} xstyle={styles.sidebar} />
       <section {...stylex.props(styles.content)} aria-label="Profile activity">
         <ProfileTabs tabs={tabs} activeTab={tab} onTabChange={setTab}>
-          <ProfileItems
-            key={tab}
-            id={id}
-            viewerId={viewerId}
-            tab={tab}
-            isFollowingProfile={'isFollowing' in profile.data && profile.data.isFollowing}
-            follows={follows}
-          />
+          <ProfileItems key={tab} id={id} viewerId={viewerId} tab={tab} follows={follows} />
         </ProfileTabs>
       </section>
     </div>
@@ -72,7 +65,16 @@ function Profile({ id, viewerId }: { id: string; viewerId: string }) {
 
 export default function UserProfilePage() {
   const { id = '' } = useParams<{ id: string }>();
-  const { user } = useAuth();
+  const { user, isPending } = useAuth();
+
+  if (isPending) {
+    return <Loader size="lg" />;
+  }
+
+  if (!user) {
+    return <Navigate to="/" replace state={{ authModal: 'sign-in' }} />;
+  }
+
   return (
     <Container xstyle={styles.page}>
       <Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: 'Profile' }]} />
