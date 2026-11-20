@@ -15,11 +15,13 @@ export default function ProfileItems({
   id,
   viewerId,
   tab,
+  isFollowingProfile,
   follows,
 }: {
   id: string;
   viewerId: string;
   tab: ProfileTab;
+  isFollowingProfile: boolean;
   follows: ReturnType<typeof useFollows>;
 }) {
   const { query, page, setPage, needsPageCorrection, handleRemoveRecipe, isRemovalPending } =
@@ -65,7 +67,9 @@ export default function ProfileItems({
       <ProfileList
         entries={items}
         tab={tab}
-        profileId={id}
+        viewerRowUnfollowTargetId={
+          tab === 'followers' && !isOwn && isFollowingProfile ? id : undefined
+        }
         viewerId={viewerId}
         isPlaceholder={query.isPlaceholderData}
         recipeActions={recipeActions}

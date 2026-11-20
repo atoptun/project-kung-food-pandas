@@ -39,7 +39,6 @@ export default function ProfileInfo({
   ];
 
   const profileId = profile.user.id;
-  const isFollowing = follows.getStatus(profileId);
 
   function handleAvatarChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.currentTarget.files?.[0];
@@ -104,12 +103,14 @@ export default function ProfileInfo({
           Log out
         </Button>
       ) : (
-        <FollowButton
-          xstyle={styles.primary}
-          isFollowing={isFollowing}
-          isPending={follows.isPending(profileId)}
-          onToggle={() => follows.toggle(profileId, isFollowing)}
-        />
+        'isFollowing' in profile && (
+          <FollowButton
+            xstyle={styles.primary}
+            isFollowing={profile.isFollowing}
+            isPending={follows.isPending(profileId)}
+            onToggle={() => follows.toggle(profileId, profile.isFollowing)}
+          />
+        )
       )}
     </aside>
   );

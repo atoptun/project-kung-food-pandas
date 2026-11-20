@@ -8,14 +8,19 @@ import { clientEnv } from '@/env';
 
 import ProfileInfo from './profile-info';
 
-const publicProfile = {
-  user: { id: 'olivia', name: 'Olivia Brooks', email: 'olivia@example.com', avatar: null },
+const stats = {
   recipesCount: 12,
   followersCount: 48,
+};
+
+const publicProfile = {
+  ...stats,
+  user: { id: 'olivia', name: 'Olivia Brooks', email: 'olivia@example.com', avatar: null },
+  isFollowing: false,
 } satisfies UserPublicProfileResponse;
 
 const ownProfile = {
-  ...publicProfile,
+  ...stats,
   user: { id: 'victoria', name: 'Victoria Moore', email: 'victoria@example.com', avatar: null },
   favoritesCount: 5,
   followingCount: 15,
@@ -38,12 +43,8 @@ const meta = {
     profile: ownProfile,
     isOwn: true,
     follows: {
-      getStatus: () => false,
       isPending: () => false,
       toggle: fn(),
-      isError: false,
-      isFetching: false,
-      retry: fn(),
     },
   },
 } satisfies Meta<typeof ProfileInfo>;

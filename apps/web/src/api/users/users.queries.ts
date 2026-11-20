@@ -1,4 +1,6 @@
+import type { CurrentUserProfileResponse, UserPublicProfileResponse } from '@repo/shared';
 import {
+  type QueryFilters,
   useIsMutating,
   useMutation,
   useMutationState,
@@ -12,7 +14,7 @@ import { updateClientAvatar } from '@/lib/auth-client';
 import { usersApi } from './users.api';
 
 export function useProfileQuery(viewerId: string, id: string) {
-  return useQuery({
+  return useQuery<CurrentUserProfileResponse | UserPublicProfileResponse>({
     queryKey: queryKeys.users.profile(viewerId, id),
     queryFn: () => (viewerId === id ? usersApi.getCurrent() : usersApi.getProfile(id)),
     enabled: Boolean(viewerId && id),
@@ -45,17 +47,11 @@ export function useAvatarUpload(userId: string) {
 
 type FollowVariables = { id: string; follow: boolean };
 
-/** One relationship cache and mutation lifecycle for the profile and every UserCard. */
-export function useFollows(viewerId: string, needsLookup: boolean) {
+/** Share pending follow actions between the profile and every UserCard. */
+export function useFollows(viewerId: string) {
   const client = useQueryClient();
   const mutationKey = [...queryKeys.users.all, 'follow', viewerId];
   const filters = { mutationKey, exact: true };
-  const followingIdsKey = queryKeys.users.followingIds(viewerId);
-  const ids = useQuery({
-    queryKey: followingIdsKey,
-    queryFn: ({ signal }) => usersApi.loadAllFollowingIds(signal),
-    enabled: needsLookup && Boolean(viewerId),
-  });
   const pendingIds = useMutationState({
     filters: { ...filters, status: 'pending' },
     select: (mutation) => (mutation.state.variables as FollowVariables | undefined)?.id,
@@ -63,22 +59,26 @@ export function useFollows(viewerId: string, needsLookup: boolean) {
   const mutation = useMutation({
     mutationKey,
     mutationFn: ({ id, follow }: FollowVariables) => usersApi.setFollowing(id, follow),
-    onSuccess: async (_, { id, follow }) => {
-      await client.cancelQueries({ queryKey: followingIdsKey, exact: true });
-      client.setQueryData<string[]>(followingIdsKey, (previous) => {
-        if (!previous) return previous;
-        if (!follow) return previous.filter((followingId) => followingId !== id);
-        return previous.includes(id) ? previous : [...previous, id];
-      });
-      await client.invalidateQueries({ queryKey: queryKeys.users.all });
+    onSuccess: async () => {
+      const viewerQueries: QueryFilters = {
+        queryKey: queryKeys.users.all,
+        predicate: ({ queryKey: [, kind, viewer] }) =>
+          viewer === viewerId && (kind === 'profile' || kind === 'list'),
+      };
+      client.removeQueries({ ...viewerQueries, type: 'inactive' });
+
+      // Replace in-flight reads immediately so their callers wait for the new response.
+      await Promise.all([
+        client.cancelQueries(viewerQueries, { silent: true, revert: false }),
+        client.invalidateQueries(viewerQueries),
+      ]);
     },
   });
 
   return {
-    getStatus: (id: string) => (ids.isSuccess ? ids.data.includes(id) : undefined),
     isPending: (id: string) => pendingIds.includes(id),
-    toggle(id: string, isFollowing: boolean | undefined) {
-      if (!viewerId || id === viewerId || isFollowing === undefined) return;
+    toggle(id: string, isFollowing: boolean) {
+      if (!viewerId || id === viewerId) return;
       const isPending = client.isMutating({
         ...filters,
         predicate: (entry) => (entry.state.variables as FollowVariables | undefined)?.id === id,
@@ -86,8 +86,5 @@ export function useFollows(viewerId: string, needsLookup: boolean) {
       if (isPending) return;
       mutation.mutate({ id, follow: !isFollowing });
     },
-    isError: needsLookup && ids.isError,
-    isFetching: ids.isFetching,
-    retry: () => void ids.refetch(),
   };
 }

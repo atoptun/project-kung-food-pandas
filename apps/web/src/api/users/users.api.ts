@@ -9,9 +9,6 @@ import { isAxiosError } from 'axios';
 
 import { apiClient } from '@/api/client';
 
-// PR #49 exposes only paginated membership. Remove this scan when #59 adds viewer status.
-const FOLLOWING_LOOKUP_PAGE_SIZE = 100;
-
 export const usersApi = {
   getCurrent: async () => (await apiClient.get<CurrentUserProfileResponse>('/users/me')).data,
   getProfile: async (id: string) =>
@@ -22,25 +19,14 @@ export const usersApi = {
         params,
       })
     ).data,
-  getFollowing: async (params: PaginationQuery, signal?: AbortSignal) =>
-    (await apiClient.get<UserFollowersListResponse>('/users/me/following', { params, signal }))
-      .data,
+  getFollowing: async (params: PaginationQuery) =>
+    (await apiClient.get<UserFollowersListResponse>('/users/me/following', { params })).data,
   getFollowers: async (id: string, params: PaginationQuery) =>
     (
       await apiClient.get<UserFollowersListResponse>(`/users/${encodeURIComponent(id)}/followers`, {
         params,
       })
     ).data,
-  loadAllFollowingIds: async (signal: AbortSignal) => {
-    const limit = FOLLOWING_LOOKUP_PAGE_SIZE;
-    const first = await usersApi.getFollowing({ page: 1, limit }, signal);
-    const ids = first.items.map(({ user }) => user.id);
-    for (let page = 2; page <= first.totalPages; page++) {
-      const data = await usersApi.getFollowing({ page, limit }, signal);
-      ids.push(...data.items.map(({ user }) => user.id));
-    }
-    return ids;
-  },
   setFollowing: async (id: string, follow: boolean) => {
     const url = `/users/me/following/${encodeURIComponent(id)}`;
     try {

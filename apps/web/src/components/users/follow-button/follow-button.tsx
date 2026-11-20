@@ -11,25 +11,23 @@ export default function FollowButton({
   variant = 'solid',
   xstyle,
 }: {
-  isFollowing: boolean | undefined;
+  isFollowing: boolean;
   isPending: boolean;
   onToggle: () => void;
   variant?: 'solid' | 'compact';
   xstyle?: StyleXStyles;
 }) {
   const compact = variant === 'compact';
-  let label = 'Follow status';
-  if (isFollowing !== undefined) label = isFollowing ? 'Unfollow' : 'Follow';
 
   return (
     <Button
       variant={compact ? 'outline' : 'solid'}
       xstyle={[compact && styles.compact, xstyle]}
-      disabled={isPending || isFollowing === undefined}
+      disabled={isPending}
       aria-pressed={isFollowing}
       onClick={onToggle}
     >
-      {label}
+      {isFollowing ? 'Unfollow' : 'Follow'}
     </Button>
   );
 }

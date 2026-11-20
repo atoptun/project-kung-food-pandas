@@ -43,24 +43,27 @@ function ProfileRecipeRow({
 
 function ProfileUserRow({
   entry,
-  followTargetId,
+  viewerId,
+  viewerRowUnfollowTargetId,
   isFirst,
   isLast,
-  knownFollowing,
   isPlaceholder,
   follows,
 }: {
   entry: UserCardEntry;
-  followTargetId: string | undefined;
+  viewerId: string;
+  viewerRowUnfollowTargetId?: string;
   isFirst: boolean;
   isLast: boolean;
-  knownFollowing: boolean;
   isPlaceholder: boolean;
   follows: ReturnType<typeof useFollows>;
 }) {
+  // On another profile, the viewer's own follower card can unfollow the owner.
+  const isViewer = entry.user.id === viewerId;
+  const followTargetId = isViewer ? viewerRowUnfollowTargetId : entry.user.id;
   let followAction;
   if (followTargetId) {
-    const isFollowing = knownFollowing || follows.getStatus(followTargetId);
+    const isFollowing = isViewer || entry.isFollowing;
     followAction = {
       isFollowing,
       isPending: isPlaceholder || follows.isPending(followTargetId),
@@ -78,7 +81,7 @@ function ProfileUserRow({
 export default function ProfileList({
   entries,
   tab,
-  profileId,
+  viewerRowUnfollowTargetId,
   viewerId,
   isPlaceholder,
   recipeActions,
@@ -86,14 +89,13 @@ export default function ProfileList({
 }: {
   entries: ProfileEntry[];
   tab: ProfileTab;
-  profileId: string;
+  viewerRowUnfollowTargetId?: string;
   viewerId: string;
   isPlaceholder: boolean;
   recipeActions?: RecipeActions;
   follows: ReturnType<typeof useFollows>;
 }) {
   const isUserList = tab === 'followers' || tab === 'following';
-  const followedProfileId = tab === 'followers' && profileId !== viewerId ? profileId : undefined;
 
   return (
     <ul {...stylex.props(styles.list, isUserList && styles.users)}>
@@ -102,10 +104,10 @@ export default function ProfileList({
           <ProfileUserRow
             key={entry.user.id}
             entry={entry}
-            followTargetId={entry.user.id === viewerId ? followedProfileId : entry.user.id}
+            viewerId={viewerId}
+            viewerRowUnfollowTargetId={viewerRowUnfollowTargetId}
             isFirst={index === 0}
             isLast={index === entries.length - 1}
-            knownFollowing={tab === 'following' || entry.user.id === viewerId}
             isPlaceholder={isPlaceholder}
             follows={follows}
           />

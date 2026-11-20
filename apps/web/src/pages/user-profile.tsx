@@ -26,10 +26,8 @@ function Profile({ id, viewerId }: { id: string; viewerId: string }) {
   const [tab, setTab] = useState<ProfileTab>('recipes');
   const isOwn = viewerId === id;
   const tabs = isOwn ? OWN_PROFILE_TABS : OTHER_PROFILE_TABS;
-  const needsFollowingLookup = !isOwn || tab === 'followers';
-
   const profile = useProfileQuery(viewerId, id);
-  const follows = useFollows(viewerId, needsFollowingLookup);
+  const follows = useFollows(viewerId);
 
   if (profile.isPending)
     return <Loader centered label="Loading profile…" xstyle={styles.message} />;
@@ -58,15 +56,14 @@ function Profile({ id, viewerId }: { id: string; viewerId: string }) {
       <ProfileInfo profile={profile.data} isOwn={isOwn} follows={follows} xstyle={styles.sidebar} />
       <section {...stylex.props(styles.content)} aria-label="Profile activity">
         <ProfileTabs tabs={tabs} activeTab={tab} onTabChange={setTab}>
-          {needsFollowingLookup && follows.isError && (
-            <div role="alert">
-              <p>Could not check your subscriptions. Follow actions are unavailable.</p>
-              <Button variant="outline" disabled={follows.isFetching} onClick={follows.retry}>
-                Retry subscriptions
-              </Button>
-            </div>
-          )}
-          <ProfileItems key={tab} id={id} viewerId={viewerId} tab={tab} follows={follows} />
+          <ProfileItems
+            key={tab}
+            id={id}
+            viewerId={viewerId}
+            tab={tab}
+            isFollowingProfile={'isFollowing' in profile.data && profile.data.isFollowing}
+            follows={follows}
+          />
         </ProfileTabs>
       </section>
     </div>

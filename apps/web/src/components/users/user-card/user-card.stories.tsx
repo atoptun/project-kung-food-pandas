@@ -20,6 +20,7 @@ const meta = {
     entry: {
       user: { id: 'user-1', name: 'Victoria', avatar: null },
       recipesCount: 12,
+      isFollowing: false,
       topRecipes: Array.from({ length: 4 }, (_, i) => ({
         id: `recipe-${i}`,
         title: 'Bakewell tart',
@@ -32,6 +33,11 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Follower: Story = {};
-export const Following: Story = { args: { followAction: { ...followAction, isFollowing: true } } };
+export const Following: Story = {
+  args: {
+    entry: { ...meta.args.entry, isFollowing: true },
+    followAction: { ...followAction, isFollowing: true },
+  },
+};
 export const Pending: Story = { args: { followAction: { ...followAction, isPending: true } } };
 export const CurrentUser: Story = { args: { followAction: undefined } };
