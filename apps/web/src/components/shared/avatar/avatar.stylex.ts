@@ -1,6 +1,6 @@
 import * as stylex from '@stylexjs/stylex';
 
-import { breakpoints } from '@/styles/tokens.stylex';
+import { breakpoints, colors } from '@/styles/tokens.stylex';
 
 export const styles = stylex.create({
   avatar: {
@@ -11,9 +11,17 @@ export const styles = stylex.create({
   },
   wrapper: {
     display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     flexShrink: 0,
     borderRadius: '50%',
     overflow: 'hidden',
+    backgroundColor: colors.lightGray,
+  },
+  placeholderIcon: {
+    color: colors.gray,
+    width: '60%',
+    height: '60%',
   },
 });
 

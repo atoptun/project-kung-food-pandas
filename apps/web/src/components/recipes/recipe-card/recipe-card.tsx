@@ -41,7 +41,7 @@ export function RecipeCard({
   const recipeHref = `/recipe/${id}`;
 
   return (
-    <article {...stylex.props(styles.card, xstyle)}>
+    <article {...stylex.props(styles.card, stylex.defaultMarker(), xstyle)}>
       <Link
         to={recipeHref}
         aria-label={`View recipe: ${title}`}
@@ -94,9 +94,10 @@ export function RecipeCard({
 
             <Button
               shape="circle"
+              variant="outline"
               to={recipeHref}
               aria-label={`View recipe: ${title}`}
-              xstyle={[styles.circleBtn, styles.arrowBtn]}
+              xstyle={[styles.circleBtn]}
             >
               <Icon name="arrow-up-right" size={18} />
             </Button>

@@ -15,11 +15,11 @@ export interface AuthorButtonAuthor {
 
 export interface AuthorButtonProps {
   author: AuthorButtonAuthor;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   xstyle?: stylex.StyleXStyles;
 }
 
-export function AuthorButton({ author, size = 'sm', xstyle }: AuthorButtonProps) {
+export function AuthorButton({ author, size = 'xs', xstyle }: AuthorButtonProps) {
   const navigate = useNavigate();
   const authorHref = `/user/${author.id}`;
 
