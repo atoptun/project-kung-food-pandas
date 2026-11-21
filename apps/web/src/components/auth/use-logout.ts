@@ -12,11 +12,12 @@ export function useLogout() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const closeAuthModal = useAuthModalStore((state) => state.close);
+  const startLogout = useAuthModalStore((state) => state.startLogout);
+  // const finishLogout = useAuthModalStore((state) => state.finishLogout);
 
   return async () => {
+    startLogout();
     closeAuthModal();
-    // Leave private pages first so their guards do not react to the cleared session.
-    await navigate('/', { replace: true });
 
     try {
       await signOut();
@@ -25,7 +26,8 @@ export function useLogout() {
     } finally {
       clearClientSession();
       queryClient.clear();
-      localStorage.clear();
+      navigate('/', { replace: true });
+      // finishLogout();
     }
   };
 }

@@ -13,6 +13,9 @@ export type SuccessCallback = () => void;
 interface AuthModalState {
   view: AuthModalView | null;
   redirectTo: string | null;
+  isLoggingOut: boolean;
+  startLogout: () => void;
+  finishLogout: () => void;
   open: (view: AuthModalView, redirectTo?: string | null) => void;
   onSuccess: SuccessCallback | null;
   openSignIn: (onSuccess?: unknown) => void;
@@ -28,6 +31,9 @@ interface AuthModalState {
 export const useAuthModalStore = create<AuthModalState>((set) => ({
   view: null,
   redirectTo: null,
+  isLoggingOut: false,
+  startLogout: () => set({ isLoggingOut: true }),
+  finishLogout: () => set({ isLoggingOut: false }),
   open: (view, redirectTo = null) => set({ view, redirectTo }),
   onSuccess: null,
   openSignIn: (onSuccess: unknown) =>
@@ -40,6 +46,6 @@ export const useAuthModalStore = create<AuthModalState>((set) => ({
       view: 'sign-up',
       onSuccess: typeof onSuccess === 'function' ? (onSuccess as SuccessCallback) : null,
     }),
-  openLogout: () => set({ view: 'logout', onSuccess: null, redirectTo: null }),
+  openLogout: () => set({ view: 'logout', onSuccess: null, redirectTo: '/' }),
   close: () => set({ view: null, onSuccess: null, redirectTo: null }),
 }));

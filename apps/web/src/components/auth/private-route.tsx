@@ -3,7 +3,7 @@ import { Navigate, useLocation } from 'react-router';
 
 import Loader from '@/components/shared/loader/loader';
 import { useAuth } from '@/hooks/use-auth';
-import type { AuthModalRedirectState } from '@/stores/auth-modal.store';
+import { type AuthModalRedirectState, useAuthModalStore } from '@/stores/auth-modal.store';
 
 /**
  * Guards private pages: waits for the session check, then redirects guests home.
@@ -12,12 +12,17 @@ import type { AuthModalRedirectState } from '@/stores/auth-modal.store';
 function PrivateRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated, isPending } = useAuth();
   const location = useLocation();
+  const isLoggingOut = useAuthModalStore((state) => state.isLoggingOut);
 
   if (isPending) {
     return <Loader size="lg" fullscreen label="Loading..." />;
   }
 
   if (!isAuthenticated) {
+    if (isLoggingOut) {
+      return <Navigate to="/" replace />;
+    }
+
     const redirectState: AuthModalRedirectState = {
       authModal: 'sign-in',
       from: `${location.pathname}${location.search}${location.hash}`,
