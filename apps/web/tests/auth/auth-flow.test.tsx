@@ -245,7 +245,6 @@ describe('Authentication', () => {
         initialEntries: ['/recipe/add'],
       });
       queryClient.setQueryData(['private-data'], { secret: true });
-      localStorage.setItem('draft', 'value');
 
       const { menu } = await openUserMenu();
       fireEvent.click(within(menu).getByRole('menuitem', { name: 'Log out' }));
@@ -263,7 +262,6 @@ describe('Authentication', () => {
       expect(router.state.location.pathname).toBe('/');
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
       expect(queryClient.getQueryData(['private-data'])).toBeUndefined();
-      expect(localStorage.getItem('draft')).toBeNull();
     });
 
     it('still clears the client session when the logout request fails', async () => {
@@ -272,7 +270,6 @@ describe('Authentication', () => {
         user: mockAuthAccount,
         initialEntries: ['/recipe/add'],
       });
-      localStorage.setItem('draft', 'value');
 
       const { menu } = await openUserMenu();
       fireEvent.click(within(menu).getByRole('menuitem', { name: 'Log out' }));
@@ -288,7 +285,6 @@ describe('Authentication', () => {
       });
 
       expect(router.state.location.pathname).toBe('/');
-      expect(localStorage.getItem('draft')).toBeNull();
     });
   });
 

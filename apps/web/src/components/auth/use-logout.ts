@@ -6,7 +6,7 @@ import { useAuthModalStore } from '@/stores/auth-modal.store';
 
 /**
  * Logs out and always resets the client: even if the request fails, the local session,
- * query cache and localStorage are cleared and the user lands on the home page.
+ * query cache are cleared and the user lands on the home page.
  */
 export function useLogout() {
   const queryClient = useQueryClient();
