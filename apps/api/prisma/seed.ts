@@ -252,84 +252,75 @@ type RawMongoRecipe = {
   }[];
 };
 
-function mapRawRecipe(raw: RawMongoRecipe): Prisma.RecipeCreateInput {
-  return {
-    id: raw._id.$oid,
-    title: raw.title,
-    category: { connect: { name: raw.category } },
-    owner: { connect: { id: raw.owner.$oid } },
-    area: { connect: { name: raw.area } },
-    instructions: raw.instructions,
-    description: raw.description,
-    thumb: raw.thumb,
-    time: parseInt(raw.time, 10),
-    ingredients: {
-      create: raw.ingredients.map((ingredient) => ({
-        ingredient: { connect: { id: ingredient.id } },
-        measure: ingredient.measure,
-      })),
-    },
-  };
-}
-
 type CreateRecipesParams = {
   users: User[] | null;
   areas: Area[] | null;
   categories: Category[] | null;
-  // ingredients: Prisma.Ingredient[] | null;
 };
 
 async function createRecipes({ users, areas, categories }: CreateRecipesParams) {
   const recipesFilePath = path.join(dataDir, 'recipes.json');
   const rawRecipes = await readJSONFile<RawMongoRecipe[]>(recipesFilePath);
 
-  if (!rawRecipes) {
-    console.error('No recipes data found.');
-    return null;
-  }
-  const recipes: Prisma.RecipeCreateInput[] = rawRecipes.map(mapRawRecipe);
-  if (!recipes || recipes.length === 0) {
+  if (!rawRecipes || rawRecipes.length === 0) {
     console.error('No recipes data found.');
     return null;
   }
 
-  recipes.forEach(async (recipe) => {
-    const user = users?.find((user) => user.id === recipe?.owner?.connect?.id);
-    const area = areas?.find((area) => area.name === recipe?.area?.connect?.name);
-    const category = categories?.find(
-      (category) => category.name === recipe?.category?.connect?.name,
-    );
-    // const ingredient = ingredients?.filter((ingredient) => ingredient.id === recipe?.ingredients?.[0]?.ingredient?.connect?.id);
+  const userIds = new Set(users?.map((user) => user.id));
+  const areaNames = new Set(areas?.map((area) => area.name));
+  const categoryNames = new Set(categories?.map((category) => category.name));
 
-    if (user && area && category) {
-      const ingredientList = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+  for (const raw of rawRecipes) {
+    const ownerId = raw.owner?.$oid;
+    const areaName = raw.area;
+    const categoryName = raw.category;
 
-      const rawRecipe: Prisma.RecipeCreateInput = {
-        id: recipe.id,
-        title: recipe.title,
-        instructions: recipe.instructions,
-        description: recipe.description,
-        thumb: recipe.thumb,
-        preview: recipe.preview,
-        time: recipe.time,
-        owner: { connect: { id: user.id } },
-        area: { connect: { name: area.name } },
-        category: { connect: { name: category.name } },
-        ingredients: {
-          create: ingredientList.map((ingredient) => ({
-            ingredient: { connect: { id: ingredient.ingredient.connect.id } },
-            measure: ingredient.measure,
-          })),
-        },
-      };
-
-      try {
-        await prisma.recipe.upsert({ where: { id: rawRecipe.id }, update: {}, create: rawRecipe });
-      } catch (error) {
-        console.error('Error upserting recipe:', error);
-      }
+    if (!userIds.has(ownerId) || !areaNames.has(areaName) || !categoryNames.has(categoryName)) {
+      continue;
     }
-  });
+
+    const recipeData: Prisma.RecipeCreateInput = {
+      id: raw._id.$oid,
+      title: raw.title,
+      instructions: raw.instructions,
+      description: raw.description,
+      thumb: raw.thumb,
+      time: raw.time ? parseInt(raw.time, 10) : null,
+      owner: { connect: { id: ownerId } },
+      area: { connect: { name: areaName } },
+      category: { connect: { name: categoryName } },
+      ingredients: {
+        create: (raw.ingredients ?? []).map((ingredient) => ({
+          ingredient: { connect: { id: ingredient.id } },
+          measure: ingredient.measure,
+        })),
+      },
+    };
+
+    try {
+      await prisma.recipe.upsert({
+        where: { id: recipeData.id },
+        update: {
+          title: recipeData.title,
+          instructions: recipeData.instructions,
+          description: recipeData.description,
+          thumb: recipeData.thumb,
+          time: recipeData.time,
+          ingredients: {
+            deleteMany: {},
+            create: (raw.ingredients ?? []).map((ingredient) => ({
+              ingredient: { connect: { id: ingredient.id } },
+              measure: ingredient.measure,
+            })),
+          },
+        },
+        create: recipeData,
+      });
+    } catch (error) {
+      console.error(`Error upserting recipe ${raw._id.$oid}:`, error);
+    }
+  }
 
   return await prisma.recipe.findMany({
     select: {
