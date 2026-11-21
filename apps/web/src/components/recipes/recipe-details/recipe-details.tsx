@@ -2,6 +2,7 @@ import * as stylex from '@stylexjs/stylex';
 import { useId } from 'react';
 import { Link } from 'react-router';
 
+import { useFavorites } from '@/api/favorites/favorites.queries';
 import type { RecipeDetails as RecipeDetailsData } from '@/api/recipes/recipes.types';
 import IngredientItem from '@/components/recipes/ingredient-item/ingredient-item';
 import Avatar from '@/components/shared/avatar/avatar';
@@ -13,9 +14,6 @@ import { styles } from './recipe-details.stylex';
 
 export interface RecipeDetailsProps {
   recipe: RecipeDetailsData;
-  isFavorite: boolean;
-  isFavoritePending: boolean;
-  onToggleFavorite: () => void;
 }
 
 /** Splits the instructions into paragraphs (the API keeps line breaks, sometimes as `\r\n`). */
@@ -26,18 +24,17 @@ function toParagraphs(text: string | null | undefined) {
     .filter(Boolean);
 }
 
-export function RecipeDetails({
-  recipe,
-  isFavorite,
-  isFavoritePending,
-  onToggleFavorite,
-}: RecipeDetailsProps) {
+export function RecipeDetails({ recipe }: RecipeDetailsProps) {
+  const { isFavorite, isFavoritePending, toggleFavorite } = useFavorites();
   const titleId = useId();
   const ingredientsId = useId();
   const preparationId = useId();
 
   const { title, thumb, description, time, category, owner, ingredients, instructions } = recipe;
   const paragraphs = toParagraphs(instructions);
+
+  const favorite = isFavorite(recipe);
+  const pending = isFavoritePending(recipe.id);
 
   return (
     <article aria-labelledby={titleId} {...stylex.props(styles.details)}>
@@ -120,13 +117,14 @@ export function RecipeDetails({
         </section>
 
         <Button
-          variant={isFavorite ? 'solid' : 'outline'}
-          aria-busy={isFavoritePending}
-          disabled={isFavoritePending}
-          onClick={() => onToggleFavorite()}
+          requireAuth
+          variant={favorite ? 'solid' : 'outline'}
+          aria-busy={pending}
+          disabled={pending}
+          onClick={() => toggleFavorite(recipe)}
           xstyle={[typography.button, styles.favoriteButton]}
         >
-          {isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          {favorite ? 'Remove from favorites' : 'Add to favorites'}
         </Button>
       </div>
     </article>
