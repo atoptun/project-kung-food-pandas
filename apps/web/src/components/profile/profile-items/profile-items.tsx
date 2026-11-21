@@ -2,6 +2,7 @@ import * as stylex from '@stylexjs/stylex';
 
 import type { useFollows } from '@/api/users/users.queries';
 import Button from '@/components/shared/button/button';
+import ConfirmDialog from '@/components/shared/confirm-dialog/confirm-dialog';
 import Loader from '@/components/shared/loader/loader';
 import Pagination from '@/components/shared/pagination/pagination';
 
@@ -22,8 +23,17 @@ export default function ProfileItems({
   tab: ProfileTab;
   follows: ReturnType<typeof useFollows>;
 }) {
-  const { query, page, setPage, needsPageCorrection, handleRemoveRecipe, isRemovalPending } =
-    useProfileItems(tab, id, viewerId);
+  const {
+    query,
+    page,
+    setPage,
+    needsPageCorrection,
+    handleRemoveRecipe,
+    confirmRemoveRecipe,
+    cancelRemoveRecipe,
+    recipePendingRemoval,
+    isRemovalPending,
+  } = useProfileItems(tab, id, viewerId);
   const isOwn = id === viewerId;
 
   if (
@@ -75,6 +85,17 @@ export default function ProfileItems({
           <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
       )}
+      <ConfirmDialog
+        isOpen={recipePendingRemoval !== null}
+        title="Delete recipe?"
+        description="Are you sure you want to delete this recipe? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        confirmVariant="danger"
+        isConfirming={recipePendingRemoval ? isRemovalPending(recipePendingRemoval) : false}
+        onConfirm={confirmRemoveRecipe}
+        onCancel={cancelRemoveRecipe}
+      />
     </div>
   );
 }
