@@ -97,6 +97,8 @@ export function useProfileItems(tab: ProfileTab, id: string, viewerId: string) {
     });
   }, [lastAvailablePage, needsPageCorrection, page]);
 
+  const [recipePendingRemoval, setRecipePendingRemoval] = useState<string | null>(null);
+
   function handleRemoveRecipe(recipeId: string) {
     if (tab === 'favorites') {
       // The favorites page establishes membership.
@@ -104,11 +106,25 @@ export function useProfileItems(tab: ProfileTab, id: string, viewerId: string) {
       return;
     }
 
+    setRecipePendingRemoval(recipeId);
+  }
+
+  function confirmRemoveRecipe() {
+    if (!recipePendingRemoval) return;
+    const idToRemove = recipePendingRemoval;
     const isPending = client.isMutating({
       ...filters,
-      predicate: (mutation) => mutation.state.variables === recipeId,
+      predicate: (mutation) => mutation.state.variables === idToRemove,
     });
-    if (!isPending) removeRecipe.mutate(recipeId);
+    if (!isPending) {
+      removeRecipe.mutate(idToRemove, {
+        onSettled: () => setRecipePendingRemoval(null),
+      });
+    }
+  }
+
+  function cancelRemoveRecipe() {
+    setRecipePendingRemoval(null);
   }
 
   function isRemovalPending(recipeId: string) {
@@ -116,5 +132,15 @@ export function useProfileItems(tab: ProfileTab, id: string, viewerId: string) {
     return recipeRemovals.includes(recipeId);
   }
 
-  return { query, page, setPage, needsPageCorrection, handleRemoveRecipe, isRemovalPending };
+  return {
+    query,
+    page,
+    setPage,
+    needsPageCorrection,
+    handleRemoveRecipe,
+    confirmRemoveRecipe,
+    cancelRemoveRecipe,
+    recipePendingRemoval,
+    isRemovalPending,
+  };
 }

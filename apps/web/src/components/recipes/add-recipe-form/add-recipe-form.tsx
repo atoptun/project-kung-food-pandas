@@ -10,6 +10,7 @@ import CookingTimeControl from '@/components/recipes/cooking-time-control/cookin
 import RecipeIngredientsEditor from '@/components/recipes/recipe-ingredients-editor/recipe-ingredients-editor';
 import RecipePhotoUpload from '@/components/recipes/recipe-photo-upload/recipe-photo-upload';
 import Button from '@/components/shared/button/button';
+import ConfirmDialog from '@/components/shared/confirm-dialog/confirm-dialog';
 import Icon from '@/components/shared/icon/icon';
 import Input from '@/components/shared/input/input';
 import Textarea from '@/components/shared/textarea/textarea';
@@ -32,6 +33,7 @@ function AddRecipeForm({
   const createRecipe = useCreateRecipeMutation();
   const submissionPending = useRef(false);
   const [editorVersion, setEditorVersion] = useState(0);
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
   const formik = useFormik<RecipeFormValues>({
     initialValues,
     validationSchema: recipeValidationSchema,
@@ -229,10 +231,11 @@ function AddRecipeForm({
         <div {...stylex.props(styles.actions)}>
           <Button
             disabled={pending}
-            type="reset"
+            type="button"
             shape="circle"
             variant="outline"
             aria-label="Reset recipe"
+            onClick={() => setIsResetConfirmOpen(true)}
           >
             <Icon name="trash" size={20} />
           </Button>
@@ -241,6 +244,19 @@ function AddRecipeForm({
           </Button>
         </div>
       </div>
+      <ConfirmDialog
+        isOpen={isResetConfirmOpen}
+        title="Reset recipe?"
+        description="Are you sure you want to clear the form? All entered data will be lost."
+        confirmText="Reset"
+        cancelText="Cancel"
+        // confirmVariant="danger"
+        onConfirm={() => {
+          formik.resetForm();
+          setIsResetConfirmOpen(false);
+        }}
+        onCancel={() => setIsResetConfirmOpen(false)}
+      />
     </form>
   );
 }

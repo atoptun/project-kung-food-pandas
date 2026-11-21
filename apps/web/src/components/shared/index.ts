@@ -2,6 +2,7 @@ export * from './avatar/avatar';
 export * from './breadcrumbs/breadcrumbs';
 export * from './button/button';
 export * from './checkbox/checkbox';
+export * from './confirm-dialog/confirm-dialog';
 export * from './container/container';
 export * from './icon/icon';
 export * from './input/input';

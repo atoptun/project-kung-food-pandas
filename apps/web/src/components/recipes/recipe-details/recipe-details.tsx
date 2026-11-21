@@ -1,11 +1,10 @@
 import * as stylex from '@stylexjs/stylex';
 import { useId } from 'react';
-import { Link } from 'react-router';
 
 import { useFavorites } from '@/api/favorites/favorites.queries';
 import type { RecipeDetails as RecipeDetailsData } from '@/api/recipes/recipes.types';
+import AuthorButton from '@/components/recipes/author-button/author-button';
 import IngredientItem from '@/components/recipes/ingredient-item/ingredient-item';
-import Avatar from '@/components/shared/avatar/avatar';
 import Button from '@/components/shared/button/button';
 import ResponsiveImage from '@/components/shared/responsive-image/responsive-image';
 import { typography } from '@/styles/typography.stylex';
@@ -62,15 +61,7 @@ export function RecipeDetails({ recipe }: RecipeDetailsProps) {
 
           {description && <p {...stylex.props(typography.main, styles.text)}>{description}</p>}
 
-          {owner && (
-            <Link to={`/user/${owner.id}`} {...stylex.props(styles.author)}>
-              <Avatar src={owner.avatar} alt="" size="sm" />
-              <span {...stylex.props(styles.authorText)}>
-                <span {...stylex.props(styles.authorLabel)}>Created by:</span>
-                <span {...stylex.props(typography.mainBold, styles.authorName)}>{owner.name}</span>
-              </span>
-            </Link>
-          )}
+          {owner && <AuthorButton author={owner} withLabel />}
         </div>
 
         <section aria-labelledby={ingredientsId} {...stylex.props(styles.section)}>
