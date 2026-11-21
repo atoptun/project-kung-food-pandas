@@ -2,15 +2,16 @@ import * as stylex from '@stylexjs/stylex';
 
 import { isRecipeNotFoundError, useRecipeQuery } from '@/api/recipes/recipes.queries';
 import RecipeDetails from '@/components/recipes/recipe-details/recipe-details';
-import Breadcrumbs from '@/components/shared/breadcrumbs/breadcrumbs';
+import type { BreadcrumbItem } from '@/components/shared/breadcrumbs/breadcrumbs';
 import Button from '@/components/shared/button/button';
-import Container from '@/components/shared/container/container';
+import PageHeader from '@/components/shared/page-header/page-header';
+import Section from '@/components/shared/section/section';
 import { typography } from '@/styles/typography.stylex';
 
 import PopularRecipes from '../popular-recipes/popular-recipes';
 import { styles } from './recipe-view.stylex';
 
-const HOME_CRUMB = { label: 'Home', to: '/' } as const;
+const HOME_CRUMB: BreadcrumbItem = { label: 'Home', to: '/' };
 
 export interface RecipeViewProps {
   id: string | undefined;
@@ -19,84 +20,69 @@ export interface RecipeViewProps {
 export function RecipeView({ id }: RecipeViewProps) {
   const { data: recipe, isPending, isError, error, refetch, isFetching } = useRecipeQuery(id);
 
-  if (!id || (isError && isRecipeNotFoundError(error))) {
-    return (
-      <Container xstyle={styles.page}>
-        <div {...stylex.props(styles.section)}>
-          <Breadcrumbs items={[HOME_CRUMB, { label: 'Recipe not found' }]} />
-          <RecipeNotFound />
-        </div>
-      </Container>
-    );
-  }
-
-  if (isError) {
-    return (
-      <Container xstyle={styles.page}>
-        <div {...stylex.props(styles.section)}>
-          <Breadcrumbs items={[HOME_CRUMB, { label: 'Recipe' }]} />
-          <RecipeError isFetching={isFetching} onRetry={() => void refetch()} />
-        </div>
-      </Container>
-    );
-  }
-
-  if (isPending) {
-    return (
-      <>
-        <Breadcrumbs items={[HOME_CRUMB, { label: 'Recipe' }]} />
-        <p role="status" {...stylex.props(typography.main, styles.messageText)}>
-          Loading recipe...
-        </p>
-      </>
-    );
-  }
+  const breadcrumbs: BreadcrumbItem[] = [
+    HOME_CRUMB,
+    {
+      label:
+        !id || (isError && isRecipeNotFoundError(error))
+          ? 'Recipe not found'
+          : (recipe?.title ?? 'Recipe'),
+    },
+  ];
 
   return (
-    <Container xstyle={styles.page}>
-      <div {...stylex.props(styles.section)}>
-        <Breadcrumbs items={[HOME_CRUMB, { label: recipe.title }]} />
-        <RecipeDetails recipe={recipe} />
-      </div>
+    <>
+      <Section isFirst withContainer aria-label="Recipe details" containerXstyle={styles.section}>
+        <PageHeader breadcrumbs={breadcrumbs} />
+
+        {(!id || (isError && isRecipeNotFoundError(error))) && <RecipeNotFound />}
+
+        {id && isError && !isRecipeNotFoundError(error) && (
+          <RecipeError isFetching={isFetching} onRetry={() => void refetch()} />
+        )}
+
+        {isPending && (
+          <p role="status" {...stylex.props(typography.main, styles.messageText)}>
+            Loading recipe...
+          </p>
+        )}
+
+        {recipe && <RecipeDetails recipe={recipe} />}
+      </Section>
+
       <PopularRecipes excludeId={id} />
-    </Container>
+    </>
   );
 }
 
 function RecipeNotFound() {
   return (
-    <>
-      <Breadcrumbs items={[HOME_CRUMB, { label: 'Recipe not found' }]} />
-      <div {...stylex.props(styles.message)}>
-        <h1 {...stylex.props(typography.h3, styles.messageTitle)}>Recipe not found</h1>
-        <p {...stylex.props(typography.main, styles.messageText)}>
-          This recipe does not exist or has been removed.
-        </p>
-        <Button to="/">Back to home</Button>
-      </div>
-    </>
+    <div {...stylex.props(styles.message)}>
+      <h1 {...stylex.props(typography.h3, styles.messageTitle)}>Recipe not found</h1>
+      <p {...stylex.props(typography.main, styles.messageText)}>
+        This recipe does not exist or has been removed.
+      </p>
+      <Button to="/">Back to home</Button>
+    </div>
   );
 }
 
 function RecipeError({ isFetching, onRetry }: { isFetching: boolean; onRetry: () => void }) {
   return (
-    <>
-      <Breadcrumbs items={[HOME_CRUMB, { label: 'Recipe' }]} />
-      <div role="alert" {...stylex.props(styles.message)}>
-        <h1 {...stylex.props(typography.h3, styles.messageTitle)}>Could not load the recipe</h1>
-        <p {...stylex.props(typography.main, styles.messageText)}>
-          Please check your connection and try again.
-        </p>
-        <div {...stylex.props(styles.actions)}>
-          <Button disabled={isFetching} onClick={onRetry}>
-            Try again
-          </Button>
-          <Button variant="outline" to="/">
-            Back to home
-          </Button>
-        </div>
+    <div role="alert" {...stylex.props(styles.message)}>
+      <h1 {...stylex.props(typography.h3, styles.messageTitle)}>Could not load the recipe</h1>
+      <p {...stylex.props(typography.main, styles.messageText)}>
+        Please check your connection and try again.
+      </p>
+      <div {...stylex.props(styles.actions)}>
+        <Button disabled={isFetching} onClick={onRetry}>
+          Try again
+        </Button>
+        <Button variant="outline" to="/">
+          Back to home
+        </Button>
       </div>
-    </>
+    </div>
   );
 }
 

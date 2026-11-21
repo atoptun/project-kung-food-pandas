@@ -3,9 +3,6 @@ import * as stylex from '@stylexjs/stylex';
 import { breakpoints, colors } from '@/styles/tokens.stylex';
 
 export const styles = stylex.create({
-  page: {
-    paddingTop: { default: 64, [breakpoints.desktop]: 80 },
-  },
   section: {
     display: 'flex',
     flexDirection: 'column',

@@ -1,7 +1,7 @@
 import * as stylex from '@stylexjs/stylex';
 
-import type { AuthBaseButtonProps } from '@/components/auth-base-button/auth-base-button';
-import AuthBaseButton from '@/components/auth-base-button/auth-base-button';
+import type { AuthBaseButtonProps } from '@/components/shared/auth-base-button/auth-base-button';
+import AuthBaseButton from '@/components/shared/auth-base-button/auth-base-button';
 
 import { shapes, styles, variants } from './button.stylex';
 

@@ -46,7 +46,7 @@ export function RecipesCatalog({
   } = useCatalogRecipes({ categoryId: category.id });
 
   return (
-    <Section withContainer aria-label="Recipes catalog" xstyle={xstyle}>
+    <Section withContainer isFirst aria-label="Recipes catalog" xstyle={[styles.section, xstyle]}>
       <div {...stylex.props(styles.grid)}>
         {/* Top area: Back button + Title & Subtitle */}
         <div {...stylex.props(styles.topArea)}>

@@ -6,6 +6,7 @@ import { toRecipeCardProps } from '@/api/recipes/recipes.mappers';
 import { POPULAR_RECIPES_LIMIT, usePopularRecipesQuery } from '@/api/recipes/recipes.queries';
 import RecipeCard from '@/components/recipes/recipe-card/recipe-card';
 import Button from '@/components/shared/button/button';
+import Section from '@/components/shared/section/section';
 import { typography } from '@/styles/typography.stylex';
 
 import { styles } from './popular-recipes.stylex';
@@ -30,7 +31,7 @@ export function PopularRecipes({ excludeId }: PopularRecipesProps) {
   }
 
   return (
-    <section aria-labelledby={titleId} {...stylex.props(styles.section)}>
+    <Section withContainer aria-labelledby={titleId} containerXstyle={styles.content}>
       <h2 id={titleId} {...stylex.props(typography.h3, styles.title)}>
         Popular recipes
       </h2>
@@ -64,7 +65,7 @@ export function PopularRecipes({ excludeId }: PopularRecipesProps) {
           ))}
         </ul>
       )}
-    </section>
+    </Section>
   );
 }
 

@@ -7,6 +7,7 @@ import { styles } from './section.stylex';
 
 export type SectionProps = Omit<ComponentPropsWithRef<'section'>, 'className' | 'style'> & {
   withContainer?: boolean;
+  isFirst?: boolean;
   containerXstyle?: stylex.StyleXStyles;
   xstyle?: stylex.StyleXStyles;
 };
@@ -14,6 +15,7 @@ export type SectionProps = Omit<ComponentPropsWithRef<'section'>, 'className' | 
 export function Section({
   children,
   withContainer = false,
+  isFirst = false,
   containerXstyle,
   xstyle,
   ...props
@@ -25,7 +27,7 @@ export function Section({
   );
 
   return (
-    <section {...props} {...stylex.props(styles.section, xstyle)}>
+    <section {...props} {...stylex.props(styles.section, isFirst && styles.first, xstyle)}>
       {content}
     </section>
   );

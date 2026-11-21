@@ -3,16 +3,16 @@ import { Link } from 'react-router';
 
 import { styles } from './breadcrumbs.stylex';
 
-type BreadcrumbItem = {
+export type BreadcrumbItem = {
   label: string;
   to?: string;
 };
 
-type BreadcrumbsType = {
+export type BreadcrumbsProps = {
   items: readonly BreadcrumbItem[];
 };
 
-function Breadcrumbs({ items }: BreadcrumbsType) {
+function Breadcrumbs({ items }: BreadcrumbsProps) {
   return (
     <nav aria-label="Breadcrumb">
       <ol {...stylex.props(styles.list)}>
