@@ -6,7 +6,7 @@ import { typography } from '@/styles/typography.stylex';
 
 const styles = stylex.create({
   subtitle: {
-    color: colors.gray,
+    color: colors.darkGray,
     margin: 0,
     maxWidth: { default: '100%', [breakpoints.tablet]: 530 },
     opacity: 0.8,
