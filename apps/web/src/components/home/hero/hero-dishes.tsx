@@ -1,6 +1,6 @@
 import * as stylex from '@stylexjs/stylex';
 
-import { composition } from './hero-dishes.stylex';
+import { styles } from './hero-dishes.stylex';
 import { heroImages } from './hero-images';
 
 type HeroDishesProps = {
@@ -9,10 +9,10 @@ type HeroDishesProps = {
 
 export function HeroDishes({ xstyle }: HeroDishesProps) {
   return (
-    <div {...stylex.props(composition.wrapper, xstyle)} aria-hidden="true">
-      <div {...stylex.props(composition.inner)}>
+    <div {...stylex.props(styles.wrapper, xstyle)} aria-hidden="true">
+      <div {...stylex.props(styles.inner)}>
         {/* Small dish */}
-        <picture {...stylex.props(composition.dishSmall)}>
+        <picture {...stylex.props(styles.dishSmall)}>
           <source
             media="(min-width: 768px)"
             type="image/avif"
@@ -37,13 +37,14 @@ export function HeroDishes({ xstyle }: HeroDishesProps) {
             src={heroImages.image1.defaultSrc}
             alt=""
             loading="eager"
+            fetchPriority="high"
             decoding="async"
-            {...stylex.props(composition.img)}
+            {...stylex.props(styles.img)}
           />
         </picture>
 
         {/* Large dish  */}
-        <picture {...stylex.props(composition.dishLarge)}>
+        <picture {...stylex.props(styles.dishLarge)}>
           <source
             media="(min-width: 768px)"
             type="image/avif"
@@ -68,8 +69,9 @@ export function HeroDishes({ xstyle }: HeroDishesProps) {
             src={heroImages.image2.defaultSrc}
             alt=""
             loading="eager"
+            fetchPriority="high"
             decoding="async"
-            {...stylex.props(composition.img)}
+            {...stylex.props(styles.img)}
           />
         </picture>
       </div>

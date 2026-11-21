@@ -7,6 +7,26 @@ import { defineConfig } from 'vitest/config';
 const sourceDirectory = fileURLToPath(new URL('./src', import.meta.url));
 
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+              return 'vendor';
+            }
+            if (id.includes('@tanstack/react-query') || id.includes('axios')) {
+              return 'query';
+            }
+            if (id.includes('better-auth')) {
+              return 'auth';
+            }
+          }
+        },
+      },
+    },
+  },
+
   plugins: [
     stylex.vite({
       useCSSLayers: { before: ['reset'] },

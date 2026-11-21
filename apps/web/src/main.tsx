@@ -1,13 +1,20 @@
 import './index.css';
 
 import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { StrictMode } from 'react';
+import { lazy, StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { queryClient } from '@/api/query-client';
 import { App } from '@/app';
 import { enableMocking } from '@/mocks/browser';
+
+const ReactQueryDevtools = import.meta.env.DEV
+  ? lazy(() =>
+      import('@tanstack/react-query-devtools').then((d) => ({
+        default: d.ReactQueryDevtools,
+      })),
+    )
+  : () => null;
 
 const rootElement = document.getElementById('root');
 
@@ -20,7 +27,11 @@ enableMocking().then(() => {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <App />
-        <ReactQueryDevtools initialIsOpen={false} />
+        {import.meta.env.DEV && (
+          <Suspense fallback={null}>
+            <ReactQueryDevtools initialIsOpen={false} />
+          </Suspense>
+        )}
       </QueryClientProvider>
     </StrictMode>,
   );
