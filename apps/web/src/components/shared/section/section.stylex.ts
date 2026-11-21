@@ -15,4 +15,11 @@ export const styles = stylex.create({
       [breakpoints.desktop]: 60,
     },
   },
+  first: {
+    paddingTop: {
+      default: 64,
+      // [breakpoints.tablet]: 80,
+      [breakpoints.desktop]: 80,
+    },
+  },
 });

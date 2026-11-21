@@ -2,6 +2,8 @@ import { useEffect, useId } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
 import Modal from '@/components/shared/modal/modal';
+import { useAuth } from '@/hooks/use-auth';
+import { authClient } from '@/lib/auth-client';
 import { type AuthModalRedirectState, useAuthModalStore } from '@/stores/auth-modal.store';
 
 import LogoutConfirm from './logout-confirm';
@@ -12,30 +14,58 @@ import SignUpForm from './sign-up-form';
 function AuthModal() {
   const titleId = useId();
   const view = useAuthModalStore((state) => state.view);
+  const redirectTo = useAuthModalStore((state) => state.redirectTo);
   const close = useAuthModalStore((state) => state.close);
   const openSignIn = useAuthModalStore((state) => state.openSignIn);
   const openSignUp = useAuthModalStore((state) => state.openSignUp);
   const open = useAuthModalStore((state) => state.open);
   const onSuccessCallback = useAuthModalStore((state) => state.onSuccess);
+  const { isAuthenticated } = useAuth();
 
   const location = useLocation();
   const navigate = useNavigate();
-  const requestedView = (location.state as AuthModalRedirectState | null)?.authModal;
+  const redirectState = location.state as AuthModalRedirectState | null;
+  const requestedView = redirectState?.authModal;
+  const from = redirectState?.from;
 
-  const handleSuccess = () => {
+  const handleSuccess = async () => {
+    const destination = redirectTo;
     close();
-    onSuccessCallback?.();
+    await authClient.getSession();
+    if (onSuccessCallback) {
+      onSuccessCallback();
+    } else if (destination) {
+      void navigate(destination);
+    }
   };
   // A redirect (e.g. PrivateRoute) asked for the dialog: open it on the destination page,
   // then drop the state so Back/refresh does not reopen it.
   useEffect(() => {
     if (!requestedView) return;
-    open(requestedView);
+
+    if (isAuthenticated) {
+      void navigate(
+        { pathname: location.pathname, search: location.search, hash: location.hash },
+        { replace: true, state: null },
+      );
+      return;
+    }
+
+    open(requestedView, from);
     void navigate(
       { pathname: location.pathname, search: location.search, hash: location.hash },
       { replace: true, state: null },
     );
-  }, [requestedView, open, navigate, location.pathname, location.search, location.hash]);
+  }, [
+    requestedView,
+    from,
+    isAuthenticated,
+    open,
+    navigate,
+    location.pathname,
+    location.search,
+    location.hash,
+  ]);
 
   return (
     // `key` remounts the dialog per view so focus moves into the new form.

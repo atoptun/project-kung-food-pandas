@@ -41,7 +41,7 @@ export const routes: RouteObject[] = [
         handle: { title: 'Recipe', crumb: 'Recipe' } satisfies RouteHandle,
       },
       {
-        path: '/user/:id',
+        path: '/user/:id/:tab?',
         element: (
           <PrivateRoute>
             <UserProfilePage />

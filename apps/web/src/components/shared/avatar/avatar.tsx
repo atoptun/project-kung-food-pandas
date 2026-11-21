@@ -1,7 +1,7 @@
 import * as stylex from '@stylexjs/stylex';
 import { useState } from 'react';
 
-import noImage from '@/assets/no-image.png';
+import Icon from '@/components/shared/icon/icon';
 
 import { size, styles } from './avatar.stylex';
 
@@ -12,23 +12,23 @@ type AvatarProps = {
   xstyle?: stylex.StyleXStyles;
 };
 
-function Avatar({ src, alt, size: sizeProp = 'md', xstyle }: AvatarProps) {
-  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+function Avatar({ src, alt, size: sizeProp = 'xs', xstyle }: AvatarProps) {
+  const [hasError, setHasError] = useState(false);
 
-  const imageSrc = src && src !== failedSrc ? src : noImage;
+  const shouldRenderImage = Boolean(src) && !hasError;
 
   return (
     <span {...stylex.props(size[sizeProp], styles.wrapper, xstyle)}>
-      <img
-        {...stylex.props(styles.avatar)}
-        alt={alt}
-        src={imageSrc}
-        onError={() => {
-          if (src && imageSrc !== noImage) {
-            setFailedSrc(src);
-          }
-        }}
-      />
+      {shouldRenderImage ? (
+        <img
+          {...stylex.props(styles.avatar)}
+          alt={alt}
+          src={src!}
+          onError={() => setHasError(true)}
+        />
+      ) : (
+        <Icon name="user" xstyle={styles.placeholderIcon} />
+      )}
     </span>
   );
 }

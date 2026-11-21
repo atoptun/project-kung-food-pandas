@@ -3,6 +3,13 @@ import * as stylex from '@stylexjs/stylex';
 import { breakpoints, colors } from '@/styles/tokens.stylex';
 
 export const styles = stylex.create({
+  section: {
+    paddingTop: {
+      default: 64,
+      [breakpoints.tablet]: 100,
+      [breakpoints.desktop]: 120,
+    },
+  },
   grid: {
     display: 'grid',
     gridTemplateAreas: {

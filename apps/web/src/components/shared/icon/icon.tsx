@@ -32,6 +32,7 @@ type IconProps = {
     | 'plus'
     | 'trash'
     | 'upload-photo'
+    | 'user'
     | 'youtube'
     | 'quote';
   size?: number;

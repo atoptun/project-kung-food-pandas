@@ -70,9 +70,11 @@ export default function ProfileItems({
         recipeActions={recipeActions}
         follows={follows}
       />
-      <div {...stylex.props(styles.pagination)}>
-        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
-      </div>
+      {totalPages > 1 && (
+        <div {...stylex.props(styles.pagination)}>
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        </div>
+      )}
     </div>
   );
 }

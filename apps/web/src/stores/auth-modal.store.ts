@@ -3,13 +3,17 @@ import { create } from 'zustand';
 export type AuthModalView = 'sign-in' | 'sign-up' | 'logout';
 
 /** Router location state that asks the destination page to open the auth dialog. */
-export type AuthModalRedirectState = { authModal?: AuthModalView };
+export type AuthModalRedirectState = {
+  authModal?: AuthModalView;
+  from?: string;
+};
 
 export type SuccessCallback = () => void;
 
 interface AuthModalState {
   view: AuthModalView | null;
-  open: (view: AuthModalView) => void;
+  redirectTo: string | null;
+  open: (view: AuthModalView, redirectTo?: string | null) => void;
   onSuccess: SuccessCallback | null;
   openSignIn: (onSuccess?: unknown) => void;
   openSignUp: (onSuccess?: unknown) => void;
@@ -23,7 +27,8 @@ interface AuthModalState {
  */
 export const useAuthModalStore = create<AuthModalState>((set) => ({
   view: null,
-  open: (view) => set({ view }),
+  redirectTo: null,
+  open: (view, redirectTo = null) => set({ view, redirectTo }),
   onSuccess: null,
   openSignIn: (onSuccess: unknown) =>
     set({
@@ -35,6 +40,6 @@ export const useAuthModalStore = create<AuthModalState>((set) => ({
       view: 'sign-up',
       onSuccess: typeof onSuccess === 'function' ? (onSuccess as SuccessCallback) : null,
     }),
-  openLogout: () => set({ view: 'logout', onSuccess: null }),
-  close: () => set({ view: null, onSuccess: null }),
+  openLogout: () => set({ view: 'logout', onSuccess: null, redirectTo: null }),
+  close: () => set({ view: null, onSuccess: null, redirectTo: null }),
 }));

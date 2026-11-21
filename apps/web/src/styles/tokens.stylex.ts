@@ -36,3 +36,10 @@ export const fontWeights = stylex.defineConsts({
   bold: 700,
   extraBold: 800,
 });
+
+export const transitions = stylex.defineConsts({
+  fast: '0.1s ease',
+  default: '0.2s ease',
+  interactive:
+    'background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease, transform 0.1s ease',
+});

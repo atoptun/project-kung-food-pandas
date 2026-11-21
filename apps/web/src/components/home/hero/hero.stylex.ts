@@ -4,6 +4,7 @@ import { breakpoints, colors, radii } from '@/styles/tokens.stylex';
 
 export const hero = stylex.create({
   card: {
+    marginTop: -1,
     marginInline: { default: 8, [breakpoints.tablet]: 16, [breakpoints.desktop]: 20 },
     backgroundColor: colors.black,
     color: colors.white,

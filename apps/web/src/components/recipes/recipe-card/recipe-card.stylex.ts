@@ -98,10 +98,10 @@ export const styles = stylex.create({
     flexShrink: 0,
   },
   circleBtn: {
-    width: { default: 40, [breakpoints.tablet]: 48 },
-    height: { default: 40, [breakpoints.tablet]: 48 },
-    minWidth: { default: 40, [breakpoints.tablet]: 48 },
-    maxWidth: { default: 40, [breakpoints.tablet]: 48 },
+    width: { default: 36, [breakpoints.tablet]: 42 },
+    height: { default: 36, [breakpoints.tablet]: 42 },
+    minWidth: { default: 36, [breakpoints.tablet]: 42 },
+    maxWidth: { default: 36, [breakpoints.tablet]: 42 },
     flexShrink: 0,
     borderRadius: radii.circle,
     paddingInline: 0,
@@ -110,17 +110,13 @@ export const styles = stylex.create({
     borderStyle: 'solid',
     borderColor: colors.border,
   },
+
   favoriteActive: {
     backgroundColor: colors.black,
     borderColor: colors.black,
     color: colors.white,
   },
   favoriteInactive: {
-    backgroundColor: 'transparent',
-    borderColor: colors.border,
-    color: colors.black,
-  },
-  arrowBtn: {
     backgroundColor: 'transparent',
     borderColor: colors.border,
     color: colors.black,

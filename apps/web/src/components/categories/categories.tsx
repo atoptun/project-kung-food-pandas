@@ -1,11 +1,10 @@
-import * as stylex from '@stylexjs/stylex';
+import type * as stylex from '@stylexjs/stylex';
 import { useEffect } from 'react';
 
 import { useCategoriesQuery } from '@/api/dictionaries/dictionaries.queries';
 import Loader from '@/components/shared/loader/loader';
-import MainTitle from '@/components/shared/main-title/main-title';
+import PageHeader from '@/components/shared/page-header/page-header';
 import Section from '@/components/shared/section/section';
-import Subtitle from '@/components/shared/subtitle/subtitle';
 import { notify } from '@/lib/notify';
 
 import { styles } from './categories.stylex';
@@ -26,14 +25,12 @@ export function Categories({ onSelectCategory, xstyle }: CategoriesProps) {
   }, [isError]);
 
   return (
-    <Section withContainer aria-label="Categories" xstyle={xstyle}>
-      <div {...stylex.props(styles.header)}>
-        <MainTitle>Categories</MainTitle>
-        <Subtitle>
-          Discover a variety of delicious recipes tailored to your taste. Explore our categories to
-          find the perfect dish for any occasion.
-        </Subtitle>
-      </div>
+    <Section withContainer isFirst aria-label="Categories" xstyle={[styles.section, xstyle]}>
+      <PageHeader
+        title="Categories"
+        titleAs="h2"
+        subtitle="Discover a variety of delicious recipes tailored to your taste. Explore our categories to find the perfect dish for any occasion."
+      />
 
       {isLoading ? (
         <Loader size="lg" centered label="Loading categories..." />

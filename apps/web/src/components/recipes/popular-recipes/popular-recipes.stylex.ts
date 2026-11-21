@@ -4,11 +4,10 @@ import { breakpoints, colors } from '@/styles/tokens.stylex';
 
 // Values follow the Figma "Recipe" frames (mobile 375 / tablet 768 / desktop 1440).
 export const styles = stylex.create({
-  section: {
+  content: {
     display: 'flex',
     flexDirection: 'column',
     gap: { default: 32, [breakpoints.tablet]: 40 },
-    marginTop: { default: 64, [breakpoints.tablet]: 100, [breakpoints.desktop]: 120 },
   },
   title: {
     margin: 0,

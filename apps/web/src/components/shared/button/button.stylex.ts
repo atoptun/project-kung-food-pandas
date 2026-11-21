@@ -1,6 +1,6 @@
 import * as stylex from '@stylexjs/stylex';
 
-import { breakpoints, colors } from '@/styles/tokens.stylex';
+import { breakpoints, colors, radii, transitions } from '@/styles/tokens.stylex';
 
 export const styles = stylex.create({
   button: {
@@ -9,7 +9,7 @@ export const styles = stylex.create({
     justifyContent: 'center',
     boxSizing: 'border-box',
     flexShrink: 0,
-    borderRadius: 30,
+    borderRadius: radii.pill,
     borderWidth: 1,
     borderStyle: 'solid',
     paddingBlock: 0,
@@ -25,6 +25,14 @@ export const styles = stylex.create({
     outlineOffset: 3,
     outlineWidth: { default: 0, ':focus-visible': 2 },
     outlineStyle: { default: 'none', ':focus-visible': 'solid' },
+    transition: {
+      default: transitions.interactive,
+      '@media (prefers-reduced-motion: reduce)': 'none',
+    },
+    transform: {
+      default: 'none',
+      ':not(:disabled):active': 'scale(0.98)',
+    },
   },
   link: {
     textDecoration: 'none',
@@ -32,16 +40,12 @@ export const styles = stylex.create({
   fullWidth: {
     width: '100%',
   },
-  circle: {
-    width: { default: 48, [breakpoints.tablet]: 56 },
-    paddingInline: 0,
-    paddingBlock: 0,
-  },
 });
 
 export const shapes = stylex.create({
   circle: {
     width: { default: 48, [breakpoints.tablet]: 56 },
+    borderRadius: radii.circle,
     paddingInline: 0,
     paddingBlock: 0,
   },

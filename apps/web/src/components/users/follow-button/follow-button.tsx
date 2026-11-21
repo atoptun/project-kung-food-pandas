@@ -21,7 +21,8 @@ export default function FollowButton({
 
   return (
     <Button
-      variant={compact ? 'outline' : 'solid'}
+      requireAuth
+      variant={!isFollowing ? 'outline' : 'solid'}
       xstyle={[compact && styles.compact, xstyle]}
       disabled={isPending}
       aria-pressed={isFollowing}

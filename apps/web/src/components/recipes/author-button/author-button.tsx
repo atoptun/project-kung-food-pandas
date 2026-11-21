@@ -1,7 +1,7 @@
 import * as stylex from '@stylexjs/stylex';
 import { useNavigate } from 'react-router';
 
-import AuthBaseButton from '@/components/auth-base-button/auth-base-button';
+import AuthBaseButton from '@/components/shared/auth-base-button/auth-base-button';
 import Avatar from '@/components/shared/avatar/avatar';
 import { typography, weights } from '@/styles/typography.stylex';
 
@@ -15,11 +15,11 @@ export interface AuthorButtonAuthor {
 
 export interface AuthorButtonProps {
   author: AuthorButtonAuthor;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   xstyle?: stylex.StyleXStyles;
 }
 
-export function AuthorButton({ author, size = 'sm', xstyle }: AuthorButtonProps) {
+export function AuthorButton({ author, size = 'xs', xstyle }: AuthorButtonProps) {
   const navigate = useNavigate();
   const authorHref = `/user/${author.id}`;
 
