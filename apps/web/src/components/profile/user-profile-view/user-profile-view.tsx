@@ -1,6 +1,7 @@
 import * as stylex from '@stylexjs/stylex';
 import { isAxiosError } from 'axios';
-import { useState } from 'react';
+// import { useState } from 'react';
+import { useNavigate } from 'react-router';
 
 import { useFollows, useProfileQuery } from '@/api/users/users.queries';
 import {
@@ -24,11 +25,13 @@ const BREADCRUMB_ITEMS = [{ label: 'Home', to: '/' }, { label: 'Profile' }] as c
 
 export interface UserProfileViewProps {
   id: string;
+  initialTab?: string;
   viewerId: string;
 }
 
-export function UserProfileView({ id, viewerId }: UserProfileViewProps) {
-  const [tab, setTab] = useState<ProfileTab>('recipes');
+export function UserProfileView({ id, initialTab, viewerId }: UserProfileViewProps) {
+  const navigate = useNavigate();
+  // const [tab, setTab] = useState<ProfileTab>('recipes');
   const isOwn = viewerId === id;
   const tabs = isOwn ? OWN_PROFILE_TABS : OTHER_PROFILE_TABS;
   const profile = useProfileQuery(viewerId, id);
@@ -37,6 +40,7 @@ export function UserProfileView({ id, viewerId }: UserProfileViewProps) {
   if (profile.isPending) {
     return (
       <Container xstyle={styles.page}>
+        <Breadcrumbs items={BREADCRUMB_ITEMS} />
         <Loader centered label="Loading profile…" xstyle={styles.message} />;
       </Container>
     );
@@ -45,6 +49,7 @@ export function UserProfileView({ id, viewerId }: UserProfileViewProps) {
   if (profile.isError) {
     return (
       <Container xstyle={styles.page}>
+        <Breadcrumbs items={BREADCRUMB_ITEMS} />
         <ProfileError
           error={profile.error}
           isFetching={profile.isFetching}
@@ -53,6 +58,14 @@ export function UserProfileView({ id, viewerId }: UserProfileViewProps) {
       </Container>
     );
   }
+
+  const activeTab: ProfileTab =
+    initialTab && tabs.some((t) => t.id === initialTab) ? (initialTab as ProfileTab) : 'recipes';
+
+  const handleTabChange = (nextTab: ProfileTab) => {
+    const path = nextTab === 'recipes' ? `/user/${id}` : `/user/${id}/${nextTab}`;
+    navigate(path, { replace: true, preventScrollReset: true });
+  };
 
   return (
     <Container xstyle={styles.page}>
@@ -73,8 +86,14 @@ export function UserProfileView({ id, viewerId }: UserProfileViewProps) {
           xstyle={styles.sidebar}
         />
         <section {...stylex.props(styles.content)} aria-label="Profile activity">
-          <ProfileTabs tabs={tabs} activeTab={tab} onTabChange={setTab}>
-            <ProfileItems key={tab} id={id} viewerId={viewerId} tab={tab} follows={follows} />
+          <ProfileTabs tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange}>
+            <ProfileItems
+              key={activeTab}
+              id={id}
+              viewerId={viewerId}
+              tab={activeTab}
+              follows={follows}
+            />
           </ProfileTabs>
         </section>
       </div>

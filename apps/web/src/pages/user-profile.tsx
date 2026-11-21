@@ -5,7 +5,7 @@ import Loader from '@/components/shared/loader/loader';
 import { useAuth } from '@/hooks/use-auth';
 
 export default function UserProfilePage() {
-  const { id = '' } = useParams<{ id: string }>();
+  const { id = '', tab } = useParams<{ id: string; tab?: string }>();
   const { user, isPending } = useAuth();
 
   if (isPending) {
@@ -16,5 +16,5 @@ export default function UserProfilePage() {
     return <Navigate to="/" replace state={{ authModal: 'sign-in' }} />;
   }
 
-  return <UserProfileView key={`${user.id}:${id}`} id={id} viewerId={user.id} />;
+  return <UserProfileView key={`${user.id}:${id}`} id={id} initialTab={tab} viewerId={user.id} />;
 }
