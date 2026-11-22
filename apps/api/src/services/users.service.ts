@@ -1,5 +1,3 @@
-import { unlink } from 'node:fs/promises';
-
 import type {
   CurrentUserProfileResponse,
   FollowActionResponse,
@@ -7,12 +5,12 @@ import type {
   UserFollowersListResponse,
   UserPublicProfileResponse,
 } from '@repo/shared';
-import type { v2 as Cloudinary } from 'cloudinary';
 
 import env from '@/config/env';
 import logger from '@/config/logger';
 import { BadRequestError, ConflictError, NotFoundError } from '@/errors/http.error';
 import type { PrismaClient } from '@/generated/prisma/client';
+import { deleteFromCloudinary, uploadFromBuffer } from '@/lib/cloudinary';
 import { isPrismaError, PrismaErrorCode } from '@/lib/prisma-errors';
 
 const AVATARS_FOLDER = 'avatars';
@@ -33,10 +31,7 @@ const profileSelect = {
 } as const;
 
 export class UsersService {
-  constructor(
-    private db: PrismaClient,
-    private storage: typeof Cloudinary,
-  ) {}
+  constructor(private db: PrismaClient) {}
 
   getCurrentProfile = async (userId: string): Promise<CurrentUserProfileResponse> => {
     const user = await this.findProfileOrThrow(userId);
@@ -272,21 +267,31 @@ export class UsersService {
     };
   };
 
-  updateAvatar = async (userId: string, filePath: string): Promise<CurrentUserProfileResponse> => {
+  updateAvatar = async (userId: string, buffer: Buffer): Promise<CurrentUserProfileResponse> => {
     try {
-      const { secure_url } = await this.storage.uploader.upload(filePath, {
-        folder: env.CLOUDINARY_FOLDER_BASE + '/' + AVATARS_FOLDER,
-        resource_type: 'image',
+      if (!buffer || buffer.length === 0) {
+        throw new BadRequestError('Avatar file is required');
+      }
+
+      const user = await this.db.user.findUnique({
+        where: { id: userId },
+        select: { id: true, avatar: true, avatarId: true },
+      });
+
+      const { secure_url, public_id } = await uploadFromBuffer(buffer, {
+        folder: `${env.CLOUDINARY_FOLDER_BASE}/${AVATARS_FOLDER}`,
       });
 
       await this.db.user.update({
         where: { id: userId },
-        data: { avatar: secure_url },
+        data: { avatar: secure_url, avatarId: public_id },
       });
-    } finally {
-      await unlink(filePath).catch((error: unknown) => {
-        logger.warn({ err: error, filePath }, 'Failed to remove temporary upload file');
-      });
+
+      if (user?.avatarId) {
+        await deleteFromCloudinary(user.avatarId);
+      }
+    } catch (error) {
+      logger.warn({ err: error }, 'Failed to upload avatar');
     }
 
     return this.getCurrentProfile(userId);

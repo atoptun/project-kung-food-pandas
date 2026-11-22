@@ -67,7 +67,7 @@ export class UsersController {
       ]);
     }
 
-    const profile = await this.service.updateAvatar(userId, req.file.path);
+    const profile = await this.service.updateAvatar(userId, req.file.buffer);
     res.status(200).json(profile);
   };
 }

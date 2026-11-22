@@ -43,6 +43,7 @@ const EnvSchema = z
       })
       .default('cloudinary://demo_key:demo_secret@demo'),
     CLOUDINARY_FOLDER_BASE: z.string().default('kfp'),
+    CLOUDINARY_FILE_LIMIT_MB: z.coerce.number().int().positive().default(5),
     // Rate limits
     RATE_LIMIT_WINDOW_MINUTES: z.coerce
       .number()

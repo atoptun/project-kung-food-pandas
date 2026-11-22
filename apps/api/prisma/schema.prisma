@@ -13,6 +13,7 @@ model User {
   email         String
   emailVerified Boolean   @default(false)
   avatar        String?
+  avatarId      String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
@@ -127,6 +128,7 @@ model Recipe {
   instructions String?
   description  String?
   thumb        String?
+  thumbId      String?  @map("thumb_id")
   preview      String?
   time         Int?
   ownerId      String   @map("owner_id")
