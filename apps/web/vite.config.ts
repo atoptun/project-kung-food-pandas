@@ -7,27 +7,27 @@ import { defineConfig } from 'vitest/config';
 const sourceDirectory = fileURLToPath(new URL('./src', import.meta.url));
 
 export default defineConfig({
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (!id.includes('node_modules')) {
-            return;
-          }
+  // build: {
+  //   rollupOptions: {
+  //     output: {
+  //       manualChunks(id) {
+  //         if (!id.includes('node_modules')) {
+  //           return;
+  //         }
 
-          if (/[\\/]node_modules[\\/](react|react-dom|react-router)[\\/]/.test(id)) {
-            return 'vendor';
-          }
-          if (/[\\/]node_modules[\\/](@tanstack\/react-query|axios)[\\/]/.test(id)) {
-            return 'query';
-          }
-          if (/[\\/]node_modules[\\/]better-auth[\\/]/.test(id)) {
-            return 'auth';
-          }
-        },
-      },
-    },
-  },
+  //         if (/[\\/]node_modules[\\/](react|react-dom|react-router)[\\/]/.test(id)) {
+  //           return 'vendor';
+  //         }
+  //         if (/[\\/]node_modules[\\/](@tanstack\/react-query|axios)[\\/]/.test(id)) {
+  //           return 'query';
+  //         }
+  //         if (/[\\/]node_modules[\\/]better-auth[\\/]/.test(id)) {
+  //           return 'auth';
+  //         }
+  //       },
+  //     },
+  //   },
+  // },
 
   plugins: [
     stylex.vite({
