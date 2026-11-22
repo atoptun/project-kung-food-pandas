@@ -1,4 +1,5 @@
 import { toNodeHandler } from 'better-auth/node';
+import compression from 'compression';
 import cors from 'cors';
 import express, { type Express } from 'express';
 import helmet from 'helmet';
@@ -11,6 +12,7 @@ import { generateOpenApiDocument } from '@/docs/openapi';
 import { auth } from '@/lib/auth';
 import { errorHandler } from '@/middlewares/error-handler.middleware';
 import { notFound } from '@/middlewares/not-found.middleware';
+import { apiRateLimiter, authRateLimiter } from '@/middlewares/rate-limit.middleware';
 // import { authRouter } from '@/routes/auth.routes';
 import { dictionariesRouter } from '@/routes/dictionaries.routes';
 import { favoritesRouter } from '@/routes/favorites.routes';
@@ -22,9 +24,22 @@ import { usersRouter } from '@/routes/users.routes';
 export async function createApp(): Promise<Express> {
   const app = express();
 
+  if (env.NODE_ENV === 'production') {
+    // Render architecture uses a single reverse proxy layer in front of the container
+    app.set('trust proxy', env.TRUST_PROXY);
+  } else {
+    app.set('trust proxy', false);
+  }
+
   app.use(
     helmet({
       contentSecurityPolicy: false,
+    }),
+  );
+
+  app.use(
+    compression({
+      threshold: 1024,
     }),
   );
 
@@ -39,10 +54,13 @@ export async function createApp(): Promise<Express> {
     }),
   );
 
+  app.use('/api/auth', authRateLimiter);
   app.all('/api/auth/*any', toNodeHandler(auth));
 
   app.use(express.json());
   app.use(pinoHttp({ logger }));
+
+  app.use(apiRateLimiter);
 
   const openApiDocument = await generateOpenApiDocument();
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));

@@ -1,30 +1,27 @@
-import { mkdir } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { resolve } from 'node:path';
-
 import type { NextFunction, Request, Response } from 'express';
 import type { FileFilterCallback } from 'multer';
 import multer from 'multer';
 
+import env from '@/config/env';
 import { BadRequestError } from '@/errors/http.error';
 
-const destination = resolve(tmpdir(), 'kung-food-pandas-uploads');
+// const destination = resolve(tmpdir(), 'kung-food-pandas-uploads');
 
 const allowMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
-await mkdir(destination, { recursive: true });
+// await mkdir(destination, { recursive: true });
 
-const storage = multer.diskStorage({
-  destination,
-  filename(_req, file, cb) {
-    const prefix = `${Date.now()}_${Math.round(Math.random() * 10000)}`;
-    const fileName = `${prefix}_${file.originalname}`;
-    cb(null, fileName);
-  },
-});
+// const _storage = multer.diskStorage({
+//   destination,
+//   filename(_req, file, cb) {
+//     const prefix = `${Date.now()}_${Math.round(Math.random() * 10000)}`;
+//     const fileName = `${prefix}_${file.originalname}`;
+//     cb(null, fileName);
+//   },
+// });
 
 const limits = {
-  fileSize: 1024 * 1024 * 5,
+  fileSize: 1024 * 1024 * env.CLOUDINARY_FILE_LIMIT_MB, // 5 MB
 };
 
 const fileFilter = (_req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
@@ -38,8 +35,8 @@ const fileFilter = (_req: Request, file: Express.Multer.File, cb: FileFilterCall
 };
 
 export const upload = multer({
-  // storage: multer.memoryStorage(),
-  storage,
+  storage: multer.memoryStorage(),
+  // storage,
   limits,
   fileFilter,
 });

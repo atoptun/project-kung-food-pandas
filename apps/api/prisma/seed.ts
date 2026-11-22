@@ -55,6 +55,7 @@ async function createUsers() {
       name: true,
       email: true,
       avatar: true,
+      avatarId: true,
       emailVerified: true,
       createdAt: true,
       updatedAt: true,

@@ -8,14 +8,13 @@ import {
 import { Router } from 'express';
 
 import { RecipesController } from '@/controllers/recipes.controller';
-import cloudinary from '@/lib/cloudinary';
 import prisma from '@/lib/prisma';
 import { authenticate, optionalAuthenticate } from '@/middlewares/auth.middleware';
 import { uploadSingle } from '@/middlewares/upload.middleware';
 import { validateBody, validateParams, validateQuery } from '@/middlewares/validate.middleware';
 import { RecipesService } from '@/services/recipes.service';
 
-const service = new RecipesService(prisma, cloudinary);
+const service = new RecipesService(prisma);
 const controller = new RecipesController(service);
 
 export const recipesRouter: Router = Router();

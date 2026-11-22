@@ -1,5 +1,3 @@
-import { unlink } from 'node:fs/promises';
-
 import type {
   CreateRecipeInput,
   PaginationQuery,
@@ -10,7 +8,6 @@ import type {
   RecipesListResponse,
   UserRecipesListResponse,
 } from '@repo/shared';
-import type { v2 as Cloudinary } from 'cloudinary';
 
 import env from '@/config/env';
 import logger from '@/config/logger';
@@ -22,6 +19,7 @@ import {
   UnprocessableEntityError,
 } from '@/errors/http.error';
 import type { Prisma, PrismaClient } from '@/generated/prisma/client';
+import { deleteFromCloudinary, uploadFromBuffer } from '@/lib/cloudinary';
 
 const RECIPES_FOLDER = 'recipes';
 
@@ -144,10 +142,7 @@ function filterWhere(query: RecipeFilterQuery): Prisma.RecipeWhereInput {
 }
 
 export class RecipesService {
-  constructor(
-    private db: PrismaClient,
-    private storage: typeof Cloudinary,
-  ) {}
+  constructor(private db: PrismaClient) {}
 
   list = async (query: RecipeFilterQuery, viewerId?: string): Promise<RecipesListResponse> => {
     const where = filterWhere(query);
@@ -219,21 +214,22 @@ export class RecipesService {
   create = async (
     ownerId: string,
     input: CreateRecipeInput,
-    filePath?: string,
+    buffer?: Buffer,
   ): Promise<RecipeDetails> => {
+    await this.assertReferences(input);
+
+    let thumb: string | null = null;
+    let thumbId: string | null = null;
+
+    if (buffer) {
+      const uploaded = await uploadFromBuffer(buffer, {
+        folder: `${env.CLOUDINARY_FOLDER_BASE}/${RECIPES_FOLDER}`,
+      });
+      thumb = uploaded.secure_url;
+      thumbId = uploaded.public_id;
+    }
+
     try {
-      await this.assertReferences(input);
-
-      let thumb: string | null = null;
-
-      if (filePath) {
-        const uploaded = await this.storage.uploader.upload(filePath, {
-          folder: env.CLOUDINARY_FOLDER_BASE + '/' + RECIPES_FOLDER,
-          resource_type: 'image',
-        });
-        thumb = uploaded.secure_url;
-      }
-
       const recipe = await this.db.recipe.create({
         data: {
           title: input.title,
@@ -241,6 +237,7 @@ export class RecipesService {
           instructions: input.instructions,
           time: input.time,
           thumb,
+          thumbId,
           ownerId,
           categoryId: input.categoryId,
           areaId: input.areaId,
@@ -259,12 +256,13 @@ export class RecipesService {
       });
 
       return toRecipeDetails(recipe, ownerId);
-    } finally {
-      if (filePath) {
-        await unlink(filePath).catch((error: unknown) => {
-          logger.warn({ err: error, filePath }, 'Failed to remove temporary upload file');
+    } catch (error) {
+      if (thumbId) {
+        await deleteFromCloudinary(thumbId).catch((err) => {
+          logger.warn({ err, thumbId }, 'Failed to rollback Cloudinary upload after DB error');
         });
       }
+      throw error;
     }
   };
 
@@ -282,7 +280,11 @@ export class RecipesService {
       throw new ForbiddenError('Access denied. You can only delete your own recipes');
     }
 
-    await this.db.recipe.delete({ where: { id } });
+    const deleted = await this.db.recipe.delete({ where: { id } });
+
+    if (deleted.thumbId) {
+      await deleteFromCloudinary(deleted.thumbId);
+    }
 
     return { message: 'Recipe deleted successfully' };
   };

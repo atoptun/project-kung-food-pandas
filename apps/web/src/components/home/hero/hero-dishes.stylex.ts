@@ -2,7 +2,7 @@ import * as stylex from '@stylexjs/stylex';
 
 import { breakpoints } from '@/styles/tokens.stylex';
 
-export const composition = stylex.create({
+export const styles = stylex.create({
   wrapper: {
     containerType: 'inline-size',
     position: 'relative',

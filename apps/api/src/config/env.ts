@@ -35,9 +35,7 @@ const EnvSchema = z
     DIRECT_URL: z
       .url()
       .default('postgresql://kfp:kfp_local_pass@localhost:5432/kfp_db?schema=public'),
-    // CLOUDINARY_CLOUD_NAME: z.string().default('demo'),
-    // CLOUDINARY_API_KEY: z.string().default('demo_key'),
-    // CLOUDINARY_API_SECRET: z.string().default('demo_secret'),
+    // Cloudinary configuration
     CLOUDINARY_URL: z
       .url()
       .startsWith('cloudinary://', {
@@ -45,6 +43,18 @@ const EnvSchema = z
       })
       .default('cloudinary://demo_key:demo_secret@demo'),
     CLOUDINARY_FOLDER_BASE: z.string().default('kfp'),
+    CLOUDINARY_FILE_LIMIT_MB: z.coerce.number().int().positive().default(5),
+    // Rate limits
+    // Render has a single reverse proxy layer in front of the container, so we trust 1 proxy hop.
+    TRUST_PROXY: z.string().default('1'),
+    RATE_LIMIT_WINDOW_MINUTES: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(15) // 15 minutes
+      .transform((value) => value * 60 * 1000),
+    RATE_LIMIT_API_MAX: z.coerce.number().int().positive().default(300),
+    RATE_LIMIT_AUTH_MAX: z.coerce.number().int().positive().default(20),
   })
   .transform((data) => ({
     ...data,

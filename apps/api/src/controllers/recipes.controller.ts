@@ -57,7 +57,7 @@ export class RecipesController {
     req: Request<Record<string, string>, RecipeDetails, CreateRecipeInput>,
     res: Response<RecipeDetails>,
   ) => {
-    const recipe = await this.service.create(getAuthUserId(req), req.body, req.file?.path);
+    const recipe = await this.service.create(getAuthUserId(req), req.body, req.file?.buffer);
     res.status(201).json(recipe);
   };
 
