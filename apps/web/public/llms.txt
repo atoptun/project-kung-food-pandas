@@ -1,0 +1,3 @@
+# Foodies
+
+> a culinary community platform to discover, create, and share delicious recipes from around the world
