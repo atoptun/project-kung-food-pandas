@@ -1,3 +1,16 @@
-# Foodies
+# Foodies (Kung Food Pandas)
 
-> a culinary community platform to discover, create, and share delicious recipes from around the world
+> A modern culinary community platform to discover, create, and share delicious recipes from around the world.
+
+Foodies allows home cooks and culinary enthusiasts to explore diverse cuisines, filter by ingredients and dietary preferences, publish personal recipes,
+and engage with other food lovers.
+
+## Main Navigation
+- [Home & Recipe Discovery](https://project-kung-food-pandas.vercel.app/): Browse popular dishes, explore categories, and discover trending recipes.
+- [Recipe Creation](https://project-kung-food-pandas.vercel.app/recipe/add): Authenticated dashboard for creating, documenting, and publishing new
+culinary recipes.
+
+## API & Documentation
+- [Interactive API Docs (Swagger)](https://kung-food-pandas-api.onrender.com/api-docs): Interactive OpenAPI 3.0 documentation for recipes, categories,
+ingredients, and authentication endpoints.
+- [API Health Check](https://kung-food-pandas-api.onrender.com/healthz): Service liveness and readiness monitoring endpoint.
