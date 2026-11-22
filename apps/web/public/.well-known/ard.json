@@ -1,0 +1,22 @@
+{
+  "specVersion": "0.91",
+  "host": {
+    "displayName": "Foodies (Kung Food Pandas)",
+    "documentationUrl": "https://project-kung-food-pandas.vercel.app"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:project-kung-food-pandas.vercel.app:api:recipes",
+      "displayName": "Foodies Recipes Catalog",
+      "type": "text/html",
+      "url": "https://project-kung-food-pandas.vercel.app",
+      "description": "Culinary community platform for discovering, creating, and sharing delicious recipes from around the world.",
+      "tags": ["recipes", "food", "cooking", "culinary"],
+      "representativeQueries": [
+        "Search popular dinner recipes",
+        "Find dessert recipes by category",
+        "Discover recipes by ingredients"
+      ]
+    }
+  ]
+}
