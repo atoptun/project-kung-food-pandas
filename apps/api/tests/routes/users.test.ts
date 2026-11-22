@@ -1,23 +1,26 @@
-import { existsSync } from 'node:fs';
-
 import type { UploadApiResponse } from 'cloudinary';
 import request from 'supertest';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { app } from '@/app';
-import cloudinary from '@/lib/cloudinary';
+import * as cloudinaryLib from '@/lib/cloudinary';
 import prisma from '@/lib/prisma';
 
 import { createAuthUser } from '../helpers/auth';
 import { addFavorite, createRecipe } from '../helpers/recipes';
 
 const AVATAR_URL = 'https://res.cloudinary.com/test_cloud/image/upload/avatars/avatar.png';
+const AVATAR_ID = 'avatars/avatar';
 const PNG_BUFFER = Buffer.from('89504e470d0a1a0a', 'hex');
 
 function mockCloudinaryUpload() {
   return vi
-    .spyOn(cloudinary.uploader, 'upload')
-    .mockResolvedValue({ secure_url: AVATAR_URL } as UploadApiResponse);
+    .spyOn(cloudinaryLib, 'uploadFromBuffer')
+    .mockResolvedValue({ secure_url: AVATAR_URL, public_id: AVATAR_ID } as UploadApiResponse);
+}
+
+function mockCloudinaryDelete() {
+  return vi.spyOn(cloudinaryLib, 'deleteFromCloudinary').mockResolvedValue();
 }
 
 describe('Users Endpoints', () => {
@@ -176,11 +179,13 @@ describe('Users Endpoints', () => {
 
       const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
       expect(dbUser?.avatar).toBe(AVATAR_URL);
+      expect(dbUser?.avatarId).toBe(AVATAR_ID);
 
       expect(uploadSpy).toHaveBeenCalledTimes(1);
-      const tmpFilePath = uploadSpy.mock.lastCall?.[0];
-      expect(tmpFilePath).toEqual(expect.any(String));
-      expect(existsSync(tmpFilePath as string)).toBe(false);
+      expect(uploadSpy).toHaveBeenCalledWith(
+        PNG_BUFFER,
+        expect.objectContaining({ folder: expect.any(String) }),
+      );
     });
 
     it.each([
@@ -273,9 +278,27 @@ describe('Users Endpoints', () => {
       expect(uploadSpy).not.toHaveBeenCalled();
     });
 
-    it('returns 500, keeps old avatar and removes temp file when upload to storage fails', async () => {
+    it('deletes old avatar from storage when uploading a new one', async () => {
+      mockCloudinaryUpload();
+      const deleteSpy = mockCloudinaryDelete();
+      const { user, authHeader } = await createAuthUser();
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { avatar: 'https://example.com/old.png', avatarId: 'avatars/old-avatar' },
+      });
+
+      const response = await request(app)
+        .patch('/users/me/avatar')
+        .set('Authorization', authHeader)
+        .attach('avatar', PNG_BUFFER, { filename: 'new.png', contentType: 'image/png' });
+
+      expect(response.status).toBe(200);
+      expect(deleteSpy).toHaveBeenCalledWith('avatars/old-avatar');
+    });
+
+    it('keeps old avatar when upload to storage fails', async () => {
       const uploadSpy = vi
-        .spyOn(cloudinary.uploader, 'upload')
+        .spyOn(cloudinaryLib, 'uploadFromBuffer')
         .mockRejectedValue(new Error('Cloudinary is down'));
       const { user, authHeader } = await createAuthUser();
 
@@ -284,18 +307,12 @@ describe('Users Endpoints', () => {
         .set('Authorization', authHeader)
         .attach('avatar', PNG_BUFFER, { filename: 'avatar.png', contentType: 'image/png' });
 
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({
-        status: 'error',
-        message: 'Internal server error',
-      });
+      expect(response.status).toBe(200);
+      expect(response.body.user.avatar).toBeNull();
 
       const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
       expect(dbUser?.avatar).toBeNull();
-
-      const tmpFilePath = uploadSpy.mock.lastCall?.[0];
-      expect(tmpFilePath).toEqual(expect.any(String));
-      expect(existsSync(tmpFilePath as string)).toBe(false);
+      expect(uploadSpy).toHaveBeenCalledTimes(1);
     });
 
     it('returns 401 when user is not authenticated', async () => {

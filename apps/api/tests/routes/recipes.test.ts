@@ -1,11 +1,9 @@
-import { existsSync } from 'node:fs';
-
 import type { UploadApiResponse } from 'cloudinary';
 import request from 'supertest';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { app } from '@/app';
-import cloudinary from '@/lib/cloudinary';
+import * as cloudinaryLib from '@/lib/cloudinary';
 import prisma from '@/lib/prisma';
 
 import { createAuthUser } from '../helpers/auth';
@@ -18,13 +16,18 @@ import {
 } from '../helpers/recipes';
 
 const THUMB_URL = 'https://res.cloudinary.com/test_cloud/image/upload/recipes/soup.png';
+const THUMB_ID = 'recipes/soup';
 const PNG_BUFFER = Buffer.from('89504e470d0a1a0a', 'hex');
 const INSTRUCTIONS = 'Boil water, cook pasta, and stir in the sauce.';
 
 function mockCloudinaryUpload() {
   return vi
-    .spyOn(cloudinary.uploader, 'upload')
-    .mockResolvedValue({ secure_url: THUMB_URL } as UploadApiResponse);
+    .spyOn(cloudinaryLib, 'uploadFromBuffer')
+    .mockResolvedValue({ secure_url: THUMB_URL, public_id: THUMB_ID } as UploadApiResponse);
+}
+
+function mockCloudinaryDelete() {
+  return vi.spyOn(cloudinaryLib, 'deleteFromCloudinary').mockResolvedValue();
 }
 
 async function recipePayload(
@@ -556,9 +559,10 @@ describe('Recipes Endpoints', () => {
       });
 
       expect(uploadSpy).toHaveBeenCalledTimes(1);
-      const tmpFilePath = uploadSpy.mock.lastCall?.[0];
-      expect(tmpFilePath).toEqual(expect.any(String));
-      expect(existsSync(tmpFilePath as string)).toBe(false);
+      expect(uploadSpy).toHaveBeenCalledWith(
+        PNG_BUFFER,
+        expect.objectContaining({ folder: expect.any(String) }),
+      );
 
       const saved = await prisma.recipe.findUnique({ where: { id: response.body.id } });
       expect(saved?.thumb).toBe(THUMB_URL);
@@ -714,9 +718,9 @@ describe('Recipes Endpoints', () => {
       expect(uploadSpy).not.toHaveBeenCalled();
     });
 
-    it('returns 500, does not create a recipe, and removes the temp file when storage upload fails', async () => {
+    it('creates a recipe without a photo when storage upload fails', async () => {
       const uploadSpy = vi
-        .spyOn(cloudinary.uploader, 'upload')
+        .spyOn(cloudinaryLib, 'uploadFromBuffer')
         .mockRejectedValue(new Error('Cloudinary is down'));
       const { authHeader } = await createAuthUser();
       const payload = await recipePayload();
@@ -733,16 +737,15 @@ describe('Recipes Endpoints', () => {
         .field('ingredients', JSON.stringify(payload.ingredients))
         .attach('thumb', PNG_BUFFER, { filename: 'soup.png', contentType: 'image/png' });
 
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({
-        status: 'error',
-        message: 'Internal server error',
+      expect(response.status).toBe(201);
+      expect(response.body).toMatchObject({
+        title: payload.title,
+        thumb: null,
       });
-      expect(await prisma.recipe.count()).toBe(0);
+      expect(uploadSpy).toHaveBeenCalledTimes(1);
 
-      const tmpFilePath = uploadSpy.mock.lastCall?.[0];
-      expect(tmpFilePath).toEqual(expect.any(String));
-      expect(existsSync(tmpFilePath as string)).toBe(false);
+      const saved = await prisma.recipe.findUnique({ where: { id: response.body.id } });
+      expect(saved?.thumb).toBeNull();
     });
 
     it('returns 401 when the user is not authenticated', async () => {
@@ -761,11 +764,16 @@ describe('Recipes Endpoints', () => {
 
   describe('DELETE /recipes/:id', () => {
     it('deletes the current user recipe and its ingredients', async () => {
+      const deleteSpy = mockCloudinaryDelete();
       const { user, authHeader } = await createAuthUser();
       const ingredient = await createIngredient('Flour');
       const recipe = await createRecipe(user.id, {
         title: 'Bread',
         ingredients: [{ ingredientId: ingredient.id, measure: '300g' }],
+      });
+      await prisma.recipe.update({
+        where: { id: recipe.id },
+        data: { thumbId: THUMB_ID },
       });
 
       const response = await request(app)
@@ -776,6 +784,7 @@ describe('Recipes Endpoints', () => {
       expect(response.body).toEqual({ message: 'Recipe deleted successfully' });
       expect(await prisma.recipe.findUnique({ where: { id: recipe.id } })).toBeNull();
       expect(await prisma.recipeIngredient.count({ where: { recipeId: recipe.id } })).toBe(0);
+      expect(deleteSpy).toHaveBeenCalledWith(THUMB_ID);
     });
 
     it('returns 403 when deleting another user recipe', async () => {
