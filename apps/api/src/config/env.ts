@@ -45,6 +45,8 @@ const EnvSchema = z
     CLOUDINARY_FOLDER_BASE: z.string().default('kfp'),
     CLOUDINARY_FILE_LIMIT_MB: z.coerce.number().int().positive().default(5),
     // Rate limits
+    // Render has a single reverse proxy layer in front of the container, so we trust 1 proxy hop.
+    TRUST_PROXY: z.string().default('1'),
     RATE_LIMIT_WINDOW_MINUTES: z.coerce
       .number()
       .int()

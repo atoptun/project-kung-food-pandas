@@ -20,7 +20,7 @@ function mockCloudinaryUpload() {
 }
 
 function mockCloudinaryDelete() {
-  return vi.spyOn(cloudinaryLib, 'deleteFromCloudinary').mockResolvedValue();
+  return vi.spyOn(cloudinaryLib, 'deleteFromCloudinary').mockResolvedValue(true);
 }
 
 describe('Users Endpoints', () => {
@@ -307,9 +307,11 @@ describe('Users Endpoints', () => {
         .set('Authorization', authHeader)
         .attach('avatar', PNG_BUFFER, { filename: 'avatar.png', contentType: 'image/png' });
 
-      expect(response.status).toBe(200);
-      expect(response.body.user.avatar).toBeNull();
-
+      expect(response.status).toBe(500);
+      expect(response.body).toEqual({
+        status: 'error',
+        message: 'Failed to upload avatar',
+      });
       const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
       expect(dbUser?.avatar).toBeNull();
       expect(uploadSpy).toHaveBeenCalledTimes(1);

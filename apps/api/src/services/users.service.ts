@@ -7,7 +7,6 @@ import type {
 } from '@repo/shared';
 
 import env from '@/config/env';
-import logger from '@/config/logger';
 import { BadRequestError, ConflictError, NotFoundError } from '@/errors/http.error';
 import type { PrismaClient } from '@/generated/prisma/client';
 import { deleteFromCloudinary, uploadFromBuffer } from '@/lib/cloudinary';
@@ -268,30 +267,31 @@ export class UsersService {
   };
 
   updateAvatar = async (userId: string, buffer: Buffer): Promise<CurrentUserProfileResponse> => {
+    if (!buffer || buffer.length === 0) {
+      throw new BadRequestError('Avatar file is required');
+    }
+
+    const user = await this.db.user.findUnique({
+      where: { id: userId },
+      select: { id: true, avatar: true, avatarId: true },
+    });
+
+    const { secure_url, public_id } = await uploadFromBuffer(buffer, {
+      folder: `${env.CLOUDINARY_FOLDER_BASE}/${AVATARS_FOLDER}`,
+    });
+
     try {
-      if (!buffer || buffer.length === 0) {
-        throw new BadRequestError('Avatar file is required');
-      }
-
-      const user = await this.db.user.findUnique({
-        where: { id: userId },
-        select: { id: true, avatar: true, avatarId: true },
-      });
-
-      const { secure_url, public_id } = await uploadFromBuffer(buffer, {
-        folder: `${env.CLOUDINARY_FOLDER_BASE}/${AVATARS_FOLDER}`,
-      });
-
       await this.db.user.update({
         where: { id: userId },
         data: { avatar: secure_url, avatarId: public_id },
       });
+    } catch (dbError) {
+      await deleteFromCloudinary(public_id);
+      throw dbError;
+    }
 
-      if (user?.avatarId) {
-        await deleteFromCloudinary(user.avatarId);
-      }
-    } catch (error) {
-      logger.warn({ err: error }, 'Failed to upload avatar');
+    if (user?.avatarId) {
+      await deleteFromCloudinary(user.avatarId);
     }
 
     return this.getCurrentProfile(userId);

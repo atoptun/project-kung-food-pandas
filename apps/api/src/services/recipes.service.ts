@@ -219,49 +219,51 @@ export class RecipesService {
     await this.assertReferences(input);
 
     let thumb: string | null = null;
+    let thumbId: string | null = null;
 
-    const recipe = await this.db.recipe.create({
-      data: {
-        title: input.title,
-        description: input.description,
-        instructions: input.instructions,
-        time: input.time,
-        thumb,
-        ownerId,
-        categoryId: input.categoryId,
-        areaId: input.areaId,
-        ...(input.ingredients.length
-          ? {
-              ingredients: {
-                create: input.ingredients.map((item) => ({
-                  ingredientId: item.id,
-                  measure: item.measure,
-                })),
-              },
-            }
-          : {}),
-      },
-      select: recipeDetailsSelect(ownerId),
-    });
-
-    try {
-      if (buffer) {
-        const { secure_url, public_id } = await uploadFromBuffer(buffer, {
-          folder: `${env.CLOUDINARY_FOLDER_BASE}/${RECIPES_FOLDER}`,
-        });
-        thumb = secure_url;
-
-        await this.db.recipe.update({
-          where: { id: recipe.id },
-          data: { thumb, thumbId: public_id },
-        });
-        recipe.thumb = thumb;
-      }
-    } catch (error) {
-      logger.warn({ err: error }, 'Failed to upload recipe thumbnail to Cloudinary');
+    if (buffer) {
+      const uploaded = await uploadFromBuffer(buffer, {
+        folder: `${env.CLOUDINARY_FOLDER_BASE}/${RECIPES_FOLDER}`,
+      });
+      thumb = uploaded.secure_url;
+      thumbId = uploaded.public_id;
     }
 
-    return toRecipeDetails(recipe, ownerId);
+    try {
+      const recipe = await this.db.recipe.create({
+        data: {
+          title: input.title,
+          description: input.description,
+          instructions: input.instructions,
+          time: input.time,
+          thumb,
+          thumbId,
+          ownerId,
+          categoryId: input.categoryId,
+          areaId: input.areaId,
+          ...(input.ingredients.length
+            ? {
+                ingredients: {
+                  create: input.ingredients.map((item) => ({
+                    ingredientId: item.id,
+                    measure: item.measure,
+                  })),
+                },
+              }
+            : {}),
+        },
+        select: recipeDetailsSelect(ownerId),
+      });
+
+      return toRecipeDetails(recipe, ownerId);
+    } catch (error) {
+      if (thumbId) {
+        await deleteFromCloudinary(thumbId).catch((err) => {
+          logger.warn({ err, thumbId }, 'Failed to rollback Cloudinary upload after DB error');
+        });
+      }
+      throw error;
+    }
   };
 
   remove = async (userId: string, id: string): Promise<RecipeActionResponse> => {

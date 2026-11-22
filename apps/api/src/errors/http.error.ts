@@ -49,3 +49,9 @@ export class UnprocessableEntityError extends HttpError {
     super(422, message, issues);
   }
 }
+
+export class InternalServerError extends HttpError {
+  constructor(message = 'Internal Server Error') {
+    super(500, message);
+  }
+}

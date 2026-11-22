@@ -8,7 +8,7 @@ import type {
 } from '@repo/shared';
 import type { Request, Response } from 'express';
 
-import { UnprocessableEntityError } from '@/errors/http.error';
+import { InternalServerError, UnprocessableEntityError } from '@/errors/http.error';
 import { getAuthUserId } from '@/middlewares/auth.middleware';
 import type { UsersService } from '@/services/users.service';
 
@@ -67,7 +67,11 @@ export class UsersController {
       ]);
     }
 
-    const profile = await this.service.updateAvatar(userId, req.file.buffer);
-    res.status(200).json(profile);
+    try {
+      const profile = await this.service.updateAvatar(userId, req.file.buffer);
+      res.status(200).json(profile);
+    } catch {
+      throw new InternalServerError('Failed to upload avatar');
+    }
   };
 }

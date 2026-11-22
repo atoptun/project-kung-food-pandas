@@ -11,16 +11,18 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-              return 'vendor';
-            }
-            if (id.includes('@tanstack/react-query') || id.includes('axios')) {
-              return 'query';
-            }
-            if (id.includes('better-auth')) {
-              return 'auth';
-            }
+          if (!id.includes('node_modules')) {
+            return;
+          }
+
+          if (/[\\/]node_modules[\\/](react|react-dom|react-router)[\\/]/.test(id)) {
+            return 'vendor';
+          }
+          if (/[\\/]node_modules[\\/](@tanstack\/react-query|axios)[\\/]/.test(id)) {
+            return 'query';
+          }
+          if (/[\\/]node_modules[\\/]better-auth[\\/]/.test(id)) {
+            return 'auth';
           }
         },
       },

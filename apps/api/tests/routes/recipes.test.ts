@@ -27,7 +27,7 @@ function mockCloudinaryUpload() {
 }
 
 function mockCloudinaryDelete() {
-  return vi.spyOn(cloudinaryLib, 'deleteFromCloudinary').mockResolvedValue();
+  return vi.spyOn(cloudinaryLib, 'deleteFromCloudinary').mockResolvedValue(true);
 }
 
 async function recipePayload(
@@ -718,7 +718,7 @@ describe('Recipes Endpoints', () => {
       expect(uploadSpy).not.toHaveBeenCalled();
     });
 
-    it('creates a recipe without a photo when storage upload fails', async () => {
+    it('does not create a recipe when storage upload fails', async () => {
       const uploadSpy = vi
         .spyOn(cloudinaryLib, 'uploadFromBuffer')
         .mockRejectedValue(new Error('Cloudinary is down'));
@@ -737,15 +737,10 @@ describe('Recipes Endpoints', () => {
         .field('ingredients', JSON.stringify(payload.ingredients))
         .attach('thumb', PNG_BUFFER, { filename: 'soup.png', contentType: 'image/png' });
 
-      expect(response.status).toBe(201);
-      expect(response.body).toMatchObject({
-        title: payload.title,
-        thumb: null,
-      });
+      expect(response.status).toBe(500);
       expect(uploadSpy).toHaveBeenCalledTimes(1);
 
-      const saved = await prisma.recipe.findUnique({ where: { id: response.body.id } });
-      expect(saved?.thumb).toBeNull();
+      expect(await prisma.recipe.count()).toBe(0);
     });
 
     it('returns 401 when the user is not authenticated', async () => {

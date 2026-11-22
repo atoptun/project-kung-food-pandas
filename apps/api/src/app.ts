@@ -24,7 +24,12 @@ import { usersRouter } from '@/routes/users.routes';
 export async function createApp(): Promise<Express> {
   const app = express();
 
-  app.set('trust proxy', 1);
+  if (env.NODE_ENV === 'production') {
+    // Render architecture uses a single reverse proxy layer in front of the container
+    app.set('trust proxy', env.TRUST_PROXY);
+  } else {
+    app.set('trust proxy', false);
+  }
 
   app.use(
     helmet({
