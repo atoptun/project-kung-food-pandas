@@ -1,3 +1,4 @@
+import * as stylex from '@stylexjs/stylex';
 import { useEffect, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -10,6 +11,18 @@ import RecipesCatalog, {
 } from '@/components/recipes/recipes-catalog/recipes-catalog';
 import PageMeta from '@/components/shared/page-meta/page-meta';
 import { notify } from '@/lib/notify';
+import { breakpoints } from '@/styles/tokens.stylex';
+
+const styles = stylex.create({
+  content: {
+    // Offset for the sticky floating header so scrollIntoView leaves space for it
+    scrollMarginTop: {
+      default: 80,
+      [breakpoints.tablet]: 100,
+      [breakpoints.desktop]: 110,
+    },
+  },
+});
 
 export function HomeView() {
   const { slug } = useParams<{ slug?: string }>();
@@ -83,7 +96,7 @@ export function HomeView() {
     <>
       <PageMeta title={pageTitle} description={pageDescription} />
       <Hero />
-      <div ref={contentSectionRef}>
+      <div ref={contentSectionRef} {...stylex.props(styles.content)}>
         {!selectedCategory ? (
           <Categories onSelectCategory={handleSelectCategory} />
         ) : (

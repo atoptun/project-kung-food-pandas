@@ -1,5 +1,5 @@
 import * as stylex from '@stylexjs/stylex';
-import { useId } from 'react';
+import { useEffect, useId, useState } from 'react';
 
 import Container from '@/components/shared/container/container';
 import Icon from '@/components/shared/icon/icon';
@@ -22,11 +22,29 @@ function Header({ theme = 'light' }: HeaderProps) {
   const mobileMenuId = useId();
   const isMobileMenuOpen = useUIStore((state) => state.isMobileMenuOpen);
   const openMobileMenu = useUIStore((state) => state.openMobileMenu);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Small threshold (e.g. 10px) to determine when the user started scrolling
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const isDark = theme === 'dark';
 
   return (
-    <header {...stylex.props(header.base, isDark ? header.dark : header.light)}>
+    <header
+      {...stylex.props(
+        header.base,
+        isDark ? header.dark : header.light,
+        isDark && isScrolled && header.darkScrolled,
+      )}
+    >
       <Container xstyle={[header.bar, isDark ? header.darkBar : header.lightBar]}>
         <Logo />
 
