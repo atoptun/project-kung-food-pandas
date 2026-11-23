@@ -81,8 +81,6 @@ export function Testimonials({ intervalMs = 5000, xstyle }: TestimonialsProps) {
     return null;
   }
 
-  const activeItem = items[activeIndex];
-
   return (
     <Section
       ref={sectionRef}
@@ -109,25 +107,37 @@ export function Testimonials({ intervalMs = 5000, xstyle }: TestimonialsProps) {
 
         <Icon name="quote" size={58} xstyle={styles.quoteIcon} />
 
-        <div
-          {...stylex.props(styles.slideWrapper)}
-          aria-live="polite"
-          role="group"
-          aria-roledescription="slide"
-          aria-label={`${activeIndex + 1} of ${items.length}`}
-        >
-          <Typography variant="main" weight="medium" color="black" xstyle={styles.testimonialText}>
-            {activeItem?.testimonial}
-          </Typography>
-          <Typography
-            variant="h4"
-            weight="extraBold"
-            color="black"
-            uppercase
-            xstyle={styles.authorName}
-          >
-            {activeItem?.owner?.name ?? 'Anonymous'}
-          </Typography>
+        <div {...stylex.props(styles.slideViewport)}>
+          <div {...stylex.props(styles.slideTrack(activeIndex))} aria-live="polite">
+            {items.map((item, index) => (
+              <div
+                key={item.id}
+                {...stylex.props(styles.slideWrapper)}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`${index + 1} of ${items.length}`}
+                aria-hidden={index !== activeIndex}
+              >
+                <Typography
+                  variant="main"
+                  weight="medium"
+                  color="black"
+                  xstyle={styles.testimonialText}
+                >
+                  {item.testimonial}
+                </Typography>
+                <Typography
+                  variant="h4"
+                  weight="extraBold"
+                  color="black"
+                  uppercase
+                  xstyle={styles.authorName}
+                >
+                  {item.owner?.name ?? 'Anonymous'}
+                </Typography>
+              </div>
+            ))}
+          </div>
         </div>
 
         {items.length > 1 && (
