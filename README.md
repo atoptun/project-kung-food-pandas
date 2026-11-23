@@ -2,6 +2,11 @@
 
 <div align="center">
     <img src="./apps/web/public/favicon.svg" alt="Kung Food Pandas Logo" width="96" height="96" />
+    <br />
+    <br />
+    <a href="https://project-kung-food-pandas.vercel.app/">
+      <img src="https://img.shields.io/badge/Live_Demo-Visit_Site-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
+    </a>
 </div>
 
 A full-stack culinary community platform for discovering, creating, and sharing recipes. Built as a high-performance TypeScript monorepo with Express, React 19, StyleX, PostgreSQL, and Better Auth.
@@ -18,6 +23,18 @@ A full-stack culinary community platform for discovering, creating, and sharing 
 - **Modern Authentication:** Secure session-based authentication (Better Auth) with modal sign-in/sign-up flows and protected route guards.
 - **Cloud Media Uploads:** Automated image processing and hosting powered by Cloudinary.
 - **Comprehensive API Documentation:** OpenAPI 3.0 specification generated directly from Zod contracts, served with interactive Swagger UI and Redoc.
+
+---
+
+## 🔗 Project Resources
+
+| Resource            | Description                                                                    | Link                                                                                                          |
+| :------------------ | :----------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
+| 🚀 **Live Demo**    | Production web application deployed on Vercel                                  | [project-kung-food-pandas.vercel.app](https://project-kung-food-pandas.vercel.app/)                           |
+| 🎨 **Figma Design** | UI/UX layouts, responsive breakpoints & design system specs                    | [Open in Figma](https://www.figma.com/design/bWQKWe0sZ3LnmcnEwXGbHv/Foodies?node-id=0-1&t=xwbD1G7xNX5FXEjz-1) |
+| 📊 **Presentation** | Project slide deck, key architectural highlights & team overview               | [View Presentation (PDF)](<./docs/Kung Food Panda.pdf>)                                                       |
+| 🖼️ **UI Showcase**  | Complete visual gallery of application screens across Desktop, Tablet & Mobile | [View Screenshots](./docs/SCREENSHOTS.md)                                                                     |
+| 📖 **API Docs**     | Interactive OpenAPI 3.0 specification & live testing sandbox                   | [Swagger UI](https://project-kung-food-pandas.onrender.com/api-docs/)                                         |
 
 ---
 
