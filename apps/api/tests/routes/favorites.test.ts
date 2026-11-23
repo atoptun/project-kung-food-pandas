@@ -64,6 +64,7 @@ describe('Favorites endpoints', () => {
       expect(response.body.items).toEqual([
         {
           id: newer.id,
+          slug: newer.slug,
           title: 'Newer',
           description: null,
           thumb: null,

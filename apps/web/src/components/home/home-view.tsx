@@ -36,7 +36,12 @@ export function HomeView() {
 
   const scrollToContent = () => {
     setTimeout(() => {
-      contentSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (
+        contentSectionRef.current &&
+        typeof contentSectionRef.current?.scrollIntoView === 'function'
+      ) {
+        contentSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }, 100);
   };
 
