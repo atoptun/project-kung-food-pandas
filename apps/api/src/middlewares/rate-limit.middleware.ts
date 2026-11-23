@@ -9,7 +9,7 @@ export const authRateLimiter = rateLimit({
   limit: env.RATE_LIMIT_AUTH_MAX,
   standardHeaders: 'draft-8',
   legacyHeaders: false,
-  skip: () => isTest, // no blocking for tests
+  skip: (req) => isTest || req.method === 'GET', // no blocking for tests or GET requests
   message: {
     message: 'Too many authentication attempts, please try again later.',
   },
