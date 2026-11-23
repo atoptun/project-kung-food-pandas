@@ -14,6 +14,7 @@ export type IngredientSelectProps = Omit<
   'options' | 'aria-label' | 'onValueChange'
 > & {
   'aria-label'?: string;
+  useSlug?: boolean;
   excludedIds?: readonly string[];
   includeAllOption?: boolean;
   allOptionLabel?: string;
@@ -26,25 +27,34 @@ export function IngredientSelect({
   placeholder = 'Select an ingredient',
   'aria-label': ariaLabel = 'Ingredient',
   'aria-describedby': describedBy,
+  useSlug = false,
   excludedIds = [],
   includeAllOption = false,
   allOptionLabel = 'All ingredients',
   allOptionValue = '',
   onValueChange,
+  value,
   ...props
 }: IngredientSelectProps) {
   const { data, isPending, isError, refetch } = useIngredientsQuery();
   const statusId = useId();
 
   const ingredientsMap = useMemo(() => {
-    return new Map((data ?? []).map((item) => [item.id, item]));
+    const map = new Map<string, Ingredient>();
+    for (const item of data ?? []) {
+      map.set(item.id, item);
+      if (item.slug) {
+        map.set(item.slug, item);
+      }
+    }
+    return map;
   }, [data]);
 
   const options = useMemo(() => {
     const items = (data ?? [])
       .filter((item) => !excludedIds.includes(item.id))
       .map((item) => ({
-        value: item.id,
+        value: useSlug && item.slug ? item.slug : item.id,
         label: item.name,
       }));
 
@@ -53,7 +63,15 @@ export function IngredientSelect({
     }
 
     return items;
-  }, [data, excludedIds, includeAllOption, allOptionValue, allOptionLabel]);
+  }, [data, excludedIds, useSlug, includeAllOption, allOptionValue, allOptionLabel]);
+
+  // Normalize controlled value if passed ID vs Slug
+  const normalizedValue = useMemo(() => {
+    if (!value || value === allOptionValue) return value;
+    const found = ingredientsMap.get(value);
+    if (!found) return value;
+    return useSlug && found.slug ? found.slug : found.id;
+  }, [value, allOptionValue, ingredientsMap, useSlug]);
 
   const handleValueChange = (selectedValue: string) => {
     const selectedIngredient = ingredientsMap.get(selectedValue);
@@ -73,6 +91,7 @@ export function IngredientSelect({
     <div {...stylex.props(styles.field)}>
       <Select
         {...props}
+        value={normalizedValue}
         onValueChange={handleValueChange}
         aria-label={ariaLabel}
         aria-describedby={[describedBy, status && statusId].filter(Boolean).join(' ') || undefined}

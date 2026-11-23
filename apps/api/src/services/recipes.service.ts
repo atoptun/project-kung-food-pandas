@@ -66,6 +66,7 @@ const recipeDetailsSelect = (viewerId?: string) =>
       select: {
         id: true,
         name: true,
+        slug: true,
       },
     },
     ingredients: {
@@ -75,6 +76,7 @@ const recipeDetailsSelect = (viewerId?: string) =>
           select: {
             id: true,
             name: true,
+            slug: true,
             description: true,
             img: true,
           },
@@ -147,8 +149,24 @@ function filterWhere(query: RecipeFilterQuery): Prisma.RecipeWhereInput {
           },
         }
       : {}),
-    ...(query.area ? { areaId: query.area } : {}),
-    ...(query.ingredient ? { ingredients: { some: { ingredientId: query.ingredient } } } : {}),
+    ...(query.area
+      ? {
+          area: {
+            OR: [{ id: query.area }, { slug: query.area }],
+          },
+        }
+      : {}),
+    ...(query.ingredient
+      ? {
+          ingredients: {
+            some: {
+              ingredient: {
+                OR: [{ id: query.ingredient }, { slug: query.ingredient }],
+              },
+            },
+          },
+        }
+      : {}),
   };
 }
 

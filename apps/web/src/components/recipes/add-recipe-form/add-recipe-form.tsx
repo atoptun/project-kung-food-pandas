@@ -48,7 +48,7 @@ function AddRecipeForm({
           stripUnknown: true,
         });
         const created = await createRecipe.mutateAsync(values);
-        void navigate(`/recipe/${encodeURIComponent(created.id)}`);
+        void navigate(`/recipe/${encodeURIComponent(created.slug || created.id)}`);
       } catch {
         // MutationCache reports the request error; retain the user's values for retry.
       } finally {

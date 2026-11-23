@@ -9,7 +9,6 @@ import RecipesCatalog, {
   type Category,
 } from '@/components/recipes/recipes-catalog/recipes-catalog';
 import { notify } from '@/lib/notify';
-import { useRecipeFiltersStore } from '@/stores/recipe-filters.store';
 
 export function HomeView() {
   const { slug } = useParams<{ slug?: string }>();
@@ -50,11 +49,6 @@ export function HomeView() {
       notify.error(`Category "${slug}" not found`);
       navigate('/', { replace: true });
     }
-
-    // Clear global filters store when leaving the page
-    return () => {
-      useRecipeFiltersStore.getState().resetFilters();
-    };
   }, [slug, categories, isLoading, navigate]);
 
   useEffect(() => {

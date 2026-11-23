@@ -30,6 +30,7 @@ export function RecipeFilters({
       <IngredientSelect
         value={ingredientId}
         onValueChange={onIngredientChange}
+        useSlug
         placeholder="Ingredients"
         aria-label="Filter by ingredient"
         includeAllOption
@@ -40,6 +41,7 @@ export function RecipeFilters({
       <AreaSelect
         value={areaId}
         onValueChange={onAreaChange}
+        useSlug
         placeholder="Area"
         aria-label="Filter by area"
         includeAllOption

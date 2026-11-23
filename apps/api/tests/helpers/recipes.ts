@@ -14,14 +14,16 @@ export async function createArea(name = 'Test Area') {
   return prisma.area.upsert({
     where: { name },
     update: {},
-    create: { name },
+    create: { name, slug: toSlug(name) },
   });
 }
 
 export async function createIngredient(name: string) {
+  const baseSlug = toSlug(name);
   return prisma.ingredient.create({
     data: {
       name,
+      slug: `${baseSlug}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       description: `${name} description`,
     },
   });

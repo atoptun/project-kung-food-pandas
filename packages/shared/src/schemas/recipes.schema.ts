@@ -14,14 +14,11 @@ export const RecipeFilterQuerySchema = PaginationQuerySchema.extend({
     .string()
     .optional()
     .openapi({ description: 'Category ID or Slug', example: 'dessert' }),
-  area: z
-    .string()
-    .optional()
-    .openapi({ description: 'Area ID', example: '6462a6f04c3d0ddd28897f9b' }),
+  area: z.string().optional().openapi({ description: 'Area ID or Slug', example: 'italian' }),
   ingredient: z
     .string()
     .optional()
-    .openapi({ description: 'Ingredient ID', example: '640c2dd963a319ea671e382c' }),
+    .openapi({ description: 'Ingredient ID or Slug', example: 'chocolate' }),
 }).openapi('RecipeFilterQuery');
 
 export const PopularRecipesQuerySchema = z
@@ -126,6 +123,7 @@ export const RecipeDetailsSchema = RecipeCardSchema.extend({
     .object({
       id: z.string().openapi({ example: 'area-1' }),
       name: z.string().openapi({ example: 'Italian' }),
+      slug: z.string().nullish().openapi({ example: 'italian' }),
     })
     .optional(),
   ingredients: z

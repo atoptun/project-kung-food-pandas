@@ -74,6 +74,7 @@ function mapRawArea(raw: RawMongoArea): Prisma.AreaCreateInput {
   return {
     id: raw._id.$oid,
     name: raw.name,
+    slug: toSlug(raw.name),
   };
 }
 
@@ -90,12 +91,25 @@ async function createAreas() {
     console.error('No areas data found.');
     return null;
   }
-  await prisma.area.createMany({ data: areas, skipDuplicates: true });
+
+  await prisma.$transaction(
+    areas.map((area) =>
+      prisma.area.upsert({
+        where: { id: area.id },
+        update: {
+          name: area.name,
+          slug: area.slug,
+        },
+        create: area,
+      }),
+    ),
+  );
 
   return await prisma.area.findMany({
     select: {
       id: true,
       name: true,
+      slug: true,
     },
   });
 }
@@ -160,10 +174,22 @@ type RawMongoIngredient = {
   img: string;
 };
 
-function mapRawIngredient(raw: RawMongoIngredient): Prisma.IngredientCreateInput {
+function mapRawIngredient(
+  raw: RawMongoIngredient,
+  usedSlugs: Set<string>,
+): Prisma.IngredientCreateInput {
+  const baseSlug = toSlug(raw.name);
+  let uniqueSlug = baseSlug;
+  let counter = 1;
+  while (usedSlugs.has(uniqueSlug)) {
+    uniqueSlug = `${baseSlug}-${counter++}`;
+  }
+  usedSlugs.add(uniqueSlug);
+
   return {
     id: raw._id,
     name: raw.name,
+    slug: uniqueSlug,
     description: raw.desc,
     img: raw.img,
   };
@@ -177,17 +203,41 @@ async function createIngredients() {
     console.error('No ingredients data found.');
     return null;
   }
-  const ingredients: Prisma.IngredientCreateInput[] = rawIngredients.map(mapRawIngredient);
+
+  const usedSlugs = new Set<string>();
+  const ingredients: Prisma.IngredientCreateInput[] = rawIngredients.map((raw) =>
+    mapRawIngredient(raw, usedSlugs),
+  );
   if (!ingredients || ingredients.length === 0) {
     console.error('No ingredients data found.');
     return null;
   }
-  await prisma.ingredient.createMany({ data: ingredients, skipDuplicates: true });
+
+  // Batch upsert ingredients to update existing data with slugs
+  const batchSize = 100;
+  for (let i = 0; i < ingredients.length; i += batchSize) {
+    const batch = ingredients.slice(i, i + batchSize);
+    await prisma.$transaction(
+      batch.map((ingredient) =>
+        prisma.ingredient.upsert({
+          where: { id: ingredient.id },
+          update: {
+            name: ingredient.name,
+            slug: ingredient.slug,
+            description: ingredient.description,
+            img: ingredient.img,
+          },
+          create: ingredient,
+        }),
+      ),
+    );
+  }
 
   return await prisma.ingredient.findMany({
     select: {
       id: true,
       name: true,
+      slug: true,
       description: true,
       img: true,
     },

@@ -81,9 +81,11 @@ model Verification {
 model Area {
   id      String   @id @default(cuid())
   name    String   @db.VarChar(255)
+  slug    String?  @unique @db.VarChar(120)
   recipes Recipe[]
 
   @@unique([name])
+  @@index([slug])
   @@map("areas")
 }
 
@@ -95,17 +97,20 @@ model Category {
   recipes Recipe[]
 
   @@unique([name])
+  @@index([slug])
   @@map("categories")
 }
 
 model Ingredient {
   id          String  @id @default(cuid())
-  name        String @db.VarChar(255)
+  name        String  @db.VarChar(255)
+  slug        String? @unique @db.VarChar(255)
   description String?
   img         String?
 
   recipes RecipeIngredient[]
 
+  @@index([slug])
   @@map("ingredients")
 }
 

@@ -40,6 +40,7 @@ export class DictionariesService {
       select: {
         id: true,
         name: true,
+        slug: true,
       },
       orderBy: { name: 'asc' },
     });
@@ -59,6 +60,7 @@ export class DictionariesService {
       select: {
         id: true,
         name: true,
+        slug: true,
         description: true,
         img: true,
       },
