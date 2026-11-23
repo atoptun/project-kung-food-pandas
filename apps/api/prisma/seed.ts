@@ -92,7 +92,7 @@ async function createAreas() {
     return null;
   }
 
-  await prisma.$transaction(
+  await Promise.all(
     areas.map((area) =>
       prisma.area.upsert({
         where: { id: area.id },
@@ -143,7 +143,7 @@ async function createCategories() {
     return null;
   }
 
-  await prisma.$transaction(
+  await Promise.all(
     categories.map((category) =>
       prisma.category.upsert({
         where: { id: category.id },
@@ -213,11 +213,11 @@ async function createIngredients() {
     return null;
   }
 
-  // Batch upsert ingredients to update existing data with slugs
-  const batchSize = 100;
+  // Batch upsert ingredients without wrapping in $transaction to avoid timeout on remote databases
+  const batchSize = 25;
   for (let i = 0; i < ingredients.length; i += batchSize) {
     const batch = ingredients.slice(i, i + batchSize);
-    await prisma.$transaction(
+    await Promise.all(
       batch.map((ingredient) =>
         prisma.ingredient.upsert({
           where: { id: ingredient.id },
