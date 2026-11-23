@@ -1,12 +1,13 @@
-import type {
-  CreateRecipeInput,
-  PaginationQuery,
-  RecipeActionResponse,
-  RecipeCard,
-  RecipeDetails,
-  RecipeFilterQuery,
-  RecipesListResponse,
-  UserRecipesListResponse,
+import {
+  type CreateRecipeInput,
+  type PaginationQuery,
+  type RecipeActionResponse,
+  type RecipeCard,
+  type RecipeDetails,
+  type RecipeFilterQuery,
+  type RecipesListResponse,
+  toSlug,
+  type UserRecipesListResponse,
 } from '@repo/shared';
 
 import env from '@/config/env';
@@ -27,6 +28,7 @@ const recipeCardSelect = (viewerId?: string) =>
   ({
     id: true,
     title: true,
+    slug: true,
     thumb: true,
     description: true,
     time: true,
@@ -57,6 +59,7 @@ const recipeDetailsSelect = (viewerId?: string) =>
       select: {
         id: true,
         name: true,
+        slug: true,
       },
     },
     area: {
@@ -98,6 +101,7 @@ function toRecipeCard(recipe: RecipeCardRecord, viewerId?: string): RecipeCard {
   return {
     id: recipe.id,
     title: recipe.title,
+    slug: recipe.slug ?? undefined,
     thumb: recipe.thumb,
     description: recipe.description,
     time: recipe.time,
@@ -118,6 +122,7 @@ function toRecipeDetails(recipe: RecipeDetailsRecord, viewerId?: string): Recipe
     category: {
       id: recipe.category.id,
       name: recipe.category.name,
+      slug: recipe.category.slug ?? undefined,
     },
     area: {
       id: recipe.area.id,
@@ -135,7 +140,13 @@ function toRecipeDetails(recipe: RecipeDetailsRecord, viewerId?: string): Recipe
 
 function filterWhere(query: RecipeFilterQuery): Prisma.RecipeWhereInput {
   return {
-    ...(query.category ? { categoryId: query.category } : {}),
+    ...(query.category
+      ? {
+          category: {
+            OR: [{ id: query.category }, { slug: query.category }],
+          },
+        }
+      : {}),
     ...(query.area ? { areaId: query.area } : {}),
     ...(query.ingredient ? { ingredients: { some: { ingredientId: query.ingredient } } } : {}),
   };
@@ -182,6 +193,7 @@ export class RecipesService {
         select: {
           id: true,
           title: true,
+          slug: true,
           thumb: true,
           description: true,
         },
@@ -198,9 +210,11 @@ export class RecipesService {
     };
   };
 
-  getById = async (id: string, viewerId?: string): Promise<RecipeDetails> => {
-    const recipe = await this.db.recipe.findUnique({
-      where: { id },
+  getById = async (idOrSlug: string, viewerId?: string): Promise<RecipeDetails> => {
+    const recipe = await this.db.recipe.findFirst({
+      where: {
+        OR: [{ id: idOrSlug }, { slug: idOrSlug }],
+      },
       select: recipeDetailsSelect(viewerId),
     });
 
@@ -218,12 +232,17 @@ export class RecipesService {
   ): Promise<RecipeDetails> => {
     await this.assertReferences(input);
 
+    const recipeSlug = await this.ensureUniqueSlug(input.title);
+
     let thumb: string | null = null;
     let thumbId: string | null = null;
 
     if (buffer) {
       const uploaded = await uploadFromBuffer(buffer, {
         folder: `${env.CLOUDINARY_FOLDER_BASE}/${RECIPES_FOLDER}`,
+        public_id: recipeSlug,
+        overwrite: true,
+        unique_filename: false,
       });
       thumb = uploaded.secure_url;
       thumbId = uploaded.public_id;
@@ -233,6 +252,7 @@ export class RecipesService {
       const recipe = await this.db.recipe.create({
         data: {
           title: input.title,
+          slug: recipeSlug,
           description: input.description,
           instructions: input.instructions,
           time: input.time,
@@ -349,6 +369,26 @@ export class RecipesService {
 
     if (issues.length) {
       throw new BadRequestError('Invalid input data', issues);
+    }
+  };
+
+  private ensureUniqueSlug = async (title: string, excludeId?: string): Promise<string> => {
+    const baseSlug = toSlug(title) || 'recipe';
+    let candidate = baseSlug;
+    let counter = 1;
+
+    while (true) {
+      const existing = await this.db.recipe.findUnique({
+        where: { slug: candidate },
+        select: { id: true },
+      });
+
+      if (!existing || existing.id === excludeId) {
+        return candidate;
+      }
+
+      candidate = `${baseSlug}-${counter}`;
+      counter++;
     }
   };
 }

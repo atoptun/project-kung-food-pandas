@@ -61,6 +61,11 @@ components:
           type: string
           maxLength: 100
           example: Dessert
+        slug:
+          type: string
+          nullable: true
+          maxLength: 120
+          example: dessert
         image:
           type: string
           nullable: true
@@ -257,7 +262,7 @@ components:
       properties:
         id:
           type: string
-          maxLength: 36
+          maxLength: 280
           example: 64c8d958249fae54bae90bb9
       required:
         - id
@@ -268,8 +273,8 @@ components:
           properties:
             category:
               type: string
-              description: Category ID
-              example: 6462a6cd4c3d0ddd28897f8f
+              description: Category ID or Slug
+              example: dessert
             area:
               type: string
               description: Area ID
@@ -402,6 +407,10 @@ components:
         id:
           type: string
           example: 64c8d958249fae54bae90bb9
+        slug:
+          type: string
+          nullable: true
+          example: spaghetti-bolognese
         title:
           type: string
           example: Recipe 1
@@ -430,6 +439,10 @@ components:
                 name:
                   type: string
                   example: Beef
+                slug:
+                  type: string
+                  nullable: true
+                  example: beef
               required:
                 - id
                 - name
@@ -652,6 +665,11 @@ components:
           type: string
           maxLength: 100
           example: Dessert
+        slug:
+          type: string
+          nullable: true
+          maxLength: 120
+          example: dessert
         image:
           type: string
           nullable: true
@@ -952,10 +970,10 @@ paths:
           in: query
         - schema:
             type: string
-            description: Category ID
-            example: 6462a6cd4c3d0ddd28897f8f
+            description: Category ID or Slug
+            example: dessert
           required: false
-          description: Category ID
+          description: Category ID or Slug
           name: category
           in: query
         - schema:
@@ -1166,7 +1184,7 @@ paths:
       parameters:
         - schema:
             type: string
-            maxLength: 36
+            maxLength: 280
             example: 64c8d958249fae54bae90bb9
           required: true
           name: id
@@ -1197,7 +1215,7 @@ paths:
       parameters:
         - schema:
             type: string
-            maxLength: 36
+            maxLength: 280
             example: 64c8d958249fae54bae90bb9
           required: true
           name: id
@@ -1246,7 +1264,7 @@ paths:
       parameters:
         - schema:
             type: string
-            maxLength: 36
+            maxLength: 280
             example: 64c8d958249fae54bae90bb9
           required: true
           name: id
@@ -1304,7 +1322,7 @@ paths:
       parameters:
         - schema:
             type: string
-            maxLength: 36
+            maxLength: 280
             example: 64c8d958249fae54bae90bb9
           required: true
           name: id

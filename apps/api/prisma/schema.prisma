@@ -90,6 +90,7 @@ model Area {
 model Category {
   id      String   @id @default(cuid())
   name    String   @db.VarChar(100)
+  slug    String?  @unique @db.VarChar(120)
   image   String?
   recipes Recipe[]
 
@@ -132,6 +133,7 @@ model Recipe {
   preview      String?
   time         Int?
   ownerId      String   @map("owner_id")
+  slug         String?  @unique @db.VarChar(280)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
@@ -144,6 +146,7 @@ model Recipe {
   @@index([ownerId])
   @@index([areaId])
   @@index([categoryId])
+  @@index([slug])
   @@map("recipes")
 }
 

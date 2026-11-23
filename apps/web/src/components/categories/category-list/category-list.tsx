@@ -6,7 +6,7 @@ import { styles } from './category-list.stylex';
 
 type CategoryListProps = {
   categories: Category[];
-  onSelectCategory: (id: string | null, name?: string) => void;
+  onSelectCategory: (id: string | null, slug?: string | null) => void;
   xstyle?: stylex.StyleXStyles;
 };
 
@@ -29,7 +29,7 @@ export function CategoryList({ categories, onSelectCategory, xstyle }: CategoryL
             id={item.id}
             name={itemName}
             image={item.image}
-            onSelect={(id) => onSelectCategory(id, itemName)}
+            onSelect={(id) => onSelectCategory(id, item.slug)}
             xstyle={[getItemStyle(index), isHiddenOnMobile && styles.hiddenOnMobile]}
           />
         );

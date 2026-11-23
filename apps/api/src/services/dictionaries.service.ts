@@ -18,6 +18,7 @@ export class DictionariesService {
       select: {
         id: true,
         name: true,
+        slug: true,
         image: true,
       },
       orderBy: { name: 'asc' },

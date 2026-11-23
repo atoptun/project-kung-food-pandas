@@ -2,76 +2,91 @@
   {
     "id": "6462a6cd4c3d0ddd28897f8a",
     "name": "Seafood",
-    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604019/kfp/categories/Seafood.jpg"
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604019/kfp/categories/Seafood.jpg",
+    "slug": "seafood"
   },
   {
     "id": "6462a6cd4c3d0ddd28897f8b",
     "name": "Lamb",
-    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Lamb.jpg"
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Lamb.jpg",
+    "slug": "lamb"
   },
   {
     "id": "6462a6cd4c3d0ddd28897f8c",
     "name": "Starter",
-    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604021/kfp/categories/Starter.jpg"
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604021/kfp/categories/Starter.jpg",
+    "slug": "starter"
   },
   {
     "id": "6462a6cd4c3d0ddd28897f8d",
     "name": "Chicken",
-    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Chicken.jpg"
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Chicken.jpg",
+    "slug": "chicken"
   },
   {
     "id": "6462a6cd4c3d0ddd28897f8e",
     "name": "Beef",
-    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Beef.jpg"
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Beef.jpg",
+    "slug": "beef"
   },
   {
     "id": "6462a6cd4c3d0ddd28897f8f",
     "name": "Dessert",
-    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Desserts.jpg"
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Desserts.jpg",
+    "slug": "dessert"
   },
   {
     "id": "6462a6cd4c3d0ddd28897f90",
     "name": "Vegan",
-    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604021/kfp/categories/Vegan.jpg"
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604021/kfp/categories/Vegan.jpg",
+    "slug": "vegan"
   },
   {
     "id": "6462a6cd4c3d0ddd28897f91",
     "name": "Pork",
-    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604018/kfp/categories/Pork.jpg"
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604018/kfp/categories/Pork.jpg",
+    "slug": "pork"
   },
   {
     "id": "6462a6cd4c3d0ddd28897f92",
     "name": "Vegetarian",
-    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604022/kfp/categories/Vegetarian.jpg"
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604022/kfp/categories/Vegetarian.jpg",
+    "slug": "vegetarian"
   },
   {
     "id": "6462a6cd4c3d0ddd28897f93",
     "name": "Miscellaneous",
-    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604017/kfp/categories/Miscellaneous.jpg"
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604017/kfp/categories/Miscellaneous.jpg",
+    "slug": "miscellaneous"
   },
   {
     "id": "6462a6cd4c3d0ddd28897f94",
     "name": "Pasta",
-    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604018/kfp/categories/Pasta.jpg"
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604018/kfp/categories/Pasta.jpg",
+    "slug": "pasta"
   },
   {
     "id": "6462a6cd4c3d0ddd28897f95",
     "name": "Breakfast",
-    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Breakfast.jpg"
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Breakfast.jpg",
+    "slug": "breakfast"
   },
   {
     "id": "6462a6cd4c3d0ddd28897f96",
     "name": "Side",
-    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604019/kfp/categories/Side.jpg"
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604019/kfp/categories/Side.jpg",
+    "slug": "side"
   },
   {
     "id": "6462a6cd4c3d0ddd28897f97",
     "name": "Goat",
-    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604017/kfp/categories/Goat.jpg"
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604017/kfp/categories/Goat.jpg",
+    "slug": "goat"
   },
   {
     "id": "6462a6cd4c3d0ddd28897f98",
     "name": "Soup",
-    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604020/kfp/categories/Soup.jpg"
+    "image": "https://res.cloudinary.com/lyycri5k/image/upload/v1794604020/kfp/categories/Soup.jpg",
+    "slug": "soup"
   }
 ]

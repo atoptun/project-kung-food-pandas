@@ -11,7 +11,7 @@ import { styles } from './categories.stylex';
 import CategoryList from './category-list/category-list';
 
 type CategoriesProps = {
-  onSelectCategory: (id: string | null, name?: string) => void;
+  onSelectCategory: (id: string | null, slug?: string | null) => void;
   xstyle?: stylex.StyleXStyles;
 };
 

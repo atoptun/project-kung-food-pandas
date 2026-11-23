@@ -82,6 +82,7 @@ describe('Recipes Endpoints', () => {
         items: [
           {
             id: earlier.id,
+            slug: earlier.slug,
             title: 'Apple Pie',
             thumb: null,
             description: 'Sweet pie',
@@ -91,6 +92,7 @@ describe('Recipes Endpoints', () => {
           },
           {
             id: later.id,
+            slug: later.slug,
             title: 'Zucchini Soup',
             thumb: null,
             description: null,
@@ -154,11 +156,13 @@ describe('Recipes Endpoints', () => {
         ingredients: [{ ingredientId: rice.id, measure: '100g' }],
       });
 
-      const response = await request(app).get('/recipes').query({
-        category: italian.id,
-        area: europe.id,
-        ingredient: pasta.id,
-      });
+      const response = await request(app)
+        .get('/recipes')
+        .query({
+          category: italian.slug ?? italian.id,
+          area: europe.id,
+          ingredient: pasta.id,
+        });
 
       expect(response.status).toBe(200);
       expect(response.body.total).toBe(1);
@@ -292,13 +296,18 @@ describe('Recipes Endpoints', () => {
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
         id: recipe.id,
+        slug: recipe.slug,
         title: 'Fruit Crumble',
         thumb: null,
         description: 'Warm fruit dessert',
         time: 50,
         favoritesCount: 1,
         instructions: 'Slice the fruit and bake until golden.',
-        category: { id: category.id, name: 'Dessert' },
+        category: {
+          id: category.id,
+          name: 'Dessert',
+          ...(category.slug ? { slug: category.slug } : {}),
+        },
         area: { id: area.id, name: 'British' },
         owner: { id: author.user.id, name: 'Chef', avatar: null },
         ingredients: expect.arrayContaining([
@@ -320,6 +329,25 @@ describe('Recipes Endpoints', () => {
       });
       expect(response.body.ingredients).toHaveLength(2);
       expect(response.body.isFavorite).toBeUndefined();
+    });
+
+    it('returns recipe details by slug', async () => {
+      const author = await createAuthUser({ name: 'Chef Slug' });
+      const category = await createCategory('Dessert Slug');
+      const area = await createArea('French');
+      const recipe = await createRecipe(author.user.id, {
+        title: 'Tarte Tatin',
+        slug: 'tarte-tatin-special',
+        categoryId: category.id,
+        areaId: area.id,
+      });
+
+      const response = await request(app).get(`/recipes/${recipe.slug}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.id).toBe(recipe.id);
+      expect(response.body.slug).toBe('tarte-tatin-special');
+      expect(response.body.title).toBe('Tarte Tatin');
     });
 
     it('returns isFavorite for the authenticated viewer', async () => {
@@ -347,7 +375,7 @@ describe('Recipes Endpoints', () => {
     });
 
     it('returns 400 when the id parameter is invalid', async () => {
-      const response = await request(app).get(`/recipes/${'a'.repeat(37)}`);
+      const response = await request(app).get(`/recipes/${'a'.repeat(281)}`);
 
       expect(response.status).toBe(400);
       expect(response.body).toEqual({
@@ -377,6 +405,7 @@ describe('Recipes Endpoints', () => {
         items: [
           {
             id: mine.id,
+            slug: mine.slug,
             title: 'Mine',
             thumb: null,
             description: 'Own dish',
@@ -424,6 +453,7 @@ describe('Recipes Endpoints', () => {
         items: [
           {
             id: recipe.id,
+            slug: recipe.slug,
             title: 'Author Soup',
             thumb: THUMB_URL,
             description: 'Their soup',

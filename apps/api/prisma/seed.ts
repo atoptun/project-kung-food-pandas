@@ -2,6 +2,8 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { toSlug } from '@repo/shared';
+
 import type { Area, Category, Prisma, User } from '@/generated/prisma/client';
 import prisma from '@/lib/prisma';
 
@@ -108,6 +110,7 @@ function mapRawCategory(raw: RawMongoCategory): Prisma.CategoryCreateInput {
   return {
     id: raw._id.$oid,
     name: raw.name,
+    slug: toSlug(raw.name),
     image: raw.image,
   };
 }
@@ -132,6 +135,7 @@ async function createCategories() {
         where: { id: category.id },
         update: {
           name: category.name,
+          slug: category.slug,
           image: category.image,
         },
         create: category,
@@ -143,6 +147,7 @@ async function createCategories() {
     select: {
       id: true,
       name: true,
+      slug: true,
       image: true,
     },
   });
@@ -272,6 +277,9 @@ async function createRecipes({ users, areas, categories }: CreateRecipesParams) 
   const areaNames = new Set(areas?.map((area) => area.name));
   const categoryNames = new Set(categories?.map((category) => category.name));
 
+  // Set to prevent duplicate slugs during seeding
+  const usedSlugs = new Set<string>();
+
   for (const raw of rawRecipes) {
     const ownerId = raw.owner?.$oid;
     const areaName = raw.area;
@@ -281,9 +289,19 @@ async function createRecipes({ users, areas, categories }: CreateRecipesParams) 
       continue;
     }
 
+    const baseSlug = toSlug(raw.title) || `recipe-${raw._id.$oid}`;
+    let recipeSlug = baseSlug;
+    let counter = 1;
+    while (usedSlugs.has(recipeSlug)) {
+      recipeSlug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+    usedSlugs.add(recipeSlug);
+
     const recipeData: Prisma.RecipeCreateInput = {
       id: raw._id.$oid,
       title: raw.title,
+      slug: recipeSlug,
       instructions: raw.instructions,
       description: raw.description,
       thumb: raw.thumb,
@@ -304,6 +322,7 @@ async function createRecipes({ users, areas, categories }: CreateRecipesParams) 
         where: { id: recipeData.id },
         update: {
           title: recipeData.title,
+          slug: recipeData.slug,
           instructions: recipeData.instructions,
           description: recipeData.description,
           thumb: recipeData.thumb,

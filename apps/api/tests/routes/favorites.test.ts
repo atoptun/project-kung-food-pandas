@@ -206,7 +206,7 @@ describe('Favorites endpoints', () => {
       const { authHeader } = await createAuthUser();
 
       const response = await request(app)
-        .post(`${BASE}/${'x'.repeat(37)}`)
+        .post(`${BASE}/${'x'.repeat(281)}`)
         .set('Authorization', authHeader);
 
       expect(response.status).toBe(400);
