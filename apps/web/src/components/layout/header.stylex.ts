@@ -7,21 +7,43 @@ export type HeaderTheme = 'light' | 'dark';
 // Values follow the Figma layout (mobile 375 / tablet 768 / desktop 1440).
 export const header = stylex.create({
   base: {
-    position: 'relative',
-    zIndex: 10,
+    position: 'sticky',
+    top: 0,
+    zIndex: 100,
+    transition: 'background-color 0.25s ease, box-shadow 0.25s ease, border-radius 0.25s ease',
   },
   // Home page: header sits on top of the dark hero card that the page continues below.
+  // When at top, bottom corners are square so it seamlessly connects to the hero.
+  // When scrolling down, it acts like a floating dark capsule above the content.
   dark: {
+    top: { default: 8, [breakpoints.tablet]: 16, [breakpoints.desktop]: 20 },
     marginTop: { default: 8, [breakpoints.tablet]: 16, [breakpoints.desktop]: 20 },
     marginInline: { default: 8, [breakpoints.tablet]: 16, [breakpoints.desktop]: 20 },
     backgroundColor: colors.black,
     color: colors.white,
     borderTopLeftRadius: { default: radii.modalMobile, [breakpoints.tablet]: radii.modal },
     borderTopRightRadius: { default: radii.modalMobile, [breakpoints.tablet]: radii.modal },
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    boxShadow: 'none',
+  },
+  darkScrolled: {
+    borderBottomLeftRadius: { default: radii.modalMobile, [breakpoints.tablet]: radii.modal },
+    borderBottomRightRadius: { default: radii.modalMobile, [breakpoints.tablet]: radii.modal },
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.28)',
   },
   light: {
-    backgroundColor: colors.white,
+    top: { default: 8, [breakpoints.tablet]: 16, [breakpoints.desktop]: 20 },
+    marginTop: { default: 8, [breakpoints.tablet]: 16, [breakpoints.desktop]: 20 },
+    marginInline: { default: 8, [breakpoints.tablet]: 16, [breakpoints.desktop]: 20 },
+    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+    backdropFilter: 'blur(12px)',
     color: colors.black,
+    borderRadius: { default: radii.modalMobile, [breakpoints.tablet]: radii.modal },
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: 'rgba(5, 5, 5, 0.08)',
+    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.06)',
   },
   // Tablet+: three columns keep the navigation centred regardless of logo / user bar widths.
   // Mobile has no navigation, so a plain flex row gives the actions all the free space.
@@ -37,7 +59,8 @@ export const header = stylex.create({
     gridColumn: '2',
   },
   lightBar: {
-    paddingTop: { default: 24, [breakpoints.tablet]: 36, [breakpoints.desktop]: 40 },
+    paddingBlock: { default: 16, [breakpoints.tablet]: 20 },
+    paddingInline: { default: 16, [breakpoints.tablet]: 32, [breakpoints.desktop]: 60 },
   },
   darkBar: {
     paddingBlock: { default: 16, [breakpoints.tablet]: 20 },
