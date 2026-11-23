@@ -5,6 +5,7 @@ import RecipeDetails from '@/components/recipes/recipe-details/recipe-details';
 import type { BreadcrumbItem } from '@/components/shared/breadcrumbs/breadcrumbs';
 import Button from '@/components/shared/button/button';
 import PageHeader from '@/components/shared/page-header/page-header';
+import PageMeta from '@/components/shared/page-meta/page-meta';
 import Section from '@/components/shared/section/section';
 import { typography } from '@/styles/typography.stylex';
 
@@ -20,7 +21,10 @@ export interface RecipeViewProps {
 export function RecipeView({ id }: RecipeViewProps) {
   const { data: recipe, isPending, isError, error, refetch, isFetching } = useRecipeQuery(id);
 
-  const pageTitle = recipe?.title ? `${recipe.title} | Foodies` : 'Recipe | Foodies';
+  const pageTitle = recipe?.title ?? 'Recipe';
+  const pageDescription =
+    recipe?.description ||
+    (recipe?.title ? `Learn how to make ${recipe.title} with our step-by-step recipe.` : undefined);
 
   const breadcrumbs: BreadcrumbItem[] = [
     HOME_CRUMB,
@@ -42,7 +46,12 @@ export function RecipeView({ id }: RecipeViewProps) {
 
   return (
     <>
-      <title>{pageTitle}</title>
+      <PageMeta
+        title={pageTitle}
+        description={pageDescription}
+        image={recipe?.thumb || undefined}
+        type="article"
+      />
       <Section isFirst withContainer aria-label="Recipe details" containerXstyle={styles.section}>
         <PageHeader breadcrumbs={breadcrumbs} />
 

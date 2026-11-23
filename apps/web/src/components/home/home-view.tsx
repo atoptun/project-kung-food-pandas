@@ -8,6 +8,7 @@ import Testimonials from '@/components/home/testimonials/testimonials';
 import RecipesCatalog, {
   type Category,
 } from '@/components/recipes/recipes-catalog/recipes-catalog';
+import PageMeta from '@/components/shared/page-meta/page-meta';
 import { notify } from '@/lib/notify';
 
 export function HomeView() {
@@ -68,11 +69,14 @@ export function HomeView() {
     scrollToContent();
   };
 
-  const pageTitle = selectedCategory ? `${selectedCategory.name} | Foodies` : 'Home | Foodies';
+  const pageTitle = selectedCategory ? selectedCategory.name : 'Home';
+  const pageDescription = selectedCategory
+    ? `Explore our best ${selectedCategory.name.toLowerCase()} recipes. Find delicious culinary ideas and step-by-step cooking instructions.`
+    : 'Discover a world of delicious recipes and improve your culinary skills with Foodies.';
 
   return (
     <>
-      <title>{pageTitle}</title>
+      <PageMeta title={pageTitle} description={pageDescription} />
       <Hero />
       <div ref={contentSectionRef}>
         {!selectedCategory ? (
