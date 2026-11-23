@@ -74,8 +74,11 @@ export function HomeView() {
     scrollToContent();
   };
 
+  const pageTitle = selectedCategory ? `${selectedCategory.name} | Foodies` : 'Home | Foodies';
+
   return (
     <>
+      <title>{pageTitle}</title>
       <Hero />
       <div ref={contentSectionRef}>
         {!selectedCategory ? (

@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react';
+import { Suspense } from 'react';
 import { Outlet, ScrollRestoration, useMatches } from 'react-router';
 
 import AuthModal from '@/components/auth/auth-modal';
@@ -14,12 +14,11 @@ function Layout() {
   const matches = useMatches();
   const handle = matches.at(-1)?.handle as RouteHandle | undefined;
 
-  useEffect(() => {
-    document.title = `${handle?.title ?? 'Not Found'} | Foodies`;
-  }, [handle]);
+  const title = `${handle?.title ?? 'Not Found'} | Foodies`;
 
   return (
     <>
+      <title>{title}</title>
       <ScrollRestoration />
       <Header theme={handle?.headerTheme} />
       <main>

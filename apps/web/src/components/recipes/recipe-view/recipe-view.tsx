@@ -20,8 +20,18 @@ export interface RecipeViewProps {
 export function RecipeView({ id }: RecipeViewProps) {
   const { data: recipe, isPending, isError, error, refetch, isFetching } = useRecipeQuery(id);
 
+  const pageTitle = recipe?.title ? `${recipe.title} | Foodies` : 'Recipe | Foodies';
+
   const breadcrumbs: BreadcrumbItem[] = [
     HOME_CRUMB,
+    ...(recipe?.category
+      ? [
+          {
+            label: recipe.category.name,
+            to: `/category/${recipe.category.slug || recipe.category.id}`,
+          },
+        ]
+      : []),
     {
       label:
         !id || (isError && isRecipeNotFoundError(error))
@@ -32,6 +42,7 @@ export function RecipeView({ id }: RecipeViewProps) {
 
   return (
     <>
+      <title>{pageTitle}</title>
       <Section isFirst withContainer aria-label="Recipe details" containerXstyle={styles.section}>
         <PageHeader breadcrumbs={breadcrumbs} />
 
