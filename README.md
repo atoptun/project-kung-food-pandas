@@ -28,13 +28,14 @@ A full-stack culinary community platform for discovering, creating, and sharing 
 
 ## 🔗 Project Resources
 
-| Resource            | Description                                                                    | Link                                                                                                          |
-| :------------------ | :----------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
-| 🚀 **Live Demo**    | Production web application deployed on Vercel                                  | [project-kung-food-pandas.vercel.app](https://project-kung-food-pandas.vercel.app/)                           |
-| 🎨 **Figma Design** | UI/UX layouts, responsive breakpoints & design system specs                    | [Open in Figma](https://www.figma.com/design/bWQKWe0sZ3LnmcnEwXGbHv/Foodies?node-id=0-1&t=xwbD1G7xNX5FXEjz-1) |
-| 📊 **Presentation** | Project slide deck, key architectural highlights & team overview               | [View Presentation (PDF)](<./docs/Kung Food Panda.pdf>)                                                       |
-| 🖼️ **UI Showcase**  | Complete visual gallery of application screens across Desktop, Tablet & Mobile | [View Screenshots](./docs/SCREENSHOTS.md)                                                                     |
-| 📖 **API Docs**     | Interactive OpenAPI 3.0 specification & live testing sandbox                   | [Swagger UI](https://project-kung-food-pandas.onrender.com/api-docs/)                                         |
+| Resource             | Description                                                                    | Link                                                                                                          |
+| :------------------- | :----------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
+| 🚀 **Live Demo**     | Production web application deployed on Vercel                                  | [project-kung-food-pandas.vercel.app](https://project-kung-food-pandas.vercel.app/)                           |
+| 🎨 **Figma Design**  | UI/UX layouts, responsive breakpoints & design system specs                    | [Open in Figma](https://www.figma.com/design/bWQKWe0sZ3LnmcnEwXGbHv/Foodies?node-id=0-1&t=xwbD1G7xNX5FXEjz-1) |
+| 📊 **Presentation**  | Project slide deck, key architectural highlights & team overview               | [View Presentation (PDF)](<./docs/Kung Food Panda.pdf>)                                                       |
+| 🖼️ **UI Showcase**   | Complete visual gallery of application screens across Desktop, Tablet & Mobile | [View Screenshots](./docs/SCREENSHOTS.md)                                                                     |
+| 📖 **API Docs**      | Interactive OpenAPI 3.0 specification & live testing sandbox                   | [Swagger UI](https://project-kung-food-pandas.onrender.com/api-docs/)                                         |
+| 📋 **Project Board** | GitHub Projects kanban board tracking tasks, sprints & milestones              | [GitHub Project Board](https://github.com/users/atoptun/projects/4)                                           |
 
 ---
 
