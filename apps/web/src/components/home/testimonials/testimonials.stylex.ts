@@ -43,12 +43,27 @@ export const styles = stylex.create({
     height: { default: 32, [breakpoints.tablet]: 44 },
     pointerEvents: 'none',
   },
+  slideViewport: {
+    width: '100%',
+    overflow: 'hidden',
+  },
+  slideTrack: (activeIndex: number) => ({
+    display: 'flex',
+    width: '100%',
+    transform: `translateX(-${activeIndex * 100}%)`,
+    transition: 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)',
+    willChange: 'transform',
+  }),
   slideWrapper: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     textAlign: 'center',
     width: '100%',
+    minWidth: '100%',
+    flexShrink: 0,
+    boxSizing: 'border-box',
+    paddingInline: 16,
   },
   testimonialText: {
     fontSize: { default: 18, [breakpoints.tablet]: 24 },
