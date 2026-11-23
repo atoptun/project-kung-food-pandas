@@ -53,8 +53,8 @@ const EnvSchema = z
       .positive()
       .default(15) // 15 minutes
       .transform((value) => value * 60 * 1000),
-    RATE_LIMIT_API_MAX: z.coerce.number().int().positive().default(300),
-    RATE_LIMIT_AUTH_MAX: z.coerce.number().int().positive().default(20),
+    RATE_LIMIT_API_MAX: z.coerce.number().int().positive().default(1000),
+    RATE_LIMIT_AUTH_MAX: z.coerce.number().int().positive().default(30),
   })
   .transform((data) => ({
     ...data,

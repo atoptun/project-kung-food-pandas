@@ -47,6 +47,11 @@ components:
           type: string
           maxLength: 255
           example: Ukrainian
+        slug:
+          type: string
+          nullable: true
+          maxLength: 120
+          example: ukrainian
       required:
         - id
         - name
@@ -61,6 +66,11 @@ components:
           type: string
           maxLength: 100
           example: Dessert
+        slug:
+          type: string
+          nullable: true
+          maxLength: 120
+          example: dessert
         image:
           type: string
           nullable: true
@@ -80,6 +90,11 @@ components:
           type: string
           maxLength: 255
           example: Pears
+        slug:
+          type: string
+          nullable: true
+          maxLength: 255
+          example: pears
         description:
           type: string
           nullable: true
@@ -257,7 +272,7 @@ components:
       properties:
         id:
           type: string
-          maxLength: 36
+          maxLength: 280
           example: 64c8d958249fae54bae90bb9
       required:
         - id
@@ -268,16 +283,16 @@ components:
           properties:
             category:
               type: string
-              description: Category ID
-              example: 6462a6cd4c3d0ddd28897f8f
+              description: Category ID or Slug
+              example: dessert
             area:
               type: string
-              description: Area ID
-              example: 6462a6f04c3d0ddd28897f9b
+              description: Area ID or Slug
+              example: italian
             ingredient:
               type: string
-              description: Ingredient ID
-              example: 640c2dd963a319ea671e382c
+              description: Ingredient ID or Slug
+              example: chocolate
     PaginationQuery:
       type: object
       properties:
@@ -402,6 +417,10 @@ components:
         id:
           type: string
           example: 64c8d958249fae54bae90bb9
+        slug:
+          type: string
+          nullable: true
+          example: spaghetti-bolognese
         title:
           type: string
           example: Recipe 1
@@ -430,6 +449,10 @@ components:
                 name:
                   type: string
                   example: Beef
+                slug:
+                  type: string
+                  nullable: true
+                  example: beef
               required:
                 - id
                 - name
@@ -442,6 +465,10 @@ components:
                 name:
                   type: string
                   example: Italian
+                slug:
+                  type: string
+                  nullable: true
+                  example: italian
               required:
                 - id
                 - name
@@ -463,6 +490,11 @@ components:
           type: string
           maxLength: 255
           example: Pears
+        slug:
+          type: string
+          nullable: true
+          maxLength: 255
+          example: pears
         description:
           type: string
           nullable: true
@@ -638,6 +670,11 @@ components:
           type: string
           maxLength: 255
           example: Ukrainian
+        slug:
+          type: string
+          nullable: true
+          maxLength: 120
+          example: ukrainian
       required:
         - id
         - name
@@ -652,6 +689,11 @@ components:
           type: string
           maxLength: 100
           example: Dessert
+        slug:
+          type: string
+          nullable: true
+          maxLength: 120
+          example: dessert
         image:
           type: string
           nullable: true
@@ -853,6 +895,11 @@ paths:
                       type: string
                       maxLength: 255
                       example: Pears
+                    slug:
+                      type: string
+                      nullable: true
+                      maxLength: 255
+                      example: pears
                     description:
                       type: string
                       nullable: true
@@ -952,26 +999,26 @@ paths:
           in: query
         - schema:
             type: string
-            description: Category ID
-            example: 6462a6cd4c3d0ddd28897f8f
+            description: Category ID or Slug
+            example: dessert
           required: false
-          description: Category ID
+          description: Category ID or Slug
           name: category
           in: query
         - schema:
             type: string
-            description: Area ID
-            example: 6462a6f04c3d0ddd28897f9b
+            description: Area ID or Slug
+            example: italian
           required: false
-          description: Area ID
+          description: Area ID or Slug
           name: area
           in: query
         - schema:
             type: string
-            description: Ingredient ID
-            example: 640c2dd963a319ea671e382c
+            description: Ingredient ID or Slug
+            example: chocolate
           required: false
-          description: Ingredient ID
+          description: Ingredient ID or Slug
           name: ingredient
           in: query
       responses:
@@ -1166,7 +1213,7 @@ paths:
       parameters:
         - schema:
             type: string
-            maxLength: 36
+            maxLength: 280
             example: 64c8d958249fae54bae90bb9
           required: true
           name: id
@@ -1197,7 +1244,7 @@ paths:
       parameters:
         - schema:
             type: string
-            maxLength: 36
+            maxLength: 280
             example: 64c8d958249fae54bae90bb9
           required: true
           name: id
@@ -1246,7 +1293,7 @@ paths:
       parameters:
         - schema:
             type: string
-            maxLength: 36
+            maxLength: 280
             example: 64c8d958249fae54bae90bb9
           required: true
           name: id
@@ -1304,7 +1351,7 @@ paths:
       parameters:
         - schema:
             type: string
-            maxLength: 36
+            maxLength: 280
             example: 64c8d958249fae54bae90bb9
           required: true
           name: id

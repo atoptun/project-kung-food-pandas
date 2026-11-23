@@ -64,6 +64,7 @@ describe('Favorites endpoints', () => {
       expect(response.body.items).toEqual([
         {
           id: newer.id,
+          slug: newer.slug,
           title: 'Newer',
           description: null,
           thumb: null,
@@ -206,7 +207,7 @@ describe('Favorites endpoints', () => {
       const { authHeader } = await createAuthUser();
 
       const response = await request(app)
-        .post(`${BASE}/${'x'.repeat(37)}`)
+        .post(`${BASE}/${'x'.repeat(281)}`)
         .set('Authorization', authHeader);
 
       expect(response.status).toBe(400);

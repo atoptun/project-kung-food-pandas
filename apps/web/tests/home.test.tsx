@@ -1,26 +1,10 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router';
+import { cleanup, fireEvent, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import HomePage from '@/pages/home';
+import { renderWithProviders } from './test-utils';
 
-function renderHomePage() {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
-        <HomePage />
-      </MemoryRouter>
-    </QueryClientProvider>,
-  );
+function renderHomePage(initialUrl = '/') {
+  return renderWithProviders({ initialEntries: [initialUrl] });
 }
 
 describe('HomePage', () => {

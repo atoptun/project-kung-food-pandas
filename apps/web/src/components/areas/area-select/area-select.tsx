@@ -11,6 +11,7 @@ import { styles } from './area-select.stylex';
 
 export type AreaSelectProps = Omit<SelectProps, 'options' | 'aria-label' | 'onValueChange'> & {
   'aria-label'?: string;
+  useSlug?: boolean;
   includeAllOption?: boolean;
   allOptionLabel?: string;
   allOptionValue?: string;
@@ -22,22 +23,31 @@ export function AreaSelect({
   placeholder = 'Select an area',
   'aria-label': ariaLabel = 'Area',
   'aria-describedby': describedBy,
+  useSlug = false,
   includeAllOption = false,
   allOptionLabel = 'All areas',
   allOptionValue = '',
   onValueChange,
+  value,
   ...props
 }: AreaSelectProps) {
   const { data, isPending, isError, refetch } = useAreasQuery();
   const statusId = useId();
 
   const areasMap = useMemo(() => {
-    return new Map((data ?? []).map((item) => [item.id, item]));
+    const map = new Map<string, Area>();
+    for (const item of data ?? []) {
+      map.set(item.id, item);
+      if (item.slug) {
+        map.set(item.slug, item);
+      }
+    }
+    return map;
   }, [data]);
 
   const options = useMemo(() => {
     const items = (data ?? []).map((item) => ({
-      value: item.id,
+      value: useSlug && item.slug ? item.slug : item.id,
       label: item.name,
     }));
 
@@ -46,7 +56,15 @@ export function AreaSelect({
     }
 
     return items;
-  }, [data, includeAllOption, allOptionValue, allOptionLabel]);
+  }, [data, useSlug, includeAllOption, allOptionValue, allOptionLabel]);
+
+  // Normalize controlled value if passed ID vs Slug
+  const normalizedValue = useMemo(() => {
+    if (!value || value === allOptionValue) return value;
+    const found = areasMap.get(value);
+    if (!found) return value;
+    return useSlug && found.slug ? found.slug : found.id;
+  }, [value, allOptionValue, areasMap, useSlug]);
 
   const handleValueChange = (selectedValue: string) => {
     const selectedArea = areasMap.get(selectedValue);
@@ -62,6 +80,7 @@ export function AreaSelect({
     <div {...stylex.props(styles.field)}>
       <Select
         {...props}
+        value={normalizedValue}
         onValueChange={handleValueChange}
         aria-label={ariaLabel}
         aria-describedby={[describedBy, status && statusId].filter(Boolean).join(' ') || undefined}

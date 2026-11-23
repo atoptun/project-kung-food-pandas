@@ -8,6 +8,7 @@ import type { Prisma } from '@/generated/prisma/client';
  */
 export const recipeCardSelect = {
   id: true,
+  slug: true,
   title: true,
   description: true,
   thumb: true,

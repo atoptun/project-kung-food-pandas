@@ -29,9 +29,13 @@ describe('Recipe page', () => {
 
     const breadcrumbs = screen.getByRole('navigation', { name: 'Breadcrumb' });
     expect(within(breadcrumbs).getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
+    expect(within(breadcrumbs).getByRole('link', { name: recipe.category!.name })).toHaveAttribute(
+      'href',
+      `/category/${recipe.category!.slug || recipe.category!.id}`,
+    );
     expect(within(breadcrumbs).getByText(recipe.title)).toHaveAttribute('aria-current', 'page');
 
-    expect(screen.getByText(recipe.category!.name)).toBeInTheDocument();
+    expect(screen.getAllByText(recipe.category!.name).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(`${recipe.time} min`)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Created by/ })).toHaveAttribute(
       'href',

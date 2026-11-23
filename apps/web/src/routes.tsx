@@ -27,6 +27,11 @@ export const routes: RouteObject[] = [
         handle: { title: 'Home', headerTheme: 'dark' } satisfies RouteHandle,
       },
       {
+        path: '/category/:slug',
+        element: <HomePage />,
+        handle: { title: 'Category', headerTheme: 'dark' } satisfies RouteHandle,
+      },
+      {
         path: '/recipe/add',
         element: (
           <PrivateRoute>

@@ -46,13 +46,13 @@ export default function UserCard({
         {topRecipes.map((recipe, index) => (
           <Link
             key={recipe.id}
-            to={`/recipe/${recipe.id}`}
+            to={`/recipe/${recipe.slug || recipe.id}`}
             aria-label={`View recipe: ${recipe.title}`}
             {...stylex.props(index === 3 && styles.fourthPreview)}
           >
             <ResponsiveImage
               src={recipe.thumb}
-              alt=""
+              alt={`Recipe image: ${recipe.title}`}
               preset={{ desktop: 'recipePreview' }}
               wrapperXstyle={styles.preview}
             />

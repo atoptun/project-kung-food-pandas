@@ -1,10 +1,12 @@
+import { toSlug } from '@repo/shared';
+
 import prisma from '@/lib/prisma';
 
 export async function createCategory(name = 'Test Category') {
   return prisma.category.upsert({
     where: { name },
     update: {},
-    create: { name },
+    create: { name, slug: toSlug(name) },
   });
 }
 
@@ -12,14 +14,16 @@ export async function createArea(name = 'Test Area') {
   return prisma.area.upsert({
     where: { name },
     update: {},
-    create: { name },
+    create: { name, slug: toSlug(name) },
   });
 }
 
 export async function createIngredient(name: string) {
+  const baseSlug = toSlug(name);
   return prisma.ingredient.create({
     data: {
       name,
+      slug: `${baseSlug}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       description: `${name} description`,
     },
   });
@@ -27,6 +31,7 @@ export async function createIngredient(name: string) {
 
 type RecipeOverrides = {
   title?: string;
+  slug?: string | null;
   description?: string | null;
   instructions?: string | null;
   time?: number | null;
@@ -36,13 +41,20 @@ type RecipeOverrides = {
   ingredients?: { ingredientId: string; measure: string }[];
 };
 
+let testSlugCounter = 0;
+
 export async function createRecipe(ownerId: string, overrides: RecipeOverrides = {}) {
   const categoryId = overrides.categoryId ?? (await createCategory()).id;
   const areaId = overrides.areaId ?? (await createArea()).id;
+  const title = overrides.title ?? 'Test Recipe';
+  testSlugCounter++;
+  const slug =
+    overrides.slug !== undefined ? overrides.slug : `${toSlug(title)}-${testSlugCounter}`;
 
   return prisma.recipe.create({
     data: {
-      title: overrides.title ?? 'Test Recipe',
+      title,
+      slug,
       description: overrides.description,
       instructions: overrides.instructions,
       time: overrides.time,

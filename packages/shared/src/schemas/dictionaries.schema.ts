@@ -6,6 +6,7 @@ export const AreaResponseSchema = z
   .object({
     id: z.string().max(32).openapi({ example: '6462a6f04c3d0ddd28897f9b' }),
     name: z.string().max(255).openapi({ example: 'Ukrainian' }),
+    slug: z.string().max(120).nullish().openapi({ example: 'ukrainian' }),
   })
   .openapi('Area');
 
@@ -13,6 +14,7 @@ export const CategoryResponseSchema = z
   .object({
     id: z.string().max(32).openapi({ example: '6462a6cd4c3d0ddd28897f8f' }),
     name: z.string().max(100).openapi({ example: 'Dessert' }),
+    slug: z.string().max(120).nullish().openapi({ example: 'dessert' }),
     image: z.url().nullish().openapi({
       example:
         'https://res.cloudinary.com/lyycri5k/image/upload/v1794604016/kfp/categories/Desserts.jpg',
@@ -23,6 +25,7 @@ export const CategoryResponseSchema = z
 export const IngredientResponseSchema = z.object({
   id: z.string().max(32).openapi({ example: '640c2dd963a319ea671e382c' }),
   name: z.string().max(255).openapi({ example: 'Pears' }),
+  slug: z.string().max(255).nullish().openapi({ example: 'pears' }),
   description: z
     .string()
     .nullish()

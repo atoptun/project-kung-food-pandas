@@ -1,5 +1,5 @@
 import * as stylex from '@stylexjs/stylex';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useTestimonialsQuery } from '@/api/testimonials/testimonials.queries';
 import Icon from '@/components/shared/icon/icon';
@@ -21,13 +21,17 @@ export function Testimonials({ intervalMs = 5000, xstyle }: TestimonialsProps) {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [isVisible, setIsVisible] = useState(() =>
+  const [isTabVisible, setIsTabVisible] = useState(() =>
     typeof document !== 'undefined' ? document.visibilityState === 'visible' : true,
   );
+  const [isInViewport, setIsInViewport] = useState(
+    () => typeof window !== 'undefined' && typeof window.IntersectionObserver === 'undefined',
+  );
+  const sectionRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      setIsVisible(document.visibilityState === 'visible');
+      setIsTabVisible(document.visibilityState === 'visible');
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -35,14 +39,35 @@ export function Testimonials({ intervalMs = 5000, xstyle }: TestimonialsProps) {
   }, []);
 
   useEffect(() => {
-    if (isPaused || !isVisible || items.length <= 1) return;
+    const target = sectionRef.current;
+    if (
+      !target ||
+      typeof window === 'undefined' ||
+      typeof window.IntersectionObserver === 'undefined'
+    ) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInViewport(entry ? entry.isIntersecting : true);
+      },
+      { threshold: 0.1 },
+    );
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [items.length]);
+
+  useEffect(() => {
+    if (isPaused || !isTabVisible || !isInViewport || items.length <= 1) return;
 
     const timer = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % items.length);
     }, intervalMs);
 
     return () => clearInterval(timer);
-  }, [isPaused, isVisible, items.length, intervalMs]);
+  }, [isPaused, isTabVisible, isInViewport, items.length, intervalMs]);
 
   if (isLoading) {
     return (
@@ -60,6 +85,7 @@ export function Testimonials({ intervalMs = 5000, xstyle }: TestimonialsProps) {
 
   return (
     <Section
+      ref={sectionRef}
       withContainer
       aria-label="Testimonials"
       xstyle={xstyle}

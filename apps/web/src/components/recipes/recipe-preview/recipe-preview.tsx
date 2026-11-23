@@ -20,13 +20,13 @@ export default function RecipePreview({
   isPending?: boolean;
   removeLabel?: string;
 }) {
-  const href = `/recipe/${recipe.id}`;
+  const href = `/recipe/${recipe.slug || recipe.id}`;
   return (
     <article {...stylex.props(styles.row)} aria-busy={isPending}>
       <Link to={href} aria-label={`View recipe: ${recipe.title}`}>
         <ResponsiveImage
           src={recipe.thumb}
-          alt=""
+          alt={`Recipe image: ${recipe.title}`}
           preset={{ desktop: 'recipePreview' }}
           wrapperXstyle={styles.recipeImage}
         />

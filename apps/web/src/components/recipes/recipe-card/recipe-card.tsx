@@ -17,6 +17,7 @@ export interface RecipeCardAuthor {
 
 export interface RecipeCardProps {
   id: string;
+  slug?: string | null;
   title: string;
   description: string;
   image?: string | null;
@@ -29,6 +30,7 @@ export interface RecipeCardProps {
 
 export function RecipeCard({
   id,
+  slug,
   title,
   description,
   image,
@@ -38,7 +40,7 @@ export function RecipeCard({
   onToggleFavorite,
   xstyle,
 }: RecipeCardProps) {
-  const recipeHref = `/recipe/${id}`;
+  const recipeHref = `/recipe/${slug || id}`;
 
   return (
     <article {...stylex.props(styles.card, stylex.defaultMarker(), xstyle)}>
@@ -49,7 +51,7 @@ export function RecipeCard({
       >
         <ResponsiveImage
           src={image}
-          alt=""
+          alt={title}
           preset={{
             mobile: 'recipeCardMobile',
             desktop: 'recipeCard',

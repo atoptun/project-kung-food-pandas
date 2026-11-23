@@ -1,9 +1,10 @@
-import { Suspense, useEffect } from 'react';
+import { Suspense } from 'react';
 import { Outlet, ScrollRestoration, useMatches } from 'react-router';
 
 import AuthModal from '@/components/auth/auth-modal';
 import RecipesSessionSync from '@/components/recipes/recipes-session-sync';
 import Loader from '@/components/shared/loader/loader';
+import PageMeta from '@/components/shared/page-meta/page-meta';
 import Toaster from '@/components/shared/toaster/toaster';
 import type { RouteHandle } from '@/routes';
 
@@ -14,12 +15,9 @@ function Layout() {
   const matches = useMatches();
   const handle = matches.at(-1)?.handle as RouteHandle | undefined;
 
-  useEffect(() => {
-    document.title = `${handle?.title ?? 'Not Found'} | Foodies`;
-  }, [handle]);
-
   return (
     <>
+      <PageMeta title={handle?.title ?? 'Not Found'} />
       <ScrollRestoration />
       <Header theme={handle?.headerTheme} />
       <main>

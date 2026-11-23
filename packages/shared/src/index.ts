@@ -5,4 +5,5 @@ export * from './schemas/health.schema';
 export * from './schemas/pagination.schema';
 export * from './schemas/recipes.schema';
 export * from './schemas/users.schema';
+export * from './utils/slug';
 export * from './zod';

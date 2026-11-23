@@ -17,6 +17,7 @@ import { useCatalogRecipes } from './use-catalog-recipes';
 export type Category = {
   id: string | null;
   name: string;
+  slug?: string | null;
 };
 
 export type RecipesCatalogProps = {

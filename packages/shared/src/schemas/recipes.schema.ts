@@ -5,7 +5,7 @@ import { PaginationMetaSchema, PaginationQuerySchema } from './pagination.schema
 
 export const RecipeIdParamSchema = z
   .object({
-    id: z.string().max(36).openapi({ example: '64c8d958249fae54bae90bb9' }),
+    id: z.string().max(280).openapi({ example: '64c8d958249fae54bae90bb9' }),
   })
   .openapi('RecipeIdParam');
 
@@ -13,15 +13,12 @@ export const RecipeFilterQuerySchema = PaginationQuerySchema.extend({
   category: z
     .string()
     .optional()
-    .openapi({ description: 'Category ID', example: '6462a6cd4c3d0ddd28897f8f' }),
-  area: z
-    .string()
-    .optional()
-    .openapi({ description: 'Area ID', example: '6462a6f04c3d0ddd28897f9b' }),
+    .openapi({ description: 'Category ID or Slug', example: 'dessert' }),
+  area: z.string().optional().openapi({ description: 'Area ID or Slug', example: 'italian' }),
   ingredient: z
     .string()
     .optional()
-    .openapi({ description: 'Ingredient ID', example: '640c2dd963a319ea671e382c' }),
+    .openapi({ description: 'Ingredient ID or Slug', example: 'chocolate' }),
 }).openapi('RecipeFilterQuery');
 
 export const PopularRecipesQuerySchema = z
@@ -80,6 +77,7 @@ export const RecipeIngredientDetailSchema = IngredientResponseSchema.extend({
 export const RecipeTinyCardSchema = z
   .object({
     id: z.string().openapi({ example: '64c8d958249fae54bae90bb9' }),
+    slug: z.string().nullish().openapi({ example: 'spaghetti-bolognese' }),
     title: z.string().openapi({ example: 'Recipe 1' }),
     thumb: z
       .string()
@@ -118,12 +116,14 @@ export const RecipeDetailsSchema = RecipeCardSchema.extend({
     .object({
       id: z.string().openapi({ example: 'cat-1' }),
       name: z.string().openapi({ example: 'Beef' }),
+      slug: z.string().nullish().openapi({ example: 'beef' }),
     })
     .optional(),
   area: z
     .object({
       id: z.string().openapi({ example: 'area-1' }),
       name: z.string().openapi({ example: 'Italian' }),
+      slug: z.string().nullish().openapi({ example: 'italian' }),
     })
     .optional(),
   ingredients: z
